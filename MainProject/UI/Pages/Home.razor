@@ -10,13 +10,19 @@
 <button class="icon-button" title="@Strings.SwapTexts" aria-label="@Strings.SwapTexts" @onclick="TranslationWorkspace.SwapTexts"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6H14M4 10H11M14 18H24M17 22H24M20 5V13M17 8L20 5L23 8M8 23V15M5 20L8 23L11 20"/></g></svg></button>
 </div></div><div class="window-actions"><button class="hide" title="@Strings.Hide" @onclick="Hide">−</button></div></header>
 <div class="editors">
-<div class="editor"><div class="editor-heading"><label for="input">@Strings.InputLabel</label><select aria-label="@Strings.SourceLanguage" value="@TranslationWorkspace.SourceLanguage" @onchange="SourceChanged">@LanguageOptions()</select></div><textarea id="input" spellcheck="false" value="@TranslationWorkspace.Input" @oninput="InputChanged"></textarea></div>
+<div class="editor"><div class="editor-heading"><label for="input">@Strings.InputLabel</label><select aria-label="@Strings.SourceLanguage" value="@TranslationWorkspace.SourceLanguage" @onchange="SourceChanged">@LanguageOptions()</select></div><textarea @ref="InputElement" id="input" spellcheck="false" value="@TranslationWorkspace.Input" @oninput="InputChanged"></textarea></div>
 <div class="editor output"><div class="editor-heading"><label for="output">@Strings.OutputLabel</label><select aria-label="@Strings.TargetLanguage" value="@TranslationWorkspace.TargetLanguage" @onchange="TargetChanged">@LanguageOptions()</select></div><textarea id="output" spellcheck="false" value="@TranslationWorkspace.Output" @oninput="OutputChanged"></textarea></div>
 </div>
 <footer><span class="status"><i class="@(TranslationWorkspace.IsBusy ? "busy" : "")"></i>@TranslationWorkspace.Status</span></footer>
 </section>
 @code {
-    protected override void OnInitialized() => TranslationWorkspace.Changed += Refresh;
+    ElementReference InputElement;
+    protected override void OnInitialized()
+    {
+        TranslationWorkspace.Changed += Refresh;
+        TranslationWorkspace.FocusInput = FocusInputAsync;
+    }
+    Task FocusInputAsync() => InvokeAsync(async () => await InputElement.FocusAsync(preventScroll:true));
     protected override void OnAfterRender(bool firstRender) { if (firstRender) TranslationWorkspace.ViewReady?.Invoke(); }
     void Refresh() => _ = InvokeAsync(StateHasChanged);
     void Hide() => TranslationWorkspace.HideWindow?.Invoke();
@@ -25,8 +31,9 @@
     Task SourceChanged(ChangeEventArgs e) => TranslationWorkspace.SetLanguagesAsync(e.Value?.ToString() ?? "en", TranslationWorkspace.TargetLanguage);
     Task TargetChanged(ChangeEventArgs e) => TranslationWorkspace.SetLanguagesAsync(TranslationWorkspace.SourceLanguage, e.Value?.ToString() ?? "tr");
     RenderFragment LanguageOptions() => @<text><option value="@TranslationWorkspace.Automatic">@Strings.Automatic</option><option value="en">English</option><option value="tr">Türkçe</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></text>;
-    public void Dispose() => TranslationWorkspace.Changed -= Refresh;
+    public void Dispose() { TranslationWorkspace.Changed -= Refresh; TranslationWorkspace.FocusInput = null; }
 }
+
 
 
 

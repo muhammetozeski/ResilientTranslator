@@ -1,6 +1,6 @@
 # Resilient Translator
 
-![Version](https://img.shields.io/badge/version-0.2.2-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
+![Version](https://img.shields.io/badge/version-0.3.0-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
 
 A portable, borderless MAUI Blazor translator with a warm hidden window and two editable text panes.
 
@@ -11,6 +11,7 @@ A portable, borderless MAUI Blazor translator with a warm hidden window and two 
 - Single left click on the tray icon toggles the window. Middle click exits.
 - Header buttons independently swap the language pair or the two texts.
 - Both language selectors offer Automatic. Offline Lingua detection reuses one preloaded seven-language detector. Selecting Automatic on the other side restores the first side to its last concrete language.
+- Opening focuses the input editor; clicking outside dismisses the window. Choosing the other pane's concrete language exchanges the two language roles.
 - The window stays above other windows. Its rendered WebView is retained while hidden.
 
 ## Install
@@ -34,5 +35,6 @@ When an Automatic selection is used as the output destination, it becomes Englis
 
 
 Developer knowledge: [documentation index](Docs/İçindekiler.md).
+
 
 

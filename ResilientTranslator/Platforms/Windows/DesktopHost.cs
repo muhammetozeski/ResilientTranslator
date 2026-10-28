@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml;
 using Polly;
 using static Logger;
 using System.ComponentModel;
@@ -17,7 +18,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
 {
     const bool IsLogEnabled = true;
     const int HotkeyId = 1;
-    enum DesktopAction { TrayOpen, TrayExit, TrayToggle, TrayMiddleExit, HideButton, FirstRender, Hotkey }
+    enum DesktopAction { TrayOpen, TrayExit, TrayToggle, TrayMiddleExit, HideButton, FirstRender, Hotkey, OutsideClick }
     static DesktopHost? Current;
     readonly NativeWindow Window;
     readonly Forms.NotifyIcon Tray;
@@ -25,8 +26,9 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
     readonly SemaphoreSlim ClipboardGate = new(1,1);
     RequestContext? CaptureRequest;
     Task? CaptureTask;
+    Task? FocusTask;
 
-    bool Visible, Ready, ShowWhenReady, Disposed;
+    bool Visible, Ready, ShowWhenReady, Disposed, ActivationObserved;
     /// <summary>Creates the tray receiver and prepares the window outside the visible desktop.</summary>
     DesktopHost(NativeWindow window)
     {
@@ -56,6 +58,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
             if (args.Button == Forms.MouseButtons.Left) Dispatch(Toggle, DesktopAction.TrayToggle);
             else if (args.Button == Forms.MouseButtons.Middle) Dispatch(Exit, DesktopAction.TrayMiddleExit);
         };
+        window.Activated += OnActivationChanged;
         window.AppWindow.Closing += (_,args) => { args.Cancel = true; Hide(); };
         TranslationWorkspace.RequestSuperseded += CancelCapture;
         TranslationWorkspace.HideWindow = () => Dispatch(Hide, DesktopAction.HideButton);
@@ -89,11 +92,25 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         if (!Ready) { ShowWhenReady = true; return; }
         Center();
         if (Window.AppWindow.Presenter is OverlappedPresenter presenter) presenter.IsAlwaysOnTop = true;
+        ActivationObserved=false; Visible = true;
         Window.AppWindow.Show(activate);
-        if (activate) Window.Activate();
-        Visible = true;
+        if (activate) ActivateWindow();
         var position = Window.AppWindow.Position; var size = Window.AppWindow.Size;
         Log($"Window shown; topmost=true; isVisible={Window.AppWindow.IsVisible}; activate={activate}; x={position.X}; y={position.Y}; width={size.Width}; height={size.Height}", Run: IsLogEnabled);
+    }
+    /// <summary>Activates the native window and observes the asynchronous focus request inside its own error boundary.</summary>
+    void ActivateWindow()
+    {
+        Window.Activate();
+        if(TranslationWorkspace.FocusInput is { } focus)
+            FocusTask=ExceptionBoundary.RunSafelyAsync(token => focus().WaitAsync(token),operationName:"FocusInput");
+    }
+    /// <summary>Dismisses a visible window when activation moves outside it, preserving the warm visual tree.</summary>
+    void OnActivationChanged(object sender,WindowActivatedEventArgs args)
+    {
+        Log($"Window activation changed; state={args.WindowActivationState}; visible={Visible}; ready={Ready}",Run:IsLogEnabled);
+        if(!Disposed && Ready && Visible && args.WindowActivationState==WindowActivationState.Deactivated)
+            Dispatch(Hide,DesktopAction.OutsideClick);
     }
     /// <summary>Contains errors from a hide action.</summary>
     void Hide() => ExceptionBoundary.RunSafely(HideCore, operationName: "HideWindow");
@@ -101,7 +118,8 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
     void HideCore()
     {
         CancelCapture();
-        Window.AppWindow.Hide(); Visible = false;
+        bool wasVisible=Visible,wasActivated=ActivationObserved; Visible=false; ActivationObserved=false;
+        try { Window.AppWindow.Hide(); } catch { Visible=wasVisible; ActivationObserved=wasActivated; throw; }
         Log($"Window hidden; isVisible={Window.AppWindow.IsVisible}; pendingCaptureCanceled=true", Run: IsLogEnabled);
     }
     /// <summary>Centers the native window within the active work area.</summary>
@@ -166,7 +184,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
                 Log($"Clipboard ownership released; request={request.Id}", Run: IsLogEnabled);
                 if (Visible && !token.IsCancellationRequested && CaptureRequest == request)
                 {
-                    Window.Activate();
+                    ActivateWindow();
                     Log($"Window activated after capture; isVisible={Window.AppWindow.IsVisible}; topmost=true", Run: IsLogEnabled);
                 }
             }
@@ -252,6 +270,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
     public void Dispose()
     {
         if (Disposed) return; Disposed = true;
+        Window.Activated -= OnActivationChanged;
         TranslationWorkspace.RequestSuperseded -= CancelCapture;
         CancelCapture();
         PInvoke.UnregisterHotKey(new HWND(Handle),HotkeyId);
@@ -259,6 +278,8 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         Log("Desktop disposed", Run:IsLogEnabled);
     }
 }
+
+
 
 
 

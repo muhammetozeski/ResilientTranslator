@@ -40,6 +40,7 @@ public static class TranslationWorkspace
     public static event Action? RequestSuperseded;
     public static Action? HideWindow;
     public static Action? ViewReady;
+    public static Func<Task>? FocusInput;
     /// <summary>Restores the language pair before rendering and observes the one-time preload.</summary>
     public static void Initialize()
     {
@@ -151,6 +152,7 @@ public static class TranslationWorkspace
         {
             bool sourceChanged=source != SourceLanguage;
             if(source==Automatic && target==Automatic) { if(sourceChanged) target=LastConcreteTargetLanguage; else source=LastConcreteSourceLanguage; }
+            else if(source==target) { if(sourceChanged) target=SourceLanguage; else source=TargetLanguage; }
             if(source!=Automatic) LastConcreteSourceLanguage=source;
             if(target!=Automatic) LastConcreteTargetLanguage=target;
             SourceLanguage=source; TargetLanguage=target;
@@ -197,4 +199,5 @@ public static class TranslationWorkspace
         return pending;
     }
 }
+
 
