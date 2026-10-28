@@ -150,10 +150,12 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         {
             if(Disposed || !Ready || !Visible || window.IsNull || Presentation is not { } owner) return;
             HWND root=RootOwner(window);
+            HWND actual=RootOwner(PInvoke.GetForegroundWindow());
+            if(root!=actual) { Log("Stale foreground notification ignored",Run:IsLogEnabled); return; }
             if(root==MainHandle) { ActivationObserved=true; return; }
             if(!ActivationObserved && root==SourceForeground) return;
             Log("Outside foreground event received",Run:IsLogEnabled);
-            Dispatcher.TryEnqueue(() => { if(Visible && Presentation==owner) Dispatch(Hide,DesktopAction.OutsideClick); });
+            Dispatcher.TryEnqueue(() => { if(Visible && Presentation==owner && RootOwner(PInvoke.GetForegroundWindow())!=MainHandle) Dispatch(Hide,DesktopAction.OutsideClick); });
         }
         catch(Exception error) { ExceptionBoundary.LogSafely($"Foreground event handling failed; error={error}"); }
     }
@@ -331,6 +333,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         Log("Desktop disposed", Run:IsLogEnabled);
     }
 }
+
 
 
 
