@@ -21,10 +21,10 @@ internal sealed class TranslationJob
     /// <param name="text">The immutable text snapshot for this job.</param>
     /// <param name="source">The source language code.</param>
     /// <param name="target">The target language code.</param>
-    public TranslationJob(long revision, TranslationInput input, Task<LanguageDetector> detector)
+    public TranslationJob(long revision, TranslationInput input, Task<LanguageDetector> detector, Action<Language> onDetected)
     {
         Revision = revision;
-        var worker = new Thread(() => Execute(input,detector)) { IsBackground = true, Name = $"Translation-{revision}" };
+        var worker = new Thread(() => Execute(input,detector,onDetected)) { IsBackground = true, Name = $"Translation-{revision}" };
         worker.Start();
     }
 
@@ -42,7 +42,7 @@ internal sealed class TranslationJob
     }
 
     /// <summary>Runs and contains one isolated engine invocation; no abandoned engine can update application state.</summary>
-    void Execute(TranslationInput input, Task<LanguageDetector> detectorTask)
+    void Execute(TranslationInput input, Task<LanguageDetector> detectorTask, Action<Language> onDetected)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         EngineContext? context = null;
@@ -50,28 +50,21 @@ internal sealed class TranslationJob
         {
             var token = Cancellation.Token;
             string text=input.Text,source=input.SourceLanguage,target=input.TargetLanguage;
-            if(source==TranslationWorkspace.Automatic || target==TranslationWorkspace.Automatic)
+            if(source==TranslationWorkspace.Automatic)
             {
                 var detector=detectorTask.WaitAsync(token).GetAwaiter().GetResult();
                 DetectionGate.WaitAsync(token).WaitAsync(token).GetAwaiter().GetResult();
                 try
                 {
-                    if(source==TranslationWorkspace.Automatic)
-                    {
-                        var detected=detector.DetectLanguageOf(text);
-                        source=detected==Language.Unknown ? input.SourceFallback : LanguageInfo.IsoCode6391(detected).ToString().ToLowerInvariant();
-                        ExceptionBoundary.LogSafely($"Language detected; request={Revision}; editedSide=true; language={source}; detected={detected}",IsLogEnabled);
-                    }
-                    if(target==TranslationWorkspace.Automatic)
-                    {
-                        var detected=string.IsNullOrWhiteSpace(input.DestinationText) ? Language.Unknown : detector.DetectLanguageOf(input.DestinationText);
-                        target=detected==Language.Unknown ? input.TargetFallback : LanguageInfo.IsoCode6391(detected).ToString().ToLowerInvariant();
-                        ExceptionBoundary.LogSafely($"Language detected; request={Revision}; editedSide=false; language={target}; detected={detected}",IsLogEnabled);
-                    }
+                    var detected=detector.DetectLanguageOf(text);
                     token.ThrowIfCancellationRequested();
+                    source=detected==Language.Unknown ? TranslationWorkspace.FallbackLanguage : LanguageInfo.IsoCode6391(detected).ToString().ToLowerInvariant();
+                    onDetected(detected);
+                    ExceptionBoundary.LogSafely($"Language detected; request={Revision}; language={source}; detected={detected}",IsLogEnabled);
                 }
                 finally { DetectionGate.Release(); }
             }
+            if(target==TranslationWorkspace.Automatic) target=TranslationWorkspace.FallbackLanguage;
             token.ThrowIfCancellationRequested();
             ExceptionBoundary.LogSafely($"Translation worker started; revision={Revision}; thread={Environment.CurrentManagedThreadId}; source={source}; target={target}; text={text}", IsLogEnabled);
             string directory = Path.GetDirectoryName(typeof(TranslationJob).Assembly.Location)!;
@@ -150,6 +143,7 @@ internal sealed class TranslationJob
         }
     }
 }
+
 
 
 

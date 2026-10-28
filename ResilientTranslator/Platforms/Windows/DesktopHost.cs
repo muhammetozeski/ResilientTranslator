@@ -150,7 +150,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
                     if (newSequence == sequence || !clipboard.HasText) return;
                     text = await ReadClipboardTextAsync(token);
                     uint afterReadSequence = PInvoke.GetClipboardSequenceNumber();
-                    if (!ReferenceEquals(request,CaptureRequest) || token.IsCancellationRequested || afterReadSequence != newSequence)
+                    if (request != CaptureRequest || token.IsCancellationRequested || afterReadSequence != newSequence)
                     {
                         Log($"Clipboard result discarded; request={request.Id}; currentRequest={CaptureRequest?.Id}; beforeReadSequence={newSequence}; afterReadSequence={afterReadSequence}", Run: IsLogEnabled);
                         token.ThrowIfCancellationRequested();
@@ -164,17 +164,17 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
             {
                 ClipboardGate.Release();
                 Log($"Clipboard ownership released; request={request.Id}", Run: IsLogEnabled);
-                if (Visible && !token.IsCancellationRequested && ReferenceEquals(CaptureRequest,request))
+                if (Visible && !token.IsCancellationRequested && CaptureRequest == request)
                 {
                     Window.Activate();
                     Log($"Window activated after capture; isVisible={Window.AppWindow.IsVisible}; topmost=true", Run: IsLogEnabled);
                 }
             }
             token.ThrowIfCancellationRequested();
-            if (ReferenceEquals(request,CaptureRequest) && !string.IsNullOrWhiteSpace(text))
+            if (request == CaptureRequest && !string.IsNullOrWhiteSpace(text))
                 await TranslationWorkspace.EditAsync(text,true,true,expectedRequest:request).WaitAsync(token);
         }, request.Token, operationName: "CaptureSelection");
-        if (ReferenceEquals(CaptureRequest,request)) CaptureRequest = null;
+        if (CaptureRequest == request) CaptureRequest = null;
     }
     /// <summary>Invalidates a pending capture when a newer editor or desktop command arrives.</summary>
     void CancelCapture()
@@ -259,6 +259,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         Log("Desktop disposed", Run:IsLogEnabled);
     }
 }
+
 
 
 
