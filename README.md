@@ -1,6 +1,6 @@
 # Resilient Translator
 
-![Version](https://img.shields.io/badge/version-0.3.0-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
+![Version](https://img.shields.io/badge/version-0.3.1-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
 
 A portable, borderless MAUI Blazor translator with a warm hidden window and two editable text panes.
 
@@ -35,6 +35,7 @@ When an Automatic selection is used as the output destination, it becomes Englis
 
 
 Developer knowledge: [documentation index](Docs/İçindekiler.md).
+
 
 
 

@@ -22,7 +22,7 @@
         TranslationWorkspace.Changed += Refresh;
         TranslationWorkspace.FocusInput = FocusInputAsync;
     }
-    Task FocusInputAsync() => InvokeAsync(async () => await InputElement.FocusAsync(preventScroll:true));
+    Task FocusInputAsync(CancellationToken token) => InvokeAsync(async () => { token.ThrowIfCancellationRequested(); await InputElement.FocusAsync(preventScroll:true).AsTask().WaitAsync(token); });
     protected override void OnAfterRender(bool firstRender) { if (firstRender) TranslationWorkspace.ViewReady?.Invoke(); }
     void Refresh() => _ = InvokeAsync(StateHasChanged);
     void Hide() => TranslationWorkspace.HideWindow?.Invoke();
@@ -33,6 +33,7 @@
     RenderFragment LanguageOptions() => @<text><option value="@TranslationWorkspace.Automatic">@Strings.Automatic</option><option value="en">English</option><option value="tr">Türkçe</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></text>;
     public void Dispose() { TranslationWorkspace.Changed -= Refresh; TranslationWorkspace.FocusInput = null; }
 }
+
 
 
 

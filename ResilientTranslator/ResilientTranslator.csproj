@@ -35,8 +35,8 @@
     <ApplicationId>com.companyname.resilienttranslator</ApplicationId>
 
     <!-- Versions -->
-    <ApplicationDisplayVersion>0.3.0</ApplicationDisplayVersion>
-    <ApplicationVersion>5</ApplicationVersion>
+    <ApplicationDisplayVersion>0.3.1</ApplicationDisplayVersion>
+    <ApplicationVersion>6</ApplicationVersion>
 
     <!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
     <WindowsPackageType>None</WindowsPackageType>
@@ -81,7 +81,8 @@
     <ProjectReference Include="..\MainProject\MainProject.csproj" /><ProjectReference Include="..\TranslationEngine\TranslationEngine.csproj" Aliases="TranslationEngine" />
   </ItemGroup>
 
-<PropertyGroup><Version>0.3.0</Version><AssemblyVersion>0.3.0.0</AssemblyVersion><FileVersion>0.3.0.0</FileVersion><ApplicationIcon>Resources\AppIcon\appicon.ico</ApplicationIcon><AllowUnsafeBlocks>true</AllowUnsafeBlocks><WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained></PropertyGroup><ItemGroup><FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms"/><PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.363" PrivateAssets="all"/><Using Remove="System.Windows.Forms"/><Using Remove="System.Drawing"/></ItemGroup></Project>
+<PropertyGroup><Version>0.3.1</Version><AssemblyVersion>0.3.1.0</AssemblyVersion><FileVersion>0.3.1.0</FileVersion><ApplicationIcon>Resources\AppIcon\appicon.ico</ApplicationIcon><AllowUnsafeBlocks>true</AllowUnsafeBlocks><WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained></PropertyGroup><ItemGroup><FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms"/><PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.363" PrivateAssets="all"/><Using Remove="System.Windows.Forms"/><Using Remove="System.Drawing"/></ItemGroup></Project>
+
 
 
 

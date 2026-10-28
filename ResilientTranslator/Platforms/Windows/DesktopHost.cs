@@ -1,3 +1,5 @@
+using Windows.Win32.UI.Accessibility;
+using Windows.Win32.UI.WindowsAndMessaging;
 using Microsoft.UI.Xaml;
 using Polly;
 using static Logger;
@@ -21,6 +23,11 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
     enum DesktopAction { TrayOpen, TrayExit, TrayToggle, TrayMiddleExit, HideButton, FirstRender, Hotkey, OutsideClick }
     static DesktopHost? Current;
     readonly NativeWindow Window;
+    readonly HWND MainHandle;
+    readonly WINEVENTPROC ForegroundCallback;
+    HWINEVENTHOOK ForegroundHook;
+    HWND SourceForeground;
+    RequestContext? Presentation;
     readonly Forms.NotifyIcon Tray;
     readonly Microsoft.UI.Dispatching.DispatcherQueue Dispatcher;
     readonly SemaphoreSlim ClipboardGate = new(1,1);
@@ -33,6 +40,10 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
     DesktopHost(NativeWindow window)
     {
         Window = window; Dispatcher = window.DispatcherQueue;
+        MainHandle=new HWND(WinRT.Interop.WindowNative.GetWindowHandle(window));
+        ForegroundCallback=OnForegroundChanged;
+        ForegroundHook=PInvoke.SetWinEventHook(PInvoke.EVENT_SYSTEM_FOREGROUND,PInvoke.EVENT_SYSTEM_FOREGROUND,default,ForegroundCallback,0,0,PInvoke.WINEVENT_OUTOFCONTEXT);
+        if(ForegroundHook.IsNull) Log($"Foreground event hook unavailable; retaining WinUI activation fallback; error={Marshal.GetLastWin32Error()}",Run:IsLogEnabled);
         Microsoft.UI.Xaml.Application.Current.UnhandledException += (_, args) => ExceptionBoundary.LogSafely($"WinUI unhandled exception; message={args.Message}; error={args.Exception}");
         ShowWhenReady = Environment.GetCommandLineArgs().Contains("--show");
         window.AppWindow.IsShownInSwitchers = false;
@@ -92,6 +103,8 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         if (!Ready) { ShowWhenReady = true; return; }
         Center();
         if (Window.AppWindow.Presenter is OverlappedPresenter presenter) presenter.IsAlwaysOnTop = true;
+        Presentation?.Cancel(); Presentation=new();
+        SourceForeground=RootOwner(PInvoke.GetForegroundWindow());
         ActivationObserved=false; Visible = true;
         Window.AppWindow.Show(activate);
         if (activate) ActivateWindow();
@@ -101,23 +114,61 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
     /// <summary>Activates the native window and observes the asynchronous focus request inside its own error boundary.</summary>
     void ActivateWindow()
     {
-        Window.Activate();
-        if(TranslationWorkspace.FocusInput is { } focus)
-            FocusTask=ExceptionBoundary.RunSafelyAsync(token => focus().WaitAsync(token),operationName:"FocusInput");
+        if(Presentation is not { } owner || !Visible) return;
+        FocusTask=ExceptionBoundary.RunSafelyAsync(async token =>
+        {
+            token.ThrowIfCancellationRequested();
+            Window.AppWindow.Show(true);
+            Window.Activate();
+            if(RootOwner(PInvoke.GetForegroundWindow())!=MainHandle)
+            {
+                bool accepted=PInvoke.SetForegroundWindow(MainHandle);
+                Log($"Native foreground request; accepted={accepted}",Run:IsLogEnabled);
+            }
+            if(TranslationWorkspace.FocusWebView is { } host) await host(token).WaitAsync(token);
+            token.ThrowIfCancellationRequested();
+            if(TranslationWorkspace.FocusInput is { } focus) await focus(token).WaitAsync(token);
+            token.ThrowIfCancellationRequested();
+            bool foreground=RootOwner(PInvoke.GetForegroundWindow())==MainHandle;
+            ActivationObserved=foreground;
+            Log($"Input focus completed; realForeground={foreground}; visible={Visible}",Run:IsLogEnabled);
+            if(!foreground) throw new InvalidOperationException("The translator did not acquire the foreground window.");
+        },owner.Token,operationName:"FocusInput");
     }
-    /// <summary>Dismisses a visible window when activation moves outside it, preserving the warm visual tree.</summary>
+    /// <summary>Uses native foreground ownership rather than logical activation alone.</summary>
     void OnActivationChanged(object sender,WindowActivatedEventArgs args)
     {
-        Log($"Window activation changed; state={args.WindowActivationState}; visible={Visible}; ready={Ready}",Run:IsLogEnabled);
-        if(!Disposed && Ready && Visible && args.WindowActivationState==WindowActivationState.Deactivated)
-            Dispatch(Hide,DesktopAction.OutsideClick);
+        bool actual=RootOwner(PInvoke.GetForegroundWindow())==MainHandle;
+        Log($"Window activation changed; state={args.WindowActivationState}; actualForeground={actual}; visible={Visible}",Run:IsLogEnabled);
+        if(args.WindowActivationState!=WindowActivationState.Deactivated) { if(Visible && actual) ActivationObserved=true; return; }
+        if(!Disposed && Ready && Visible && ActivationObserved && !actual) Dispatch(Hide,DesktopAction.OutsideClick);
+    }
+    /// <summary>Receives foreground-change events without polling and ignores child or owned browser windows.</summary>
+    void OnForegroundChanged(HWINEVENTHOOK hook,uint eventType,HWND window,int objectId,int childId,uint thread,uint time)
+    {
+        try
+        {
+            if(Disposed || !Ready || !Visible || window.IsNull || Presentation is not { } owner) return;
+            HWND root=RootOwner(window);
+            if(root==MainHandle) { ActivationObserved=true; return; }
+            if(!ActivationObserved && root==SourceForeground) return;
+            Log("Outside foreground event received",Run:IsLogEnabled);
+            Dispatcher.TryEnqueue(() => { if(Visible && Presentation==owner) Dispatch(Hide,DesktopAction.OutsideClick); });
+        }
+        catch(Exception error) { ExceptionBoundary.LogSafely($"Foreground event handling failed; error={error}"); }
+    }
+    /// <summary>Finds the owning top-level window for an active browser child or popup.</summary>
+    static HWND RootOwner(HWND window)
+    {
+        HWND root=PInvoke.GetAncestor(window,GET_ANCESTOR_FLAGS.GA_ROOTOWNER);
+        return root.IsNull ? window : root;
     }
     /// <summary>Contains errors from a hide action.</summary>
     void Hide() => ExceptionBoundary.RunSafely(HideCore, operationName: "HideWindow");
     /// <summary>Cancels pending capture and hides the window without destroying its visual tree.</summary>
     void HideCore()
     {
-        CancelCapture();
+        CancelCapture(); Presentation?.Cancel();
         bool wasVisible=Visible,wasActivated=ActivationObserved; Visible=false; ActivationObserved=false;
         try { Window.AppWindow.Hide(); } catch { Visible=wasVisible; ActivationObserved=wasActivated; throw; }
         Log($"Window hidden; isVisible={Window.AppWindow.IsVisible}; pendingCaptureCanceled=true", Run: IsLogEnabled);
@@ -270,6 +321,8 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
     public void Dispose()
     {
         if (Disposed) return; Disposed = true;
+        if(!ForegroundHook.IsNull) { PInvoke.UnhookWinEvent(ForegroundHook); ForegroundHook=default; }
+        Presentation?.Cancel();
         Window.Activated -= OnActivationChanged;
         TranslationWorkspace.RequestSuperseded -= CancelCapture;
         CancelCapture();
@@ -278,6 +331,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         Log("Desktop disposed", Run:IsLogEnabled);
     }
 }
+
 
 
 

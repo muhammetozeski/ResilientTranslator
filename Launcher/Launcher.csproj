@@ -1,4 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>WinExe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><AssemblyName>ResilientTranslator</AssemblyName><Version>0.3.0</Version><ApplicationIcon>..\ResilientTranslator\Resources\AppIcon\appicon.ico</ApplicationIcon><PublishSingleFile>true</PublishSingleFile><SelfContained>false</SelfContained><RuntimeIdentifier>win-x64</RuntimeIdentifier></PropertyGroup></Project>
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>WinExe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><AssemblyName>ResilientTranslator</AssemblyName><Version>0.3.1</Version><ApplicationIcon>..\ResilientTranslator\Resources\AppIcon\appicon.ico</ApplicationIcon><PublishSingleFile>true</PublishSingleFile><SelfContained>false</SelfContained><RuntimeIdentifier>win-x64</RuntimeIdentifier></PropertyGroup></Project>
+
 
 
 

@@ -40,7 +40,8 @@ public static class TranslationWorkspace
     public static event Action? RequestSuperseded;
     public static Action? HideWindow;
     public static Action? ViewReady;
-    public static Func<Task>? FocusInput;
+    public static Func<CancellationToken,Task>? FocusInput;
+    public static Func<CancellationToken,Task>? FocusWebView;
     /// <summary>Restores the language pair before rendering and observes the one-time preload.</summary>
     public static void Initialize()
     {
@@ -199,5 +200,6 @@ public static class TranslationWorkspace
         return pending;
     }
 }
+
 
 
