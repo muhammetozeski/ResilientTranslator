@@ -8,3 +8,6 @@ SetLanguagesAsync normalizes user-selected collisions while holding the short wo
 Controlled workspace tests cover both directions of tr/en exchange, a second de/fr pair, and both Automatic restoration sequences. Actual focused-edit observations are read through the accessibility event stream without driving the UI. Foreground ownership and dismissal are recorded separately in the application log.
 
 
+
+In the 0.3.1 interaction probe, the accessibility focus event identified the input editor as Girdi with ControlType.Edit. The same presentation logged native host focus accepted and realForeground=True. Stale foreground notifications were ignored before any dismissal was queued.
+
