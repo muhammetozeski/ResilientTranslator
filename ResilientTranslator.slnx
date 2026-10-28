@@ -1,0 +1,11 @@
+<Solution>
+  <Project Path="Generators/Generators.csproj" />
+  <Project Path="Launcher/Launcher.csproj" />
+  <Project Path="MainProject/MainProject.csproj" />
+  <Project Path="ResilientTranslator.Web.Client/ResilientTranslator.Web.Client.csproj" />
+  <Project Path="ResilientTranslator.Web/ResilientTranslator.Web.csproj" />
+  <Project Path="ResilientTranslator/ResilientTranslator.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="TranslationEngine/TranslationEngine.csproj" />
+</Solution>

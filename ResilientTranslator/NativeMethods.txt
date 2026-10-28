@@ -1,0 +1,14 @@
+RegisterHotKey
+UnregisterHotKey
+SendInput
+GetAsyncKeyState
+GetClipboardSequenceNumber
+WM_HOTKEY
+SetWindowsHookEx
+CallNextHookEx
+UnhookWindowsHookEx
+GetModuleHandle
+WM_KEYUP
+WM_SYSKEYUP
+KBDLLHOOKSTRUCT
+CLIPBRD_E_CANT_OPEN

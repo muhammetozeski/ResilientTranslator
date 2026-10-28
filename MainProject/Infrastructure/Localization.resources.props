@@ -1,0 +1,9 @@
+<Project>
+  <ItemGroup>
+    <None Remove="$(MSBuildThisFileDirectory)Localization\lang.en.xml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Localization\lang.en.xml"
+                      LogicalName="ResilientTranslator.MainProject.Infrastructure.Localization.lang.en.xml"
+                      WithCulture="false" />
+  </ItemGroup>
+</Project>
+

@@ -1,0 +1,32 @@
+@page "/"
+@using ResilientTranslator.MainProject.Services
+@using ResilientTranslator.MainProject.Infrastructure.Localization
+@implements IDisposable
+<PageTitle>Resilient Translator</PageTitle>
+<section class="translator">
+<header><div class="brand"><svg class="brand-icon" viewBox="0 0 256 256" aria-hidden="true"><rect x="10" y="10" width="236" height="236" rx="58" fill="#74cf9c"/><path d="M47 151L81 65H98L132 151H110L103 131H76L69 151ZM82 113H97L90 89Z" fill="#112e26"/><g fill="none" stroke="#112e26" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"><path d="M146 84H210M178 68V84M155 86C159 112 179 133 208 146M202 86C194 115 178 133 149 147M57 188H193M179 174L193 188L179 202"/></g></svg><div><h1>Resilient Translator</h1></div>
+<div class="swap-actions">
+<button class="icon-button" title="@Strings.SwapLanguages" aria-label="@Strings.SwapLanguages" @onclick="TranslationWorkspace.SwapLanguagesAsync"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15L7 5L11 15M4.5 12H9.5M16 7H25M20.5 4V7M18 8C19 11 21 13 25 15M24 8C23 11 21 13 17 15M4 21H23M20 18L23 21L20 24M7 18L4 21L7 24"/></g></svg></button>
+<button class="icon-button" title="@Strings.SwapTexts" aria-label="@Strings.SwapTexts" @onclick="TranslationWorkspace.SwapTexts"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6H14M4 10H11M14 18H24M17 22H24M20 5V13M17 8L20 5L23 8M8 23V15M5 20L8 23L11 20"/></g></svg></button>
+</div></div><div class="window-actions"><button class="hide" title="@Strings.Hide" @onclick="Hide">−</button></div></header>
+<div class="editors">
+<div class="editor"><div class="editor-heading"><label for="input">@Strings.InputLabel</label><select aria-label="@Strings.SourceLanguage" value="@TranslationWorkspace.SourceLanguage" @onchange="SourceChanged">@LanguageOptions()</select></div><textarea id="input" spellcheck="false" value="@TranslationWorkspace.Input" @oninput="InputChanged"></textarea></div>
+<div class="editor output"><div class="editor-heading"><label for="output">@Strings.OutputLabel</label><select aria-label="@Strings.TargetLanguage" value="@TranslationWorkspace.TargetLanguage" @onchange="TargetChanged">@LanguageOptions()</select></div><textarea id="output" spellcheck="false" value="@TranslationWorkspace.Output" @oninput="OutputChanged"></textarea></div>
+</div>
+<footer><span class="status"><i class="@(TranslationWorkspace.IsBusy ? "busy" : "")"></i>@TranslationWorkspace.Status</span></footer>
+</section>
+@code {
+    protected override void OnInitialized() => TranslationWorkspace.Changed += Refresh;
+    protected override void OnAfterRender(bool firstRender) { if (firstRender) TranslationWorkspace.ViewReady?.Invoke(); }
+    void Refresh() => _ = InvokeAsync(StateHasChanged);
+    void Hide() => TranslationWorkspace.HideWindow?.Invoke();
+    Task InputChanged(ChangeEventArgs e) => TranslationWorkspace.EditAsync(e.Value?.ToString() ?? "", true);
+    Task OutputChanged(ChangeEventArgs e) => TranslationWorkspace.EditAsync(e.Value?.ToString() ?? "", false);
+    Task SourceChanged(ChangeEventArgs e) => TranslationWorkspace.SetLanguagesAsync(e.Value?.ToString() ?? "en", TranslationWorkspace.TargetLanguage);
+    Task TargetChanged(ChangeEventArgs e) => TranslationWorkspace.SetLanguagesAsync(TranslationWorkspace.SourceLanguage, e.Value?.ToString() ?? "tr");
+    RenderFragment LanguageOptions() => @<text><option value="en">English</option><option value="tr">Türkçe</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></text>;
+    public void Dispose() => TranslationWorkspace.Changed -= Refresh;
+}
+
+
+
