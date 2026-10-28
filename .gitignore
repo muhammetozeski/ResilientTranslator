@@ -368,3 +368,4 @@ artifacts/
 **/UserCache/
 Imzalama.pfx
 PFX-PAROLA.txt
+!MainProject/packages/*.nupkg

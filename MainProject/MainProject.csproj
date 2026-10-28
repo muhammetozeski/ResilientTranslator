@@ -33,5 +33,6 @@
 						  OutputItemType="Analyzer"
 						  ReferenceOutputAssembly="false" />
 	</ItemGroup>
-<ItemGroup><ProjectReference Include="..\TranslationEngine\TranslationEngine.csproj" Aliases="TranslationEngine" /></ItemGroup><Import Project="Infrastructure\Localization.resources.props" /></Project>
+<ItemGroup><ProjectReference Include="..\TranslationEngine\TranslationEngine.csproj" Aliases="TranslationEngine" /></ItemGroup><Import Project="Infrastructure\Localization.resources.props" /><PropertyGroup><RestoreAdditionalProjectSources>$(RestoreAdditionalProjectSources);$(MSBuildThisFileDirectory)packages</RestoreAdditionalProjectSources></PropertyGroup><ItemGroup><PackageReference Include="ResilientTranslator.Lingua.SevenLanguages" Version="2.0.0" /></ItemGroup></Project>
+
 

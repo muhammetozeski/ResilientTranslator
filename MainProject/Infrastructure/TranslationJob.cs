@@ -1,3 +1,5 @@
+using Lingua;
+using ResilientTranslator.MainProject.Services;
 using System.Reflection;
 using System.Runtime.Loader;
 namespace ResilientTranslator.MainProject.Infrastructure;
@@ -6,6 +8,7 @@ namespace ResilientTranslator.MainProject.Infrastructure;
 internal sealed class TranslationJob
 {
     const bool IsLogEnabled = true;
+    static readonly SemaphoreSlim DetectionGate = new(1,1);
     readonly CancellationTokenSource Cancellation = new();
     readonly TaskCompletionSource<(string? Text, Exception? Error, string Function, string Service)> Completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
     HttpClient[] Clients = [];
@@ -18,10 +21,10 @@ internal sealed class TranslationJob
     /// <param name="text">The immutable text snapshot for this job.</param>
     /// <param name="source">The source language code.</param>
     /// <param name="target">The target language code.</param>
-    public TranslationJob(long revision, string text, string source, string target)
+    public TranslationJob(long revision, TranslationInput input, Task<LanguageDetector> detector)
     {
         Revision = revision;
-        var worker = new Thread(() => Execute(text, source, target)) { IsBackground = true, Name = $"Translation-{revision}" };
+        var worker = new Thread(() => Execute(input,detector)) { IsBackground = true, Name = $"Translation-{revision}" };
         worker.Start();
     }
 
@@ -39,13 +42,36 @@ internal sealed class TranslationJob
     }
 
     /// <summary>Runs and contains one isolated engine invocation; no abandoned engine can update application state.</summary>
-    void Execute(string text, string source, string target)
+    void Execute(TranslationInput input, Task<LanguageDetector> detectorTask)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         EngineContext? context = null;
         try
         {
             var token = Cancellation.Token;
+            string text=input.Text,source=input.SourceLanguage,target=input.TargetLanguage;
+            if(source==TranslationWorkspace.Automatic || target==TranslationWorkspace.Automatic)
+            {
+                var detector=detectorTask.WaitAsync(token).GetAwaiter().GetResult();
+                DetectionGate.WaitAsync(token).WaitAsync(token).GetAwaiter().GetResult();
+                try
+                {
+                    if(source==TranslationWorkspace.Automatic)
+                    {
+                        var detected=detector.DetectLanguageOf(text);
+                        source=detected==Language.Unknown ? input.SourceFallback : LanguageInfo.IsoCode6391(detected).ToString().ToLowerInvariant();
+                        ExceptionBoundary.LogSafely($"Language detected; request={Revision}; editedSide=true; language={source}; detected={detected}",IsLogEnabled);
+                    }
+                    if(target==TranslationWorkspace.Automatic)
+                    {
+                        var detected=string.IsNullOrWhiteSpace(input.DestinationText) ? Language.Unknown : detector.DetectLanguageOf(input.DestinationText);
+                        target=detected==Language.Unknown ? input.TargetFallback : LanguageInfo.IsoCode6391(detected).ToString().ToLowerInvariant();
+                        ExceptionBoundary.LogSafely($"Language detected; request={Revision}; editedSide=false; language={target}; detected={detected}",IsLogEnabled);
+                    }
+                    token.ThrowIfCancellationRequested();
+                }
+                finally { DetectionGate.Release(); }
+            }
             token.ThrowIfCancellationRequested();
             ExceptionBoundary.LogSafely($"Translation worker started; revision={Revision}; thread={Environment.CurrentManagedThreadId}; source={source}; target={target}; text={text}", IsLogEnabled);
             string directory = Path.GetDirectoryName(typeof(TranslationJob).Assembly.Location)!;
@@ -124,6 +150,7 @@ internal sealed class TranslationJob
         }
     }
 }
+
 
 
 

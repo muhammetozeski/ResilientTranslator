@@ -24,9 +24,10 @@
     Task OutputChanged(ChangeEventArgs e) => TranslationWorkspace.EditAsync(e.Value?.ToString() ?? "", false);
     Task SourceChanged(ChangeEventArgs e) => TranslationWorkspace.SetLanguagesAsync(e.Value?.ToString() ?? "en", TranslationWorkspace.TargetLanguage);
     Task TargetChanged(ChangeEventArgs e) => TranslationWorkspace.SetLanguagesAsync(TranslationWorkspace.SourceLanguage, e.Value?.ToString() ?? "tr");
-    RenderFragment LanguageOptions() => @<text><option value="en">English</option><option value="tr">Türkçe</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></text>;
+    RenderFragment LanguageOptions() => @<text><option value="@TranslationWorkspace.Automatic">@Strings.Automatic</option><option value="en">English</option><option value="tr">Türkçe</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></text>;
     public void Dispose() => TranslationWorkspace.Changed -= Refresh;
 }
+
 
 
 

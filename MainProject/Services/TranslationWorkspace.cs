@@ -1,3 +1,4 @@
+using Lingua;
 using System.Diagnostics;
 using ResilientTranslator.MainProject.Infrastructure;
 using ResilientTranslator.MainProject.Infrastructure.Localization;
@@ -6,14 +7,28 @@ namespace ResilientTranslator.MainProject.Services;
 public static class TranslationWorkspace
 {
     const bool IsLogEnabled = true;
+    public const string Automatic = "auto";
+    internal static readonly Task<LanguageDetector> Detector = Task.Factory.StartNew(static () =>
+    {
+        var timer=Stopwatch.StartNew();
+        Log("Offline language detector loading; languages=en,tr,de,fr,es,it,ru",Run:IsLogEnabled);
+        var detector=LanguageDetectorBuilder.FromLanguages(Language.English,Language.Turkish,Language.German,Language.French,Language.Spanish,Language.Italian,Language.Russian)
+            .WithLanguageModelsDirectory(Path.Combine(Path.GetDirectoryName(typeof(TranslationWorkspace).Assembly.Location)!,"Lingua","LanguageModels"))
+            .WithPreloadedLanguageModels().Build();
+        Log($"Offline language detector ready; elapsedMs={timer.Elapsed.TotalMilliseconds:F1}",Run:IsLogEnabled);
+        return detector;
+    },CancellationToken.None,TaskCreationOptions.LongRunning,TaskScheduler.Default);
     static readonly object StateGate = new();
     static readonly SemaphoreSlim SettingsSaveGate = new(1,1);
     static RequestContext Current = new();
+    static RequestContext CurrentSettingsRequest = new();
     public static RequestContext CurrentRequest => Volatile.Read(ref Current);
     public static string Input { get; private set; } = "";
     public static string Output { get; private set; } = "";
     public static string SourceLanguage { get; private set; } = "en";
     public static string TargetLanguage { get; private set; } = "tr";
+    public static string LastConcreteSourceLanguage { get; private set; } = "en";
+    public static string LastConcreteTargetLanguage { get; private set; } = "tr";
     public static string Status { get; private set; } = "";
     public static bool IsBusy { get; private set; }
     public static event Action? Changed;
@@ -21,7 +36,13 @@ public static class TranslationWorkspace
     public static Action? HideWindow;
     public static Action? ViewReady;
     /// <summary>Restores the portable language pair before rendering.</summary>
-    public static void Initialize() { SourceLanguage = Settings.SourceLanguage.Value; TargetLanguage = Settings.TargetLanguage.Value; Status = Strings.Ready; }
+    public static void Initialize()
+    {
+        SourceLanguage=Settings.SourceLanguage.Value; TargetLanguage=Settings.TargetLanguage.Value;
+        LastConcreteSourceLanguage=Settings.LastConcreteSourceLanguage.Value; LastConcreteTargetLanguage=Settings.LastConcreteTargetLanguage.Value;
+        Status=Strings.Ready;
+        _ = Detector.ContinueWith(task => ExceptionBoundary.LogSafely($"Offline detector initialization failed; error={task.Exception}"),CancellationToken.None,TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,TaskScheduler.Default);
+    }
     /// <summary>Replaces the owner atomically, then cancels old work outside the short state lock.</summary>
     public static void CancelPending()
     {
@@ -37,14 +58,14 @@ public static class TranslationWorkspace
     public static async Task EditAsync(string text, bool fromInput, bool immediate = false, RequestContext? expectedRequest = null)
     {
         RequestContext previous, request;
-        string source, target;
+        TranslationInput input;
         lock (StateGate)
         {
             if (expectedRequest is not null && !ReferenceEquals(expectedRequest,Current)) return;
             previous = Current; Current = request = new();
             if (fromInput) Input = text; else Output = text;
-            source = fromInput ? SourceLanguage : TargetLanguage;
-            target = fromInput ? TargetLanguage : SourceLanguage;
+            input=new(text,fromInput ? SourceLanguage : TargetLanguage,fromInput ? TargetLanguage : SourceLanguage,
+                fromInput ? Output : Input,fromInput ? LastConcreteSourceLanguage : LastConcreteTargetLanguage,fromInput ? LastConcreteTargetLanguage : LastConcreteSourceLanguage);
             IsBusy = false; Status = Strings.Ready;
         }
         previous.Cancel(); RequestSuperseded?.Invoke();
@@ -62,7 +83,7 @@ public static class TranslationWorkspace
             }
             Changed?.Invoke();
             var stopwatch = Stopwatch.StartNew();
-            var job = new TranslationJob(request.Id,text,source,target);
+            var job = new TranslationJob(request.Id,input,Detector);
             using var registration = token.Register(job.Cancel);
             request.Attach(job);
             try
@@ -102,15 +123,49 @@ public static class TranslationWorkspace
     public static async Task SetLanguagesAsync(string source,string target)
     {
         string input;
-        lock(StateGate) { SourceLanguage=source; TargetLanguage=target; Settings.SourceLanguage.Value=source; Settings.TargetLanguage.Value=target; input=Input; }
-        Task translation = EditAsync(input,true,true);
-        var request=CurrentRequest;
+        RequestContext previousSave,saveRequest;
+        LanguagePreferences preferences;
+        lock(StateGate)
+        {
+            bool sourceChanged=source != SourceLanguage;
+            if(source==Automatic && target==Automatic)
+            {
+                if(sourceChanged) target=LastConcreteTargetLanguage;
+                else source=LastConcreteSourceLanguage;
+            }
+            if(source!=Automatic) LastConcreteSourceLanguage=source;
+            if(target!=Automatic) LastConcreteTargetLanguage=target;
+            SourceLanguage=source; TargetLanguage=target;
+            preferences=new(source,target,LastConcreteSourceLanguage,LastConcreteTargetLanguage);
+            previousSave=CurrentSettingsRequest; CurrentSettingsRequest=saveRequest=new();
+            input=Input;
+        }
+        previousSave.Cancel();
+        Task translation=EditAsync(input,true,true);
         await ExceptionBoundary.RunSafelyAsync(async token =>
         {
             await SettingsSaveGate.WaitAsync(token).WaitAsync(token);
-            try { await Task.Factory.StartNew(ApplicationServices.SaveSettings,token,TaskCreationOptions.LongRunning,TaskScheduler.Default).WaitAsync(token); }
-            finally { SettingsSaveGate.Release(); }
-        },request.Token,operationName:"SaveLanguagePair");
+            Task<OperationResult<bool>> saving;
+            try
+            {
+                saving=Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        token.ThrowIfCancellationRequested();
+                        Settings.SourceLanguage.Value=preferences.Source;
+                        Settings.TargetLanguage.Value=preferences.Target;
+                        Settings.LastConcreteSourceLanguage.Value=preferences.LastSource;
+                        Settings.LastConcreteTargetLanguage.Value=preferences.LastTarget;
+                        return ApplicationServices.SaveSettings();
+                    }
+                    finally { SettingsSaveGate.Release(); }
+                },CancellationToken.None,TaskCreationOptions.LongRunning,TaskScheduler.Default);
+            }
+            catch { SettingsSaveGate.Release(); throw; }
+            _ = saving.ContinueWith(task => ExceptionBoundary.LogSafely($"Late settings writer failure; error={task.Exception}"),CancellationToken.None,TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,TaskScheduler.Default);
+            await saving.WaitAsync(token);
+        },saveRequest.Token,operationName:"SaveLanguagePair");
         await translation;
     }
 }

@@ -2,6 +2,7 @@ namespace ResilientTranslator.MainProject.Infrastructure.Localization;
 public static class Strings {
 public static string SwapLanguages = "Dillerin yerini değiştir";
 public static string SwapTexts = "Metinlerin yerini değiştir";
+public static string Automatic = "Otomatik";
 public static string LanguageName = "Türkçe";
 public static string Ready = "Hazır";
 public static string Translating = "Çevriliyor";
@@ -20,4 +21,5 @@ public static string Characters = "karakter";
 public static string Copy = "Kopyala";
 public static string ShortcutHint = "aç / gizle";
 }
+
 

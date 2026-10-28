@@ -33,6 +33,8 @@ internal static class Settings
     public static readonly Setting<string> Language = new("tr");
     public static readonly Setting<string> SourceLanguage = new("en");
     public static readonly Setting<string> TargetLanguage = new("tr");
+    public static readonly Setting<string> LastConcreteSourceLanguage = new("en");
+    public static readonly Setting<string> LastConcreteTargetLanguage = new("tr");
     public static readonly Setting<bool> EnableLogging = new(true);
 }
 
@@ -341,5 +343,6 @@ internal static class SettingsManager
 
     internal static string SplitPascalCase(string text) => Regex.Replace(text, "(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ");
 }
+
 
 
