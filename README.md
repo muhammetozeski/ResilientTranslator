@@ -9,7 +9,7 @@ A portable, borderless MAUI Blazor translator with a warm hidden window and two 
 - A new command cancels the previous request; only the current request object may publish its result.
 - Single left click on the tray icon toggles the window. Middle click exits.
 - Header buttons independently swap the language pair or the two texts.
-- Both language selectors offer Automatic. Offline Lingua detection reuses one preloaded seven-language detector. Selecting Automatic on the other side restores the first side to its last manual language.
+- Both language selectors offer Automatic. Offline Lingua detection reuses one preloaded seven-language detector. Selecting Automatic on the other side restores the first side to its last concrete language.
 - The window stays above other windows. Its rendered WebView is retained while hidden.
 
 ## Install
@@ -29,4 +29,5 @@ Run `pwsh -File .\Publish.ps1` to produce the signed Windows package under `publ
 
 
 When an Automatic selection is used as the output destination, it becomes English. For reverse translation into an Automatic input, a nonempty input uses its last detected language; an empty input or missing detection falls back to English.
+
 
