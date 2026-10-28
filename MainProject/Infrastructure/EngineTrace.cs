@@ -6,6 +6,22 @@ public sealed class EngineTrace : EventListener
 {
     const bool IsLogEnabled = true;
     static EngineTrace? Listener;
+    static readonly AsyncLocal<TranslationTrace?> CurrentTrace = new();
+    internal static long? RequestId => CurrentTrace.Value?.Request;
+    internal static string CurrentDescription => CurrentTrace.Value is { } trace ? $"request={trace.Request}; attempt={trace.Attempt}; mode={trace.Mode}" : "request=none";
+    /// <summary>Flows diagnostic correlation through the original engine's asynchronous HTTP calls.</summary>
+    internal static IDisposable Enter(long request,int attempt,TranslationMode mode)
+    {
+        var previous=CurrentTrace.Value;
+        CurrentTrace.Value=new(request,attempt,mode);
+        return new TraceScope(previous);
+    }
+    sealed record TranslationTrace(long Request,int Attempt,TranslationMode Mode);
+    sealed class TraceScope(TranslationTrace? previous) : IDisposable
+    {
+        bool Disposed;
+        public void Dispose() { if(!Disposed) { Disposed=true; CurrentTrace.Value=previous; } }
+    }
     /// <summary>Installs process diagnostics before translation providers are initialized.</summary>
     public static void Initialize()
     {
@@ -26,8 +42,12 @@ public sealed class EngineTrace : EventListener
         if (!IsLogEnabled) return;
         try
         {
-            Log($"HTTP event; name={data.EventName}; activity={data.ActivityId}; relatedActivity={data.RelatedActivityId}", Run: IsLogEnabled);
-            if (data.Payload is not null) Log(data.PayloadNames is null ? data.Payload : data.PayloadNames.Zip(data.Payload, static (name, value) => new KeyValuePair<string,object?>(name,value)), Run: IsLogEnabled);
+            Log($"HTTP event; {CurrentDescription}; name={data.EventName}; activity={data.ActivityId}; relatedActivity={data.RelatedActivityId}", Run: IsLogEnabled);
+            if(data.Payload is not null)
+            {
+                var metadata=new[] { new KeyValuePair<string,object?>("translation",CurrentDescription) };
+                Log(metadata.Concat(data.Payload.Select((value,index) => new KeyValuePair<string,object?>(data.PayloadNames?[index] ?? $"value{index}",value))),Run:IsLogEnabled);
+            }
         }
         catch (Exception error) { ExceptionBoundary.LogSafely($"HTTP diagnostic logging failed; error={error}", IsLogEnabled); }
     }
@@ -36,7 +56,7 @@ public sealed class EngineTrace : EventListener
     {
         readonly StringBuilder Buffer = new();
         public override Encoding Encoding => Encoding.UTF8;
-        public override void WriteLine(string? value) => ExceptionBoundary.LogSafely($"Translation engine: {value}", IsLogEnabled);
+        public override void WriteLine(string? value) => ExceptionBoundary.LogSafely($"Translation engine; {CurrentDescription}: {value}", IsLogEnabled);
         public override void Write(char value)
         {
             if (value == '\n') { WriteLine(Buffer.ToString()); Buffer.Clear(); }
@@ -44,4 +64,6 @@ public sealed class EngineTrace : EventListener
         }
     }
 }
+
+
 
