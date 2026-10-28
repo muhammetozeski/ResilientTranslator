@@ -7,6 +7,7 @@ namespace ResilientTranslator
     {
         public static MauiApp CreateMauiApp()
         {
+            Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", Path.Combine(MainProject.Infrastructure.AppPaths.AppCache,"WebView2"));
             if (!MainProject.Infrastructure.ApplicationServices.Initialize().Succeeded) throw new InvalidOperationException("Application initialization failed.");
             MainProject.Infrastructure.EngineTrace.Initialize();
             MainProject.Services.TranslationWorkspace.Initialize();
@@ -26,5 +27,6 @@ namespace ResilientTranslator
         }
     }
 }
+
 
 

@@ -5,8 +5,8 @@ namespace ResilientTranslator
         public MainPage()
         {
             InitializeComponent();
-            blazorWebView.BlazorWebViewInitializing += static (_, args) => args.UserDataFolder = Path.Combine(MainProject.Infrastructure.AppPaths.AppCache, "WebView2");
         }
     }
 }
+
 
