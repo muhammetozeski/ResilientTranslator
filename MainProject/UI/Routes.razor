@@ -3,7 +3,6 @@
 <Router AppAssembly="@typeof(ResilientTranslator.MainProject.UI.Routes).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(ResilientTranslator.MainProject.UI.Layout.MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
         <PageTitle>Not found</PageTitle>
@@ -12,3 +11,4 @@
         </LayoutView>
     </NotFound>
 </Router>
+
