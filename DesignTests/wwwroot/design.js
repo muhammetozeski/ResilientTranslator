@@ -31,34 +31,39 @@ if (preview) {
     });
 }
 
-// Animate only overflowing status text; recalculate after resizing.
+// Two fixed text copies loop without adding nodes during animation.
 const status = document.querySelector('.toolbar-status');
 if (status) {
+    const light = status.querySelector('i');
+    const message = status.textContent.trim();
+    const viewport = document.createElement('span');
+    viewport.className = 'status-viewport';
     const track = document.createElement('span');
     track.className = 'status-track';
-    while (status.firstChild) track.append(status.firstChild);
-    status.append(track);
+    const original = document.createElement('span');
+    original.textContent = message;
+    const copy = original.cloneNode(true);
+    copy.setAttribute('aria-hidden', 'true');
+    track.append(original, copy);
+    viewport.append(track);
+    status.replaceChildren(light, viewport);
     let motion;
-    let speed = 28;
+    let speed = 70;
     const update = () => {
         motion?.cancel();
-        const distance = track.scrollWidth - status.clientWidth;
-        if (distance <= 0 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        const travel = distance / speed * 1000;
-        const duration = travel * 2 + 2400;
-        const pause = 1200 / duration;
+        const overflowing = original.scrollWidth > viewport.clientWidth;
+        copy.hidden = !overflowing;
+        if (!overflowing || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const distance = original.getBoundingClientRect().width;
         motion = track.animate([
-            { transform: 'translateX(0)', offset: 0 },
-            { transform: 'translateX(0)', offset: pause },
-            { transform: `translateX(-${distance}px)`, offset: .5 },
-            { transform: `translateX(-${distance}px)`, offset: .5 + pause },
-            { transform: 'translateX(0)', offset: 1 }
-        ], { duration, iterations: Infinity, easing: 'linear' });
+            { transform: `translateX(-${distance}px)` },
+            { transform: 'translateX(0)' }
+        ], { duration: distance / speed * 1000, iterations: Infinity, easing: 'linear' });
         if (status.matches(':hover')) motion.pause();
     };
     const controls = document.createElement('label');
     controls.className = 'speed-control';
-    controls.innerHTML = 'Hız <input type="range" min="5" max="150" value="28" aria-label="Kayan yazı hızı"><output>28 px/sn</output>';
+    controls.innerHTML = 'Hız <input type="range" min="5" max="150" value="70" aria-label="Kayan yazı hızı"><output>70 px/sn</output>';
     document.body.append(controls);
     const slider = controls.querySelector('input');
     slider.addEventListener('input', () => {
@@ -66,7 +71,7 @@ if (status) {
         controls.querySelector('output').textContent = `${speed} px/sn`;
         update();
     });
-    new ResizeObserver(update).observe(status);
+    new ResizeObserver(update).observe(viewport);
     status.addEventListener('mouseenter', () => motion?.pause());
     status.addEventListener('mouseleave', () => motion?.play());
     update();
