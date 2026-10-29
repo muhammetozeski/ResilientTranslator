@@ -56,8 +56,8 @@ if (status) {
         if (!overflowing || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         const distance = original.getBoundingClientRect().width;
         motion = track.animate([
-            { transform: `translateX(-${distance}px)` },
-            { transform: 'translateX(0)' }
+            { transform: 'translateX(0)' },
+            { transform: `translateX(-${distance}px)` }
         ], { duration: distance / speed * 1000, iterations: Infinity, easing: 'linear' });
         if (status.matches(':hover')) motion.pause();
     };
