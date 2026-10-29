@@ -1,0 +1,81 @@
+@using System.Globalization
+@using ResilientTranslator.MainProject.Infrastructure
+@using ResilientTranslator.MainProject.Infrastructure.Localization
+<SettingsPanelCss />
+<div class="settings-backdrop" @onclick="OnClose">
+    <section class="settings-panel" role="dialog" aria-modal="true" aria-label="@Strings.SettingsTitle" @onkeydown="KeyDown" @onclick:stopPropagation>
+        <header><h2>@Strings.SettingsTitle</h2><button @ref="CloseButton" @onclick="OnClose" aria-label="@Strings.Close">×</button></header>
+        <div class="settings-fields">
+            <label><span>@Strings.ApplicationLanguage</span><select value="@Settings.Language.Value" @onchange="args => Change(Settings.Language,args)">@foreach (var language in LanguageCatalog.All.Where(item => item.Code != "auto")) { <option value="@language.Code">@language.Name</option> }</select></label>
+            <label class="speed-row"><span>@Label(Settings.StatusSpeed)</span><input type="range" min="5" max="150" step="1" value="@Invariant(Speed)" @oninput="PreviewSpeed" @onchange="SaveSpeed" /><output>@Invariant(Speed) px/s</output></label>
+            <StatusTicker Text="@Strings.StatusPreview" Speed="@Speed" />
+            @foreach (var setting in new[] { Settings.DefaultSourceLanguage, Settings.DefaultTargetLanguage })
+            {
+                <label><span>@Label(setting)</span><select value="@setting.Value" @onchange="args => Change(setting,args)"><option value="">—</option>@foreach (var language in LanguageCatalog.All) { <option value="@language.Code">@language.Name</option> }</select></label>
+            }
+            <div class="font-picker">
+                <label><span>@Label(Settings.EditorFont)</span><button @onclick="LoadFonts" aria-expanded="@(Fonts is not null)">@Settings.EditorFont.Value</button></label>
+                @if (Fonts is not null)
+                {
+                    <select size="7" aria-label="@Label(Settings.EditorFont)" value="@Settings.EditorFont.Value" @onchange="SelectFont">@foreach (string font in Fonts) { <option value="@font">@font</option> }</select>
+                }
+            </div>
+            <label><span>@Label(Settings.EditorFontSize)</span><div class="number-stepper"><button @onclick="() => StepFont(-1)" aria-label="@Strings.Decrease">−</button><input type="number" min="1" max="300" step="any" value="@Invariant(Settings.EditorFontSize.Value)" @onchange="args => Change(Settings.EditorFontSize,args)" aria-label="@Label(Settings.EditorFontSize)" /><button @onclick="() => StepFont(1)" aria-label="@Strings.Increase">+</button></div></label>
+            <label><span>@Label(Settings.EditorColor)</span><div class="color-controls"><input type="color" value="@Settings.EditorColor.Value" @onchange="args => Change(Settings.EditorColor,args)" aria-label="@Label(Settings.EditorColor)" /><button @onclick='() => Set(Settings.EditorColor,"#ffffff")'>@Strings.White</button></div></label>
+            <label><span>@Strings.EditorSplit</span><button @onclick='() => Set(Settings.InputShare,"50")'>@Strings.ResetSplit</button></label>
+            <details><summary>@Strings.TechnicalSettings</summary><div class="technical-settings">
+                @foreach (var entry in Preferences.Entries.Where(item => item.Editor.Technical))
+                {
+                    <label><span>@entry.Label</span>
+                    @if (entry.Setting.ValueType == typeof(bool)) { <input type="checkbox" checked="@((bool)entry.Setting.Value!)" @onchange="args => Change(entry.Setting,args)" /> }
+                    else { <input type="number" min="@Invariant(entry.Editor.Minimum)" max="@Invariant(entry.Editor.Maximum)" step="@(entry.Setting.ValueType==typeof(int) ? "1" : "any")" value="@Convert.ToString(entry.Setting.Value,CultureInfo.InvariantCulture)" @onchange="args => Change(entry.Setting,args)" /> }
+                    </label>
+                }
+            </div></details>
+            @if (Error.Length > 0 || Preferences.SaveError.Length > 0) { <p class="settings-error" role="alert">@(Error.Length > 0 ? Error : Preferences.SaveError)</p> }
+        </div>
+    </section>
+</div>
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+    ElementReference CloseButton;
+    string[]? Fonts;
+    string Error = "";
+    double Speed = Preferences.StatusSpeed;
+
+    /// <summary>Places keyboard focus inside the dialog after it is rendered.</summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) await ExceptionBoundary.RunSafelyAsync(async token => await CloseButton.FocusAsync().AsTask().WaitAsync(token), operationName: "FocusSettings");
+    }
+    /// <summary>Looks up bilingual metadata by the registered setting's object identity.</summary>
+    static string Label(ISetting setting) => Preferences.Entries.Single(entry => entry.Setting == setting).Label;
+    /// <summary>Uses HTML number syntax independently of the display language.</summary>
+    static string Invariant(double number) => number.ToString("0.###", CultureInfo.InvariantCulture);
+    /// <summary>Applies an HTML input value through the common validator and writer.</summary>
+    Task Change(ISetting setting, ChangeEventArgs args) => Set(setting, Convert.ToString(args.Value, CultureInfo.InvariantCulture) ?? "");
+    /// <summary>Preserves the previous value when a UI edit is invalid and reports persistence failures.</summary>
+    async Task Set(ISetting setting, string text) => Error = await Preferences.SetAsync(setting, text) ? "" : Preferences.SaveError.Length > 0 ? Preferences.SaveError : Strings.InvalidSetting;
+    /// <summary>Updates the real ticker component locally while the user moves the speed slider.</summary>
+    void PreviewSpeed(ChangeEventArgs args) { if (double.TryParse(args.Value?.ToString(), CultureInfo.InvariantCulture, out double value)) Speed = value; }
+    /// <summary>Persists speed on release, avoiding file writes for every slider movement.</summary>
+    Task SaveSpeed(ChangeEventArgs args) => Change(Settings.StatusSpeed, args);
+    /// <summary>Changes fractional font size with one-pixel steps without truncating its fraction.</summary>
+    Task StepFont(int direction) => Set(Settings.EditorFontSize, Invariant(Math.Clamp(Settings.EditorFontSize.Value + direction, 1, 300)));
+    /// <summary>Enumerates installed font families only on demand; closing the list releases its RAM reference.</summary>
+    async Task LoadFonts()
+    {
+        if (Fonts is not null) { Fonts = null; return; }
+        var result = await ExceptionBoundary.RunSafelyAsync(async token =>
+        {
+            if (Preferences.LoadFonts is not { } load) throw new InvalidOperationException("The native font provider is unavailable.");
+            return await load().WaitAsync(token);
+        }, operationName: "EnumerateFonts");
+        if (result.Succeeded) Fonts = result.Value;
+        else Error = Strings.FontsUnavailable;
+    }
+    /// <summary>Saves the selected family name and releases the enumerated list.</summary>
+    async Task SelectFont(ChangeEventArgs args) { await Change(Settings.EditorFont, args); Fonts = null; }
+    /// <summary>Supports closing the dialog without reaching for the mouse.</summary>
+    Task KeyDown(KeyboardEventArgs args) => args.Key == "Escape" ? OnClose.InvokeAsync() : Task.CompletedTask;
+}

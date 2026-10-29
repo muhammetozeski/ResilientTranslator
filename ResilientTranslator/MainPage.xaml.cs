@@ -20,4 +20,9 @@ public partial class MainPage : ContentPage
         Log($"Native WebView focus requested; accepted={focused}",Run:IsLogEnabled);
         if(!focused) throw new InvalidOperationException("The browser host rejected keyboard focus.");
     });
-}
+    /// <summary>Installs native frame input before the retained Blazor document is shown.</summary>
+    async void OnWebViewInitialized(object? sender,Microsoft.AspNetCore.Components.WebView.BlazorWebViewInitializedEventArgs args)
+    {
+        await MainProject.Infrastructure.ExceptionBoundary.RunSafelyAsync(async token =>
+            await DesktopHost.AttachBrowserAsync(args.WebView.CoreWebView2).WaitAsync(token),operationName:"AttachNativeBrowserInput");
+    }}

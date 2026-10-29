@@ -54,8 +54,8 @@ internal sealed class TranslationJob
             {
                 try
                 {
-                    var detector=detectorTask.WaitAsync(TimeSpan.FromSeconds(3),token).GetAwaiter().GetResult();
-                    if(!DetectionGate.WaitAsync(TimeSpan.FromMilliseconds(250),token).WaitAsync(token).GetAwaiter().GetResult())
+                    var detector=detectorTask.WaitAsync(TimeSpan.FromMilliseconds(Settings.DetectorLoadBudget.Value),token).GetAwaiter().GetResult();
+                    if(!DetectionGate.WaitAsync(TimeSpan.FromMilliseconds(Settings.DetectorGateBudget.Value),token).WaitAsync(token).GetAwaiter().GetResult())
                         throw new TimeoutException("The shared language detector is busy; use provider detection for this request.");
                     try
                     {
@@ -87,7 +87,7 @@ internal sealed class TranslationJob
                     return await session.ExecuteAsync(attempt,innerToken).WaitAsync(innerToken).ConfigureAwait(false);
                 }
                 finally { Interlocked.CompareExchange(ref ActiveSession,null,session); }
-            },token).WaitAsync(token).GetAwaiter().GetResult();
+            },token,bypassCache:input.ForceNetwork).WaitAsync(token).GetAwaiter().GetResult();
             token.ThrowIfCancellationRequested();
             Completion.TrySetResult((confirmed.Text,null,confirmed.Function,confirmed.Service));
         }

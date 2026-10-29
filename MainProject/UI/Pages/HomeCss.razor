@@ -1,72 +1,13 @@
-@namespace ResilientTranslator.MainProject.UI.Pages
 <style>
-    .home-screen {
-        min-height: @(AppMeasures.Viewport.Full)vh;
-        position: relative;
-    }
-
-    .home-scroll-container {
-        display: flex;
-        flex-direction: column;
-        gap: @(AppMeasures.Space.Medium.ToString() + "px");
-        padding-bottom: @(AppMeasures.Space.Px120)px;
-    }
-
-    .home-pro-banner {
-        margin: 0 @(AppMeasures.Space.Px20)px;
-        display: flex;
-        flex-direction: column;
-        gap: @(AppMeasures.Space.Px16)px;
-    }
-
-    .home-pro-banner-row {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: @(AppMeasures.Space.Px12)px;
-    }
-
-    .home-pro-banner-text {
-        display: flex;
-        flex-direction: column;
-        gap: @(AppMeasures.Space.Px4)px;
-    }
-
-    .home-pro-banner-title {
-        display: flex;
-        align-items: center;
-        gap: @(AppMeasures.Space.Px8)px;
-        font-size: @(AppMeasures.Font.Large)px;
-        font-weight: @(AppMeasures.Weight.Heavy);
-        color: @AppColors.TextOnFilledSurface;
-    }
-
-    .home-pro-banner-subtitle {
-        margin: 0;
-        font-size: @(AppMeasures.Font.Small)px;
-        line-height: @(AppMeasures.LineHeight.Relaxed);
-        color: @AppColors.TextOnFilledSurface;
-    }
-
-    .reading-reward-row {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: @(AppMeasures.Space.Px12)px;
-        margin-bottom: @(AppMeasures.Space.Px24)px;
-        font-size: @(AppMeasures.Font.Large)px;
-        font-weight: @(AppMeasures.Weight.Heavy);
-    }
-
-    .reading-reward-xp {
-        color: @AppColors.TextPrimary;
-    }
-
-    /* Keeps the "+" prefix and the inline CurrencyAmount on one baseline, matching the XP span's layout. The gold tint itself is owned by CurrencyAmount. */
-    .reading-reward-gold {
-        display: inline-flex;
-        align-items: center;
-        gap: @(AppMeasures.Space.Px4)px;
-    }
-
+    .translator{--surface:#14171c;--editor-surface:#1c2129;--text:#edf2f8;--muted-text:#92a8ba;--control:#252e38;--control-border:#3a4756;--editor-border:#343c48;--accent:#74cf9c;--success:#93d5a8;--pending:#e5c880;--failure:#ef8d8d;height:100dvh;position:relative;display:grid;grid-template-rows:36px minmax(0,1fr);gap:8px;background:var(--surface);color:var(--text);font-family:'Segoe UI',sans-serif;padding:10px 12px 12px;box-sizing:border-box;border:1px solid #4b5968;border-radius:3px;overflow:hidden}
+    .translator *{box-sizing:border-box}.translator button,.translator select,.translator input{font:inherit}.translator button{cursor:pointer}.translator button,.translator select{border:1px solid var(--control-border);border-radius:6px;background:var(--control);color:var(--text)}
+    .translator button:hover{background:#35453e}.translator button:focus-visible,.translator select:focus-visible,.translator input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+    .toolbar,.brand,.swap-actions,.language-pair{display:flex;align-items:center;min-width:0}.toolbar{gap:10px}.toolbar>.status-ticker{flex:1}
+    .translator .brand{gap:9px;flex-shrink:0;white-space:nowrap;background:transparent;border:0;padding:0;color:var(--text)}.brand-icon{width:32px;height:32px;flex-shrink:0}h1{font-size:18px;font-weight:600;letter-spacing:-.4px;margin:0}
+    .swap-actions{gap:5px;flex-shrink:0}.translator .icon-button{display:grid;place-items:center;width:32px;height:32px;padding:4px;background:#242f2a;border-color:#3a4b40;color:#a9d9bb}.icon-button svg{width:23px;height:23px}
+    .language-pair{gap:7px;flex-shrink:0}.translator select{field-sizing:content;width:auto;min-width:0;height:32px;padding:3px 7px;font-size:13px}.translator .send,.translator .hide{background:transparent;border:0;flex-shrink:0;padding:0;width:25px;height:32px;color:#c7d2df;font-size:20px}.translator .hide{margin-left:auto;font-size:24px;width:28px}
+    .editors{display:grid;grid-template-columns:minmax(0,var(--input-share,50fr)) 8px minmax(0,var(--output-share,50fr));gap:0;min-height:0}.editors textarea{display:block;width:100%;height:100%;min-height:0;resize:none;background:var(--editor-surface);color:inherit;border:1px solid var(--editor-border);border-radius:8px;padding:11px 12px;font:inherit;line-height:1.48;outline:none;scrollbar-width:thin;scrollbar-color:#4b5866 transparent}.editors textarea:last-of-type{border-color:#3b5145}.editors textarea:focus{border-color:#74a587}
+    .resize-grip{position:absolute;right:0;bottom:0;width:14px;height:14px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#7a9687 3px 4px,transparent 4px 6px);clip-path:polygon(100% 0,100% 100%,0 100%)}
+    @@media(max-width:880px){.brand h1{display:none}.toolbar{gap:7px}}
+    @@media(max-width:540px){.translator{padding:8px 8px 12px}.toolbar{gap:5px}.language-pair{gap:3px}.translator select{padding-left:4px;padding-right:3px}.translator .send{width:18px}}
 </style>

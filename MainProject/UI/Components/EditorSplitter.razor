@@ -1,0 +1,40 @@
+@using Microsoft.JSInterop
+@using ResilientTranslator.MainProject.Infrastructure
+@using ResilientTranslator.MainProject.Infrastructure.Localization
+@inject IJSRuntime JavaScript
+@implements IAsyncDisposable
+<EditorSplitterCss />
+<div class="editor-splitter" @ref="Element" role="separator" aria-orientation="vertical" aria-label="@Strings.EditorSplit" aria-valuemin="10" aria-valuemax="90" aria-valuenow="@Preferences.InputShare" tabindex="0"></div>
+@code {
+    ElementReference Element;
+    IJSObjectReference? Module;
+    DotNetObjectReference<EditorSplitter>? Reference;
+
+    /// <summary>Reuses a single local pointer handler; only completed ratio changes cross into .NET.</summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await ExceptionBoundary.RunSafelyAsync(async token =>
+        {
+            Reference ??= DotNetObjectReference.Create(this);
+            Module ??= await JavaScript.InvokeAsync<IJSObjectReference>("import", token, "./_content/MainProject/UI/Components/EditorSplitter.razor.js");
+            await Module.InvokeVoidAsync("attach", token, Element, Reference, Preferences.InputShare, Preferences.CenterSnapRange);
+        }, operationName: "AttachEditorSplitter");
+    }
+
+    /// <summary>Persists the final percentage, retaining proportional widths after window resizing.</summary>
+    /// <param name="percentage">The completed left pane share between ten and ninety percent.</param>
+    [JSInvokable]
+    public Task SaveShare(double percentage) => Preferences.SetAsync(Settings.InputShare, percentage.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+    /// <summary>Releases pointer listeners and the callback reference with its owning component.</summary>
+    public async ValueTask DisposeAsync()
+    {
+        if (Module is not null)
+            await ExceptionBoundary.RunSafelyAsync(async token =>
+            {
+                await Module.InvokeVoidAsync("dispose", token, Element);
+                await Module.DisposeAsync();
+            }, operationName: "DisposeEditorSplitter");
+        Reference?.Dispose();
+    }
+}

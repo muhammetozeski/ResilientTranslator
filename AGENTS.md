@@ -10,3 +10,6 @@ Read [the documentation guide](Docs/Documentation-Guide.md) and [topic index](Do
 
 For project handoff, follow [the Walkthrough guide](Walkthrough/Walkthrough-Rehberi.md), selecting dated records by filename. Add a new concise record when an observed result changes the context or lesson for the next developer.
 
+
+UI styles belong in paired Css.razor components explicitly rendered by their owning component. Do not replace this architecture with scoped .razor.css files.
+

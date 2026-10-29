@@ -20,6 +20,8 @@ Oversized text is divided using Unicode text-element boundaries and a 1,000-byte
 
 Only successful, nonempty results are eligible for the bounded in-memory cache. The key includes the complete source text and resolved language pair. Errors, partial results and abandoned successes are excluded. Confirmed-result reuse is an alternative to a new network request, not a fabricated success.
 
+An explicit manual arrow command passes forceNetwork through TranslationInput to TranslationRecovery's bypassCache option, including recursively split chunks. It always starts a fresh request without typing debounce. Configurable wrapper budgets, retries and cache limits come from the reflected settings registry; the supplied engine's own constants remain unchanged.
+
 ## Diagnosing an exhausted request
 
 Use the installed application's AppCache/Logs directory. Request, attempt and execution-mode metadata flows into engine and HTTP logs. Read the attempt history and the aggregate final error; do not infer a cause from the generic UI string.

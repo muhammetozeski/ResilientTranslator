@@ -26,8 +26,7 @@ public static class ApplicationServices
             Logger.ActivateLogging = Settings.EnableLogging.Value;
             LocManager.Init(Settings.Language.Value);
             SettingsManagerSettings.IsTurkish = LocManager.Current == "tr";
-            ValidateLanguageFile("tr");
-            ValidateLanguageFile("en");
+            foreach(var language in LanguageCatalog.All.Where(item => item.Code != "auto")) ValidateLanguageFile(language.Code);
             ValidateAppliedLanguage(LocManager.Resolve(Settings.Language.Value));
             Initialized = true;
             if (IsLogEnabled)

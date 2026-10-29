@@ -7,9 +7,9 @@ namespace ResilientTranslator.MainProject.Infrastructure;
 public static class TranslationRecovery
 {
     const bool IsLogEnabled = true;
-    const int ChunkByteLimit = 1000;
-    const int MaximumCacheEntries = 128;
-    const int MaximumCachedCharacters = 8192;
+    static int ChunkByteLimit => Settings.ChunkByteLimit.Value;
+    static int MaximumCacheEntries => Settings.MaximumCacheEntries.Value;
+    static int MaximumCachedCharacters => Settings.MaximumCachedCharacters.Value;
     static readonly object CacheGate = new();
     static readonly Dictionary<CacheKey,ConfirmedTranslation> Cache = new();
     static readonly Queue<CacheKey> CacheOrder = new();
@@ -21,7 +21,7 @@ public static class TranslationRecovery
     /// <param name="translate">Creates and retires an independent engine session for each call.</param>
     /// <param name="token">Cancels attempts, retry delays and remaining chunks.</param>
     public static async Task<ConfirmedTranslation> ExecuteAsync(string text,string source,string target,
-        Func<TranslationAttempt,CancellationToken,Task<ConfirmedTranslation>> translate,CancellationToken token=default)
+        Func<TranslationAttempt,CancellationToken,Task<ConfirmedTranslation>> translate,CancellationToken token=default,bool bypassCache=false)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(text);
         ArgumentException.ThrowIfNullOrWhiteSpace(source);
@@ -30,7 +30,7 @@ public static class TranslationRecovery
         token.ThrowIfCancellationRequested();
         var key=new CacheKey(text,source,target);
         lock(CacheGate)
-            if(Cache.TryGetValue(key,out var confirmed))
+            if(!bypassCache && Cache.TryGetValue(key,out var confirmed))
             {
                 ExceptionBoundary.LogSafely($"Translation confirmed-cache hit; request={EngineTrace.RequestId}; source={source}; target={target}; length={text.Length}",IsLogEnabled);
                 return confirmed;
@@ -49,7 +49,7 @@ public static class TranslationRecovery
                 if(segment.Text.Length>0)
                 {
                     ExceptionBoundary.LogSafely($"Translation chunk started; request={EngineTrace.RequestId}; part={++part}; length={segment.Text.Length}",IsLogEnabled);
-                    var translated=await ExecuteAsync(segment.Text,source,target,translate,token).WaitAsync(token).ConfigureAwait(false);
+                    var translated=await ExecuteAsync(segment.Text,source,target,translate,token,bypassCache).WaitAsync(token).ConfigureAwait(false);
                     output.Append(translated.Text); services.Add(translated.Service); function=translated.Function;
                 }
                 output.Append(segment.Separator);
@@ -83,7 +83,7 @@ public static class TranslationRecovery
             try
             {
                 result=await Resilience.ExecuteResilientlyAsync(ct => Invoke(TranslationMode.Concurrent,ct),CanRetry,token,
-                    retryCount:2,attemptTimeout:TimeSpan.FromSeconds(12),totalTimeout:TimeSpan.FromSeconds(37),retryDelay:TimeSpan.FromMilliseconds(200),operationName:$"ConcurrentTranslationRecovery-{EngineTrace.RequestId}").WaitAsync(token).ConfigureAwait(false);
+                    retryCount:Settings.ConcurrentRetries.Value,attemptTimeout:TimeSpan.FromSeconds(Settings.AttemptTimeout.Value),totalTimeout:TimeSpan.FromSeconds(Settings.ConcurrentBudget.Value),retryDelay:TimeSpan.FromMilliseconds(Settings.ConcurrentRetryDelay.Value),operationName:$"ConcurrentTranslationRecovery-{EngineTrace.RequestId}").WaitAsync(token).ConfigureAwait(false);
             }
             catch(Exception concurrentError) when(!token.IsCancellationRequested)
             {
@@ -93,7 +93,7 @@ public static class TranslationRecovery
                 try
                 {
                     result=await Resilience.ExecuteResilientlyAsync(ct => Invoke(TranslationMode.Sequential,ct),CanRetry,token,
-                        retryCount:1,attemptTimeout:TimeSpan.FromSeconds(12),totalTimeout:TimeSpan.FromSeconds(25),retryDelay:TimeSpan.FromMilliseconds(300),operationName:$"SequentialTranslationRecovery-{EngineTrace.RequestId}").WaitAsync(token).ConfigureAwait(false);
+                        retryCount:Settings.SequentialRetries.Value,attemptTimeout:TimeSpan.FromSeconds(Settings.AttemptTimeout.Value),totalTimeout:TimeSpan.FromSeconds(Settings.SequentialBudget.Value),retryDelay:TimeSpan.FromMilliseconds(Settings.SequentialRetryDelay.Value),operationName:$"SequentialTranslationRecovery-{EngineTrace.RequestId}").WaitAsync(token).ConfigureAwait(false);
                 }
                 catch(Exception sequentialError) when(!token.IsCancellationRequested)
                 {
@@ -103,12 +103,12 @@ public static class TranslationRecovery
             }
         }
         token.ThrowIfCancellationRequested();
-        if(text.Length<=MaximumCachedCharacters && result.Text.Length<=MaximumCachedCharacters)
+        if(MaximumCacheEntries>0 && text.Length<=MaximumCachedCharacters && result.Text.Length<=MaximumCachedCharacters)
             lock(CacheGate)
             {
                 if(!Cache.ContainsKey(key))
                 {
-                    if(Cache.Count>=MaximumCacheEntries && CacheOrder.TryDequeue(out var oldest)) Cache.Remove(oldest);
+                    while(Cache.Count>=MaximumCacheEntries && CacheOrder.TryDequeue(out var oldest)) Cache.Remove(oldest);
                     CacheOrder.Enqueue(key);
                 }
                 Cache[key]=result;

@@ -1,16 +1,14 @@
 using System.Globalization;
 using System.Reflection;
-using System.Text;
 using System.Xml.Linq;
 using ResilientTranslator.MainProject.Infrastructure;
 
 namespace ResilientTranslator.MainProject.Infrastructure.Localization;
 
 /// <summary>
-/// Drives localization for <see cref="Strings"/>. On startup it ensures <c>lang.tr.xml</c> exists
-/// (writing the Turkish defaults so the user can edit them), extracts the shipped
-/// <c>lang.en.xml</c>, and — when another language is chosen — loads <c>lang.&lt;code&gt;.xml</c>
-/// over the fields via reflection.
+/// Loads seven embedded UI languages into portable UserData files and applies their
+/// values to Strings through reflection. Version or key changes preserve the previous
+/// file before refreshing it from the shipped resource.
 ///
 /// Dropping another <c>lang.&lt;code&gt;.xml</c> into the configuration folder is enough to add a
 /// language; it shows up in the picker without a code change.
@@ -19,7 +17,7 @@ public static class LocManager
 {
     internal const bool IsLogEnabled = true;
     public const string SystemLanguage = "system";
-    private const string EnglishResource = "ResilientTranslator.MainProject.Infrastructure.Localization.lang.en.xml";
+    private const string ResourcePrefix = "ResilientTranslator.MainProject.Infrastructure.Localization.lang.";
 
     /// <summary>Fires after the active language changes so open windows can re-apply their text.</summary>
     public static event Action? LanguageChanged;
@@ -100,8 +98,8 @@ public static class LocManager
             // alongside so hand edits are not simply thrown away.
             var currentVersion = AppPaths.PayloadVersion;
 
-            RefreshShippedFile(PathFor("tr"), currentVersion, () => WriteXml(PathFor("tr"), "Türkçe", currentVersion));
-            RefreshShippedFile(PathFor("en"), currentVersion, () => ExtractEnglish(currentVersion));
+            foreach (var language in LanguageCatalog.All.Where(item => item.Code != "auto"))
+                RefreshShippedFile(PathFor(language.Code), currentVersion, () => ExtractResource(language.Code, currentVersion));
         }
         catch (Exception ex)
         {
@@ -124,7 +122,8 @@ public static class LocManager
             var stamped = ReadVersion(path);
             if (stamped == currentVersion)
             {
-                return;
+                var keys = XDocument.Load(path).Root?.Elements("s").Select(element => (string?)element.Attribute("name")).ToHashSet();
+                if (keys is not null && StringFields().All(field => keys.Contains(field.Name))) return;
             }
 
             var backup = path + ".previous";
@@ -240,27 +239,6 @@ public static class LocManager
         return "en";
     }
 
-    /// <summary>Reflection-writes the current field values to an XML file.</summary>
-    private static void WriteXml(string path, string languageName, string version)
-    {
-        try
-        {
-            var doc = new XDocument(new XElement("strings",
-                new XElement("LanguageName", languageName),
-                new XElement("Version", version),
-                StringFields().Select(f => new XElement("s",
-                    new XAttribute("name", f.Name),
-                    Escape((string?)f.GetValue(null) ?? string.Empty)))));
-
-            File.WriteAllText(path, doc.ToString(), new UTF8Encoding(false));
-            LocalizationLog.App($"Wrote the language baseline {Path.GetFileName(path)}");
-        }
-        catch (Exception ex)
-        {
-            LocalizationLog.Error("Writing the language baseline failed", ex);
-        }
-    }
-
     /// <summary>Reflection-loads values from an XML file over the matching fields.</summary>
     private static void ReadInto(string path)
     {
@@ -288,37 +266,19 @@ public static class LocManager
         }
     }
 
-    private static void ExtractEnglish(string version)
+    /// <summary>Extracts a shipped UI language; its stamp follows the actual executable version.</summary>
+    private static void ExtractResource(string language, string version)
     {
-        var path = PathFor("en");
-
-        try
-        {
-            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(EnglishResource);
-            if (stream is null)
-            {
-                LocalizationLog.App($"The embedded resource {EnglishResource} is missing; English is unavailable.");
-                return;
-            }
-
-            var doc = XDocument.Load(stream);
-
-            // The stamp is added on the way out rather than kept in the source file, so it cannot
-            // drift from the version that actually shipped it.
-            doc.Root?.Element("Version")?.Remove();
-            doc.Root?.AddFirst(new XElement("Version", version));
-
-            doc.Save(path);
-            LocalizationLog.App("Wrote lang.en.xml");
-        }
-        catch (Exception ex)
-        {
-            LocalizationLog.Error("Extracting lang.en.xml failed", ex);
-        }
+        string resource = ResourcePrefix + language + ".xml";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resource)
+            ?? throw new FileNotFoundException("Missing embedded UI language.", resource);
+        var document = XDocument.Load(stream);
+        document.Root?.Element("Version")?.Remove();
+        document.Root?.AddFirst(new XElement("Version", version));
+        document.Save(PathFor(language));
+        LocalizationLog.App($"Wrote lang.{language}.xml");
     }
-
     // Multi-line strings are stored single-line with a literal \n so the XML stays clean/indentable.
-    private static string Escape(string s) => s.Replace("\r\n", "\n").Replace("\n", "\\n");
 
     private static string Unescape(string s) => s.Replace("\\n", "\n");
 }

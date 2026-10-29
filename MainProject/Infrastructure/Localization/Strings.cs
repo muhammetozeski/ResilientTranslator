@@ -1,25 +1,62 @@
 namespace ResilientTranslator.MainProject.Infrastructure.Localization;
-public static class Strings {
-public static string SwapLanguages = "Dillerin yerini değiştir";
-public static string SwapTexts = "Metinlerin yerini değiştir";
-public static string Automatic = "Otomatik";
-public static string LanguageName = "Türkçe";
-public static string Ready = "Hazır";
-public static string Translating = "Çevriliyor";
-public static string TranslationFailed = "Çeviri alınamadı. Metni düzenleyerek yeniden deneyebilirsin.";
-public static string Subtitle = "Seç, kısayola bas, çevir.";
-public static string Hide = "Gizle";
-public static string Open = "Aç";
-public static string Exit = "Çıkış";
-public static string InputLabel = "Girdi";
-public static string OutputLabel = "Çıktı";
-public static string SourceLanguage = "Kaynak dil";
-public static string TargetLanguage = "Hedef dil";
-public static string InputPlaceholder = "Bir metin seçip Win + < tuşlarına bas veya buraya yaz.";
-public static string OutputPlaceholder = "Çeviri burada görünecek. Burayı da düzenleyebilirsin.";
-public static string Characters = "karakter";
-public static string Copy = "Kopyala";
-public static string ShortcutHint = "aç / gizle";
+/// <summary>Contains UI strings loaded from the seven embedded language files.</summary>
+public static class Strings
+{
+    public static string SwapLanguages = "Dillerin yerini değiştir";
+    public static string SwapTexts = "Metinlerin yerini değiştir";
+    public static string Automatic = "Otomatik";
+    public static string LanguageName = "Türkçe";
+    public static string Ready = "Hazır";
+    public static string Translating = "Çevriliyor";
+    public static string TranslationFailed = "Çeviri alınamadı. Metni düzenleyerek yeniden deneyebilirsin.";
+    public static string Subtitle = "Seç, kısayola bas, çevir.";
+    public static string Hide = "Gizle";
+    public static string Open = "Aç";
+    public static string Exit = "Çıkış";
+    public static string InputLabel = "Girdi";
+    public static string OutputLabel = "Çıktı";
+    public static string SourceLanguage = "Kaynak dil";
+    public static string TargetLanguage = "Hedef dil";
+    public static string InputPlaceholder = "Bir metin seçip Win + < tuşlarına bas veya buraya yaz.";
+    public static string OutputPlaceholder = "Çeviri burada görünecek. Burayı da düzenleyebilirsin.";
+    public static string Characters = "karakter";
+    public static string Copy = "Kopyala";
+    public static string ShortcutHint = "aç / gizle";
+    public static string SettingsTitle = "Ayarlar";
+    public static string Close = "Kapat";
+    public static string TranslateNow = "Şimdi çevir";
+    public static string TechnicalSettings = "Teknik ayarlar";
+    public static string StatusPreview = "Çeviri servisine bağlanılıyor; bağlantı yeniden kuruluyor ve alternatif servislerden yanıt bekleniyor.";
+    public static string SettingsSaveFailed = "Ayarlar kaydedilemedi. Değişikliği yeniden deneyebilirsin.";
+    public static string InvalidSetting = "Geçerli aralıkta bir değer gir.";
+    public static string FontsUnavailable = "Yazı tipleri alınamadı. Yeniden deneyebilirsin.";
+    public static string Increase = "Artır";
+    public static string Decrease = "Azalt";
+    public static string EditorSplit = "Metin alanı oranı";
+    public static string ResetSplit = "%50 olarak sıfırla";
+    public static string ApplicationLanguage = "Uygulama dili";
+    public static string White = "White";
+    public static string SettingEnableLogging = "Log kaydı";
+    public static string SettingDefaultSourceLanguage = "Varsayılan girdi dili";
+    public static string SettingDefaultTargetLanguage = "Varsayılan çıktı dili";
+    public static string SettingStatusSpeed = "Durum yazısı hızı";
+    public static string SettingEditorFont = "Yazı tipi";
+    public static string SettingEditorFontSize = "Yazı boyutu";
+    public static string SettingEditorColor = "Yazı rengi";
+    public static string SettingTypingDelay = "Yazma beklemesi (ms)";
+    public static string SettingConcurrentRetries = "Eşzamanlı tekrar sayısı";
+    public static string SettingSequentialRetries = "Sıralı tekrar sayısı";
+    public static string SettingAttemptTimeout = "Deneme süresi (sn)";
+    public static string SettingConcurrentBudget = "Eşzamanlı toplam süre (sn)";
+    public static string SettingSequentialBudget = "Sıralı toplam süre (sn)";
+    public static string SettingConcurrentRetryDelay = "Eşzamanlı tekrar aralığı (ms)";
+    public static string SettingSequentialRetryDelay = "Sıralı tekrar aralığı (ms)";
+    public static string SettingChunkByteLimit = "Metin parçası sınırı (UTF-8 bayt)";
+    public static string SettingMaximumCacheEntries = "Önbellek kayıt sınırı";
+    public static string SettingMaximumCachedCharacters = "Önbellek metin sınırı";
+    public static string SettingDetectorLoadBudget = "Algılayıcı yükleme süresi (ms)";
+    public static string SettingDetectorGateBudget = "Algılayıcı kilit süresi (ms)";
+    public static string SettingClipboardChangeBudget = "Pano değişimi süresi (ms)";
+    public static string SettingInputShare = "Sol metin alanı (%)";
+    public static string SettingCenterSnapRange = "Merkeze yakalama aralığı (%)";
 }
-
-

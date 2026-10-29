@@ -1,41 +1,81 @@
 @page "/"
 @using ResilientTranslator.MainProject.Services
+@using ResilientTranslator.MainProject.Infrastructure
 @using ResilientTranslator.MainProject.Infrastructure.Localization
+@using ResilientTranslator.MainProject.UI.Components
 @implements IDisposable
 <PageTitle>Resilient Translator</PageTitle>
-<section class="translator">
-<header><div class="brand"><svg class="brand-icon" viewBox="0 0 256 256" aria-hidden="true"><rect x="10" y="10" width="236" height="236" rx="58" fill="#74cf9c"/><path d="M47 151L81 65H98L132 151H110L103 131H76L69 151ZM82 113H97L90 89Z" fill="#112e26"/><g fill="none" stroke="#112e26" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"><path d="M146 84H210M178 68V84M155 86C159 112 179 133 208 146M202 86C194 115 178 133 149 147M57 188H193M179 174L193 188L179 202"/></g></svg><div><h1>Resilient Translator</h1></div>
-<div class="swap-actions">
-<button class="icon-button" title="@Strings.SwapLanguages" aria-label="@Strings.SwapLanguages" @onclick="TranslationWorkspace.SwapLanguagesAsync"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15L7 5L11 15M4.5 12H9.5M16 7H25M20.5 4V7M18 8C19 11 21 13 25 15M24 8C23 11 21 13 17 15M4 21H23M20 18L23 21L20 24M7 18L4 21L7 24"/></g></svg></button>
-<button class="icon-button" title="@Strings.SwapTexts" aria-label="@Strings.SwapTexts" @onclick="TranslationWorkspace.SwapTexts"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6H14M4 10H11M14 18H24M17 22H24M20 5V13M17 8L20 5L23 8M8 23V15M5 20L8 23L11 20"/></g></svg></button>
-</div></div><div class="window-actions"><button class="hide" title="@Strings.Hide" @onclick="Hide">−</button></div></header>
-<div class="editors">
-<div class="editor"><div class="editor-heading"><label for="input">@Strings.InputLabel</label><select aria-label="@Strings.SourceLanguage" value="@TranslationWorkspace.SourceLanguage" @onchange="SourceChanged">@LanguageOptions()</select></div><textarea @ref="InputElement" id="input" spellcheck="false" value="@TranslationWorkspace.Input" @oninput="InputChanged"></textarea></div>
-<div class="editor output"><div class="editor-heading"><label for="output">@Strings.OutputLabel</label><select aria-label="@Strings.TargetLanguage" value="@TranslationWorkspace.TargetLanguage" @onchange="TargetChanged">@LanguageOptions()</select></div><textarea id="output" spellcheck="false" value="@TranslationWorkspace.Output" @oninput="OutputChanged"></textarea></div>
-</div>
-<footer><span class="status"><i class="@(TranslationWorkspace.IsBusy ? "busy" : "")"></i>@TranslationWorkspace.Status</span></footer>
+<HomeCss />
+<StatusTickerCss />
+<section class="translator" data-window-background>
+    <header class="toolbar" data-window-background inert="@(SettingsOpen ? string.Empty : null)">
+        <button class="brand" title="@Strings.SettingsTitle" aria-label="@Strings.SettingsTitle" @onclick="OpenSettings"><svg class="brand-icon" viewBox="0 0 256 256" aria-hidden="true"><rect x="10" y="10" width="236" height="236" rx="58" fill="#74cf9c"/><path d="M47 151L81 65H98L132 151H110L103 131H76L69 151ZM82 113H97L90 89Z" fill="#112e26"/><g fill="none" stroke="#112e26" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"><path d="M146 84H210M178 68V84M155 86C159 112 179 133 208 146M202 86C194 115 178 133 149 147M57 188H193M179 174L193 188L179 202"/></g></svg><h1>Resilient Translator</h1></button>
+        <div class="swap-actions"><button class="icon-button" title="@Strings.SwapLanguages" aria-label="@Strings.SwapLanguages" @onclick="TranslationWorkspace.SwapLanguagesAsync"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15L7 5L11 15M4.5 12H9.5M16 7H25M20.5 4V7M18 8C19 11 21 13 25 15M24 8C23 11 21 13 17 15M4 21H23M20 18L23 21L20 24M7 18L4 21L7 24"/></g></svg></button>
+<button class="icon-button" title="@Strings.SwapTexts" aria-label="@Strings.SwapTexts" @onclick="TranslationWorkspace.SwapTexts"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4H11M3 8H9M3 12H10M17 4H25M17 8H23M17 12H24M4 21H23M20 18L23 21L20 24M7 18L4 21L7 24"/></g></svg></button></div>
+        <div class="language-pair" data-window-background>
+            <select aria-label="@Strings.SourceLanguage" value="@TranslationWorkspace.SourceLanguage" @onchange="SourceChanged">@LanguageOptions()</select>
+            <button class="send" title="@Strings.TranslateNow" aria-label="@Strings.TranslateNow" data-native-command="translate" @onclick="TranslateNow">→</button>
+            <select aria-label="@Strings.TargetLanguage" value="@TranslationWorkspace.TargetLanguage" @onchange="TargetChanged">@LanguageOptions()</select>
+        </div>
+        <StatusTicker Text="@TranslationWorkspace.Status" State="@(TranslationWorkspace.HasError ? "error" : TranslationWorkspace.IsBusy ? "busy" : "ready")" Speed="@Preferences.StatusSpeed" />
+        <button class="hide" title="@Strings.Hide" aria-label="@Strings.Hide" data-native-command="hide" @onclick="Hide">−</button>
+    </header>
+    <div class="editors" data-window-background inert="@(SettingsOpen ? string.Empty : null)" style="@Preferences.EditorStyle">
+        <textarea @ref="InputElement" id="input" aria-label="@Strings.InputLabel" spellcheck="false" value="@TranslationWorkspace.Input" @oninput="InputChanged"></textarea>
+        <EditorSplitter />
+        <textarea id="output" aria-label="@Strings.OutputLabel" spellcheck="false" value="@TranslationWorkspace.Output" @oninput="OutputChanged"></textarea>
+    </div>
+    <div class="resize-grip" data-window-resize aria-hidden="true"></div>
+    @if (SettingsOpen) { <SettingsPanel OnClose="CloseSettings" /> }
 </section>
 @code {
     ElementReference InputElement;
+    bool SettingsOpen;
+
+    /// <summary>Connects the retained screen to editor state, preferences and native opening focus.</summary>
     protected override void OnInitialized()
     {
         TranslationWorkspace.Changed += Refresh;
+        Preferences.Changed += Refresh;
+        TranslationWorkspace.WindowHidden += DismissSettings;
         TranslationWorkspace.FocusInput = FocusInputAsync;
     }
-    Task FocusInputAsync(CancellationToken token) => InvokeAsync(async () => { token.ThrowIfCancellationRequested(); await InputElement.FocusAsync(preventScroll:true).AsTask().WaitAsync(token); });
+    /// <summary>Focuses the first real editor after native activation; opening settings retains its own focus.</summary>
+    Task FocusInputAsync(CancellationToken token) => InvokeAsync(async () =>
+    {
+        token.ThrowIfCancellationRequested();
+        if (!SettingsOpen) await InputElement.FocusAsync(preventScroll: true).AsTask().WaitAsync(token);
+    });
+    /// <summary>Signals native readiness only after the first complete Blazor render.</summary>
     protected override void OnAfterRender(bool firstRender) { if (firstRender) TranslationWorkspace.ViewReady?.Invoke(); }
+    /// <summary>Renders shared-state notifications on the owning dispatcher.</summary>
     void Refresh() => _ = InvokeAsync(StateHasChanged);
+    /// <summary>Opens the preferences dialog from the product icon or title.</summary>
+    void OpenSettings() => SettingsOpen = true;
+    /// <summary>Closes settings without discarding already persisted edits.</summary>
+    void CloseSettings() => SettingsOpen = false;
+    /// <summary>Discards only the open dialog when outside-window dismissal hides the retained surface.</summary>
+    void DismissSettings() => _ = InvokeAsync(() => { SettingsOpen = false; StateHasChanged(); });
+    /// <summary>Uses the same immediate hide action when a native browser bridge is unavailable.</summary>
     void Hide() => TranslationWorkspace.HideWindow?.Invoke();
-    Task InputChanged(ChangeEventArgs e) => TranslationWorkspace.EditAsync(e.Value?.ToString() ?? "", true);
-    Task OutputChanged(ChangeEventArgs e) => TranslationWorkspace.EditAsync(e.Value?.ToString() ?? "", false);
-    Task SourceChanged(ChangeEventArgs e) => TranslationWorkspace.SetLanguagesAsync(e.Value?.ToString() ?? "en", TranslationWorkspace.TargetLanguage);
-    Task TargetChanged(ChangeEventArgs e) => TranslationWorkspace.SetLanguagesAsync(TranslationWorkspace.SourceLanguage, e.Value?.ToString() ?? "tr");
-    RenderFragment LanguageOptions() => @<text><option value="@TranslationWorkspace.Automatic">@Strings.Automatic</option><option value="en">English</option><option value="tr">Türkçe</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></text>;
-    public void Dispose() { TranslationWorkspace.Changed -= Refresh; TranslationWorkspace.FocusInput = null; }
+    /// <summary>Starts a fresh forward translation without debounce or cache reuse.</summary>
+    Task TranslateNow() => TranslationWorkspace.EditAsync(TranslationWorkspace.Input, true, true, forceNetwork: true);
+    /// <summary>Accepts input edits through the latest-request translation pipeline.</summary>
+    Task InputChanged(ChangeEventArgs args) => TranslationWorkspace.EditAsync(args.Value?.ToString() ?? "", true);
+    /// <summary>Accepts reverse edits through the same translation pipeline.</summary>
+    Task OutputChanged(ChangeEventArgs args) => TranslationWorkspace.EditAsync(args.Value?.ToString() ?? "", false);
+    /// <summary>Applies source selection and the existing language collision rules.</summary>
+    Task SourceChanged(ChangeEventArgs args) => TranslationWorkspace.SetLanguagesAsync(args.Value?.ToString() ?? "en", TranslationWorkspace.TargetLanguage);
+    /// <summary>Applies target selection and the existing Automatic fallback rules.</summary>
+    Task TargetChanged(ChangeEventArgs args) => TranslationWorkspace.SetLanguagesAsync(TranslationWorkspace.SourceLanguage, args.Value?.ToString() ?? "tr");
+    /// <summary>Uses the language catalog shared with startup preferences.</summary>
+    RenderFragment LanguageOptions() => @<text>@foreach (var language in LanguageCatalog.All) { <option value="@language.Code">@language.Name</option> }</text>;
+    /// <summary>Releases retained screen subscriptions when its component is disposed.</summary>
+    public void Dispose()
+    {
+        TranslationWorkspace.Changed -= Refresh;
+        Preferences.Changed -= Refresh;
+        TranslationWorkspace.WindowHidden -= DismissSettings;
+        TranslationWorkspace.FocusInput = null;
+    }
 }
-
-
-
-
-
-

@@ -1,3 +1,4 @@
+using ResilientTranslator.MainProject.Infrastructure.Localization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,12 +31,60 @@ internal static class SettingsManagerSettings
 // Declare settings here. Field names become file keys automatically.
 internal static class Settings
 {
+    [Preference(nameof(Strings.ApplicationLanguage))]
     public static readonly Setting<string> Language = new("tr");
     public static readonly Setting<string> SourceLanguage = new("en");
     public static readonly Setting<string> TargetLanguage = new("tr");
     public static readonly Setting<string> LastConcreteSourceLanguage = new("en");
     public static readonly Setting<string> LastConcreteTargetLanguage = new("tr");
+    [Preference(nameof(Strings.SettingEnableLogging), true)]
     public static readonly Setting<bool> EnableLogging = new(true);
+    [Preference(nameof(Strings.SettingDefaultSourceLanguage))]
+    public static readonly Setting<string> DefaultSourceLanguage = new("");
+    [Preference(nameof(Strings.SettingDefaultTargetLanguage))]
+    public static readonly Setting<string> DefaultTargetLanguage = new("");
+    [Preference(nameof(Strings.SettingStatusSpeed), minimum: 5, maximum: 150)]
+    public static readonly Setting<double> StatusSpeed = new(70);
+    [Preference(nameof(Strings.SettingEditorFont))]
+    public static readonly Setting<string> EditorFont = new("Segoe UI");
+    [Preference(nameof(Strings.SettingEditorFontSize), minimum: 1, maximum: 300)]
+    public static readonly Setting<double> EditorFontSize = new(14);
+    [Preference(nameof(Strings.SettingEditorColor))]
+    public static readonly Setting<string> EditorColor = new("#ffffff");
+    [Preference(nameof(Strings.SettingTypingDelay), true, 0, 10000)]
+    public static readonly Setting<int> TypingDelay = new(1000);
+    [Preference(nameof(Strings.SettingConcurrentRetries), true, 0, 10)]
+    public static readonly Setting<int> ConcurrentRetries = new(2);
+    [Preference(nameof(Strings.SettingSequentialRetries), true, 0, 10)]
+    public static readonly Setting<int> SequentialRetries = new(1);
+    [Preference(nameof(Strings.SettingAttemptTimeout), true, 1, 120)]
+    public static readonly Setting<double> AttemptTimeout = new(12);
+    [Preference(nameof(Strings.SettingConcurrentBudget), true, 1, 600)]
+    public static readonly Setting<double> ConcurrentBudget = new(37);
+    [Preference(nameof(Strings.SettingSequentialBudget), true, 1, 600)]
+    public static readonly Setting<double> SequentialBudget = new(25);
+    [Preference(nameof(Strings.SettingConcurrentRetryDelay), true, 0, 10000)]
+    public static readonly Setting<int> ConcurrentRetryDelay = new(200);
+    [Preference(nameof(Strings.SettingSequentialRetryDelay), true, 0, 10000)]
+    public static readonly Setting<int> SequentialRetryDelay = new(300);
+    [Preference(nameof(Strings.SettingChunkByteLimit), true, 100, 1000)]
+    public static readonly Setting<int> ChunkByteLimit = new(1000);
+    [Preference(nameof(Strings.SettingMaximumCacheEntries), true, 0, 1024)]
+    public static readonly Setting<int> MaximumCacheEntries = new(128);
+    [Preference(nameof(Strings.SettingMaximumCachedCharacters), true, 0, 100000)]
+    public static readonly Setting<int> MaximumCachedCharacters = new(8192);
+    [Preference(nameof(Strings.SettingDetectorLoadBudget), true, 0, 30000)]
+    public static readonly Setting<int> DetectorLoadBudget = new(3000);
+    [Preference(nameof(Strings.SettingDetectorGateBudget), true, 0, 5000)]
+    public static readonly Setting<int> DetectorGateBudget = new(250);
+    [Preference(nameof(Strings.SettingClipboardChangeBudget), true, 50, 5000)]
+    public static readonly Setting<int> ClipboardChangeBudget = new(450);
+    [Preference(nameof(Strings.SettingInputShare), minimum: 10, maximum: 90)]
+    public static readonly Setting<double> InputShare = new(50);
+    [Preference(nameof(Strings.SettingCenterSnapRange), true, 0, 80)]
+    public static readonly Setting<int> CenterSnapRange = new(6);
+    public static readonly Setting<int> WindowWidth = new(1000);
+    public static readonly Setting<int> WindowHeight = new(560);
 }
 
 internal interface ISetting
@@ -271,29 +320,37 @@ internal static class SettingsManager
     }
 
     /// <summary>Saves settings and raises SettingsSaved after a successful write. Errors propagate to the caller.</summary>
-    public static void SaveSettings(string? filePath = null)
+    public static void SaveSettings(string? filePath = null) => SaveSnapshot(CaptureSnapshot(), filePath);
+
+    /// <summary>Serializes current values without performing file access; callers hold their state gate.</summary>
+    internal static string CaptureSnapshot()
+    {
+        var content = new StringBuilder($"{SettingsManagerSettings.CommentPrefix} {SettingsManagerSettings.AppTitle} Configuration{Environment.NewLine}");
+        foreach (ISettingSetup setting in iSettingSetups.Values)
+            content.AppendLine($"{setting.Key} {SettingsManagerSettings.KeyValueSeparator} {setting.Serialize()}");
+        return content.ToString();
+    }
+
+    /// <summary>Atomically installs an immutable settings snapshot, preserving the previous file on write failure.</summary>
+    /// <param name="content">Already serialized settings.</param>
+    /// <param name="filePath">Portable destination or the default config path.</param>
+    internal static void SaveSnapshot(string content, string? filePath = null)
     {
         lock (FileLock)
         {
             string path = Path.GetFullPath(filePath ?? ConfigPath);
-            var content = new StringBuilder($"{SettingsManagerSettings.CommentPrefix} {SettingsManagerSettings.AppTitle} Configuration{Environment.NewLine}");
-            foreach (ISettingSetup setting in iSettingSetups.Values) content.AppendLine($"{setting.Key} {SettingsManagerSettings.KeyValueSeparator} {setting.Serialize()}");
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             string tempPath = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
             try
             {
-                File.WriteAllText(tempPath, content.ToString(), new UTF8Encoding(false));
+                File.WriteAllText(tempPath, content, new UTF8Encoding(false));
                 if (File.Exists(path)) File.Replace(tempPath, path, null);
                 else File.Move(tempPath, path);
             }
-            finally
-            {
-                if (File.Exists(tempPath)) File.Delete(tempPath);
-            }
+            finally { if (File.Exists(tempPath)) File.Delete(tempPath); }
         }
         SettingsSaved?.Invoke();
     }
-
     public static bool Apply(ISetting setting, string value) => setting.TrySetFromText(value);
 
     /// <summary>Opens an optional console settings editor. Changes are saved immediately.</summary>

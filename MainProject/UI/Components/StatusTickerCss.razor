@@ -1,0 +1,9 @@
+<style>
+    .status-ticker{display:flex;align-items:center;gap:7px;border:1px solid var(--control-border);border-radius:6px;padding:5px 8px;height:32px;min-width:0;color:var(--muted-text);font:12px 'Segoe UI',sans-serif}
+    .status-light{width:6px;height:6px;border-radius:50%;background:var(--success);flex:0 0 6px}
+    .status-light.busy{background:var(--pending)}.status-light.error{background:var(--failure)}
+    .status-viewport{display:block;overflow:hidden;min-width:0;flex:1}
+    .status-track{display:flex;width:max-content;white-space:nowrap}
+    .status-track>span{display:block;flex-shrink:0;padding-right:28px}
+    .status-track>span[hidden]{display:none}
+</style>

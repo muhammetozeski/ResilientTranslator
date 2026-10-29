@@ -12,6 +12,7 @@ using ResilientTranslator.MainProject.Services;
 using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.UI.Input.KeyboardAndMouse;
+using Preferences = ResilientTranslator.MainProject.Infrastructure.Preferences;
 using Forms = System.Windows.Forms;
 using NativeWindow = Microsoft.UI.Xaml.Window;
 namespace ResilientTranslator;
@@ -23,6 +24,8 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
     enum DesktopAction { TrayOpen, TrayExit, TrayToggle, TrayMiddleExit, HideButton, FirstRender, Hotkey, OutsideClick }
     static DesktopHost? Current;
     readonly NativeWindow Window;
+    readonly MauiWindowing.BorderlessWindow Chrome;
+    bool Positioned;
     readonly HWND MainHandle;
     readonly WINEVENTPROC ForegroundCallback;
     HWINEVENTHOOK ForegroundHook;
@@ -53,7 +56,20 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
             presenter.SetBorderAndTitleBar(false, false);
             presenter.IsResizable = false; presenter.IsMaximizable = false; presenter.IsMinimizable = false;
         }
-        window.AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(-30000,-30000,900,530));
+        Chrome = new(window, new()
+        {
+            Log = message => ExceptionBoundary.LogSafely(message),
+            Command = OnNativeCommand,
+            ResizeCompleted = (width,height) => _ = Preferences.SaveWindowSizeAsync(width,height)
+        });
+        window.AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(-30000,-30000,Preferences.WindowWidth,Preferences.WindowHeight));
+        Preferences.LoadFonts = () => Task.Factory.StartNew(static () =>
+        {
+            using var fonts = new System.Drawing.Text.InstalledFontCollection();
+            var families = fonts.Families;
+            try { return families.Select(family => family.Name).Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.OrdinalIgnoreCase).ToArray(); }
+            finally { foreach(var family in families) family.Dispose(); }
+        },CancellationToken.None,TaskCreationOptions.LongRunning,TaskScheduler.Default);
         CreateHandle(new Forms.CreateParams { Caption = "ResilientTranslator.Hotkey" });
         if (!PInvoke.RegisterHotKey(new HWND(Handle), HotkeyId, HOT_KEY_MODIFIERS.MOD_WIN | HOT_KEY_MODIFIERS.MOD_NOREPEAT, (uint)VIRTUAL_KEY.VK_OEM_102)) throw new Win32Exception(Marshal.GetLastWin32Error());
         Tray = new Forms.NotifyIcon
@@ -70,11 +86,26 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
             else if (args.Button == Forms.MouseButtons.Middle) Dispatch(Exit, DesktopAction.TrayMiddleExit);
         };
         window.Activated += OnActivationChanged;
+        LocManager.LanguageChanged += RefreshTrayLanguage;
         window.AppWindow.Closing += (_,args) => { args.Cancel = true; Hide(); };
         TranslationWorkspace.RequestSuperseded += CancelCapture;
         TranslationWorkspace.HideWindow = () => Dispatch(Hide, DesktopAction.HideButton);
         TranslationWorkspace.ViewReady = () => Dispatch(OnReady, DesktopAction.FirstRender);
         Log("Desktop initialized; shortcut=Win+OEM102; trayLeft=toggle; trayMiddle=exit", Run: IsLogEnabled);
+    }
+    /// <summary>Connects native browser input independently of Blazor UI event dispatch.</summary>
+    internal static Task AttachBrowserAsync(Microsoft.Web.WebView2.Core.CoreWebView2 browser) =>
+        Current?.Chrome.AttachBrowserAsync(browser) ?? Task.CompletedTask;
+
+    /// <summary>Starts a fresh manual request or hides immediately, regardless of pending editor work.</summary>
+    void OnNativeCommand(string command,string text)
+    {
+        if(command=="hide") Dispatch(Hide,DesktopAction.HideButton);
+        else if(command=="translate")
+        {
+            Log("Manual translation requested; bypassCache=true; debounce=false",Run:IsLogEnabled);
+            _ = TranslationWorkspace.EditAsync(text,true,true,forceNetwork:true);
+        }
     }
     /// <summary>Attaches desktop behavior to the native MAUI window once.</summary>
     internal static void Attach(NativeWindow window) => Current ??= new DesktopHost(window);
@@ -101,7 +132,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
     void ShowCore(bool activate)
     {
         if (!Ready) { ShowWhenReady = true; return; }
-        Center();
+        if(!Positioned) { Center(); Positioned=true; }
         if (Window.AppWindow.Presenter is OverlappedPresenter presenter) presenter.IsAlwaysOnTop = true;
         Presentation?.Cancel(); Presentation=new();
         SourceForeground=RootOwner(PInvoke.GetForegroundWindow());
@@ -173,8 +204,11 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         CancelCapture(); Presentation?.Cancel();
         bool wasVisible=Visible,wasActivated=ActivationObserved; Visible=false; ActivationObserved=false;
         try { Window.AppWindow.Hide(); } catch { Visible=wasVisible; ActivationObserved=wasActivated; throw; }
+        TranslationWorkspace.NotifyWindowHidden();
         Log($"Window hidden; isVisible={Window.AppWindow.IsVisible}; pendingCaptureCanceled=true", Run: IsLogEnabled);
     }
+    /// <summary>Updates tray labels on the native dispatcher after a UI-language selection.</summary>
+    void RefreshTrayLanguage() => Dispatcher.TryEnqueue(() => { Tray.ContextMenuStrip.Items[0].Text = Strings.Open; Tray.ContextMenuStrip.Items[1].Text = Strings.Exit; });
     /// <summary>Centers the native window within the active work area.</summary>
     void Center()
     {
@@ -214,7 +248,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
                     uint sequence = PInvoke.GetClipboardSequenceNumber();
                     Log($"Ctrl+C starting; request={request.Id}; clipboardSequence={sequence}", Run: IsLogEnabled);
                     SendCopy();
-                    try { await changed.Task.WaitAsync(TimeSpan.FromMilliseconds(450), token); }
+                    try { await changed.Task.WaitAsync(TimeSpan.FromMilliseconds(Preferences.ClipboardChangeBudget), token); }
                     catch (TimeoutException) { Log("Selection copy produced no clipboard change", Run: IsLogEnabled); return; }
                     uint newSequence = PInvoke.GetClipboardSequenceNumber();
                     Log($"Clipboard event; previousSequence={sequence}; newSequence={newSequence}; hasText={clipboard.HasText}", Run: IsLogEnabled);
@@ -326,10 +360,11 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         if(!ForegroundHook.IsNull) { PInvoke.UnhookWinEvent(ForegroundHook); ForegroundHook=default; }
         Presentation?.Cancel();
         Window.Activated -= OnActivationChanged;
+        LocManager.LanguageChanged -= RefreshTrayLanguage;
         TranslationWorkspace.RequestSuperseded -= CancelCapture;
         CancelCapture();
         PInvoke.UnregisterHotKey(new HWND(Handle),HotkeyId);
-        Tray.Visible=false; Tray.Dispose(); DestroyHandle();
+        Tray.Visible=false; Chrome.Dispose(); Tray.Dispose(); DestroyHandle();
         Log("Desktop disposed", Run:IsLogEnabled);
     }
 }

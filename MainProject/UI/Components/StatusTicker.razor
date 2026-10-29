@@ -1,0 +1,38 @@
+@using Microsoft.JSInterop
+@using ResilientTranslator.MainProject.Infrastructure
+@implements IAsyncDisposable
+@inject IJSRuntime JavaScript
+<div class="status-ticker" @ref="Element" role="status" aria-label="@Text">
+    <i class="status-light @State" aria-hidden="true"></i>
+    <div class="status-viewport"><span class="status-track" aria-hidden="true"><span>@Text</span><span hidden>@Text</span></span></div>
+</div>
+@code {
+    [Parameter] public string Text { get; set; } = "";
+    [Parameter] public string State { get; set; } = "ready";
+    [Parameter] public double Speed { get; set; } = 70;
+    ElementReference Element;
+    IJSObjectReference? Module;
+    bool Disposed;
+
+    /// <summary>Shares the same bounded animation implementation between the live status and settings preview.</summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await ExceptionBoundary.RunSafelyAsync(async token =>
+        {
+            Module ??= await JavaScript.InvokeAsync<IJSObjectReference>("import", token, "./_content/MainProject/UI/Components/StatusTicker.razor.js");
+            if (!Disposed) await Module.InvokeVoidAsync("update", token, Element, Speed);
+        }, operationName: "RenderStatusTicker");
+    }
+
+    /// <summary>Disconnects size events and cancels animation when its owning component disappears.</summary>
+    public async ValueTask DisposeAsync()
+    {
+        Disposed = true;
+        if (Module is null) return;
+        await ExceptionBoundary.RunSafelyAsync(async token =>
+        {
+            await Module.InvokeVoidAsync("dispose", token, Element);
+            await Module.DisposeAsync();
+        }, operationName: "DisposeStatusTicker");
+    }
+}
