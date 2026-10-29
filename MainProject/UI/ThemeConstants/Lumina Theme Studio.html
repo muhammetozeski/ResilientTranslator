@@ -25,10 +25,10 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
+
     body {
       background-color: var(--bg-dark);
-      background-image: 
+      background-image:
         radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08), transparent 25%),
         radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08), transparent 25%);
       background-attachment: fixed;
@@ -49,7 +49,7 @@
 
     /* Layout & Containers */
     .container { width: 100%; max-width: 950px; margin-bottom: 2rem; }
-    
+
     .glass-panel {
       background: var(--bg-glass);
       backdrop-filter: blur(16px);
@@ -68,10 +68,10 @@
     /* Controls (Search & Sort) */
     .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
     @media (max-width: 768px) { .controls-grid { grid-template-columns: 1fr; } }
-    
+
     .input-group { display: flex; flex-direction: column; gap: 0.5rem; position: relative; }
     .input-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: var(--text-muted); }
-    
+
     .search-input {
       background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-glass); color: #fff;
       padding: 0.8rem 1rem; border-radius: 8px; font-family: var(--font-stack); outline: none; transition: all 0.2s; width: 100%;
@@ -109,9 +109,9 @@
       min-height: 64px;
     }
     .color-item:hover { transform: translateX(4px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-    
+
     .color-info { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; flex: 1; }
-    
+
     /* İsim Etiketi */
     .name-preview { font-size: 1.1rem; font-weight: 700; transition: color 0.3s; }
     .name-preview.badge-mode {
@@ -124,13 +124,13 @@
       padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; color: #fff;
     }
     .badge-sim { background: rgba(99, 102, 241, 0.2); border-color: var(--accent); color: #c7d2fe; }
-    
+
     /* Okunabilirlik Yüzde Etiketi (Dinamik Renkli) */
-    .readability-badge { 
-      font-size: 0.8rem; display: flex; align-items: center; gap: 6px; padding: 0.3rem 0.8rem; 
-      border-radius: 6px; font-weight: 700; border: 1px solid; 
+    .readability-badge {
+      font-size: 0.8rem; display: flex; align-items: center; gap: 6px; padding: 0.3rem 0.8rem;
+      border-radius: 6px; font-weight: 700; border: 1px solid;
     }
-    
+
     .color-controls { display: flex; align-items: center; gap: 0.5rem; }
     .hex-input {
       background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.1); color: #fff;
@@ -138,7 +138,7 @@
       cursor: pointer; transition: all 0.2s;
     }
     .hex-input:hover { border-color: rgba(255,255,255,0.4); background: rgba(0,0,0,0.8); }
-    
+
     .btn-action {
       background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.1);
       width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -152,7 +152,7 @@
       padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; resize: vertical; outline: none; margin-bottom: 1rem;
     }
     .textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
-    
+
     .btn-primary { background: var(--accent); border: 1px solid var(--accent-hover); color: white; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
     .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 4px 15px var(--accent-glow); }
     .btn-secondary { background: transparent; border: 1px solid var(--border-glass); color: var(--text-main); padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
@@ -191,7 +191,7 @@
     .widget-header { background: #2a2a2e; padding: 6px; cursor: move; text-align: center; font-size: 0.75rem; font-weight: bold; border-bottom: 1px solid #333; }
     .widget-body { padding: 12px; }
     .widget input[type="color"] { width: 100%; height: 40px; border: none; border-radius: 4px; cursor: pointer; background: none; }
-    
+
     .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); border: 1px dashed var(--border-glass); border-radius: 12px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
   </style>
@@ -240,7 +240,7 @@
           <div id="search-color-preview" class="search-preview"></div>
         </div>
       </div>
-      
+
       <!-- Sıralama Kutusu -->
       <div class="input-group">
         <label class="input-label">Sıralama Seçenekleri</label>
@@ -306,9 +306,9 @@
   <section class="container glass-panel" style="border-color: rgba(99, 102, 241, 0.3);">
     <h2>⚙️ C# Kod Senkronizasyonu (İçe / Dışa Aktar)</h2>
     <p><code>AppThemes.cs</code> dosyanızdaki veriyi kopyalayıp yapıştırın. Değişimleri C# dosyasına geri alın.</p>
-    
+
     <textarea id="csharp-input" class="textarea" rows="6" placeholder="BackgroundDeep = Color.FromArgb(&quot;#070A1A&quot;),&#10;SurfaceNormal = Colors.White.WithAlpha(0.08f),&#10;..."></textarea>
-    
+
     <div class="flex-between">
       <button id="parse-btn" class="btn-primary">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -327,7 +327,7 @@
       <button id="close-modal" class="modal-close">&times;</button>
       <h2 style="color: var(--accent); border: none; margin-bottom: 0;">Lumina Theme Studio</h2>
       <p style="font-weight: bold; color: #fff;">MAUI Blazor Hybrid Temanızı Yönetmenin En Akıllı Yolu</p>
-      
+
       <h3>🎯 Neden Geliştirildi? (Kullanım Senaryosu)</h3>
       <p>Android veya iOS emülatöründe test yaparken bir butonun, kartın veya yazının renginin hatalı göründüğünü fark ettiniz. Ancak 100 farklı tema rengi arasından bunun <code>PrimaryDark</code> mı yoksa <code>SurfaceTint</code> mi olduğunu hatırlayamıyorsunuz.</p>
       <p><strong>Çözüm:</strong> Bir Color Picker ile (örneğin Powertoys) hatalı rengin Hex kodunu alın ve bu araçta aratın! Araç, C# kodunuzdaki değişken isimlerini eşleştirerek size anında o rengin hangi değişkenden geldiğini bulacaktır.</p>
@@ -340,7 +340,7 @@
         <li><span style="color: #f87171; font-weight:bold;">%45 ve Altı (Göz Yorar):</span> Metni okumak işkenceye dönüşür. (Gölge efektleri kaldırıldığı için bu renklerde metin tamamen kaybolabilir, bu normaldir!)</li>
       </ul>
       <p><strong>Canlı Gözlem Modu:</strong> "Metin Rengi Testi" alanından <em>"Canlı Gözlem"</em>i seçerseniz, belirlediğiniz özel renk tüm listeye uygulanır ve okunabilirliği çıplak gözle görebilirsiniz.</p>
-      
+
       <h3>👁️ Yeni: Renk Körlüğü ve Erişilebilirlik Simülatörü</h3>
       <p>Dünya nüfusunun yaklaşık %8'i renk körüdür. MAUI uygulamanızı tasarlarken "Başarılı" mesajı için Yeşil, "Hatalı" mesajı için Kırmızı bir kutu koyarsanız, <strong>Deuteranopia</strong> (Yeşil Körlüğü) olan bir kullanıcı ikisini de çamur sarısı bir tonda görecektir!</p>
       <p>Bu sebeple üst panele bir <strong>Renk Körlüğü Simülatörü</strong> eklendi. Seçtiğiniz filtre (SVG matrix algoritması) ile anında uygulamanızın engelli kullanıcılar tarafından nasıl göründüğünü test edebilir, renk paletinizi buna göre erişilebilir kılabilirsiniz.</p>
@@ -355,7 +355,7 @@
 
   <!-- ==================== TOAST & WIDGET ==================== -->
   <div id="toast" class="toast">Kopyalandı!</div>
-  
+
   <div id="color-picker-widget" class="widget">
     <div id="widget-header" class="widget-header">Renk Seçici</div>
     <div class="widget-body">
@@ -366,7 +366,7 @@
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
     // ------------------- Renk Matematik & Dönüşüm -------------------
-    
+
     function rgbaToHex(rgba) {
       const m = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (!m) return "#000000";
@@ -430,7 +430,7 @@
       let r = colorObj.red, g = colorObj.green, b = colorObj.blue;
       let max = Math.max(r, g, b), min = Math.min(r, g, b);
       let h, s, l = (max + min) / 2;
-      if (max === min) { h = s = 0; } 
+      if (max === min) { h = s = 0; }
       else {
         let d = max - min;
         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -445,7 +445,7 @@
     }
 
     // ------------------- Gelişmiş Okunabilirlik (% Test) Modülü -------------------
-    
+
     function getLuminance(r, g, b) {
       let a = [r, g, b].map(v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
       return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
@@ -483,10 +483,10 @@
     let colors = [];
     let surfaceGradients = [];
     let auroraStops = [];
-    
+
 
     let searchQuery = "";
-    let sortMode = "similarity"; 
+    let sortMode = "similarity";
 
     // Metin Rengi Testi Durumu
     let customTextColorObj = { red: 168/255, green: 177/255, blue: 217/255, alpha: 1 }; // Varsayılan #A8B1D9
@@ -515,7 +515,7 @@
       if (hex.length === 6) {
         r = parseInt(hex.substring(0,2), 16)/255; g = parseInt(hex.substring(2,4), 16)/255; b = parseInt(hex.substring(4,6), 16)/255;
       } else if (hex.length === 8) {
-        if (isArgb) { a = parseInt(hex.substring(0,2), 16)/255; r = parseInt(hex.substring(2,4), 16)/255; g = parseInt(hex.substring(4,6), 16)/255; b = parseInt(hex.substring(6,8), 16)/255; } 
+        if (isArgb) { a = parseInt(hex.substring(0,2), 16)/255; r = parseInt(hex.substring(2,4), 16)/255; g = parseInt(hex.substring(4,6), 16)/255; b = parseInt(hex.substring(6,8), 16)/255; }
         else { r = parseInt(hex.substring(0,2), 16)/255; g = parseInt(hex.substring(2,4), 16)/255; b = parseInt(hex.substring(4,6), 16)/255; a = parseInt(hex.substring(6,8), 16)/255; }
       }
       return { red: r, green: g, blue: b, alpha: a };
@@ -558,7 +558,7 @@
 
       let parsedColors = [], parsedGradients = [], parsedAuroras = [], match;
       while ((match = propRegex.exec(code)) !== null) parsedColors.push({ name: match[1], ...formatColorData(evaluateColorExpression(match[2])) });
-      while ((match = gradientRegex.exec(code)) !== null) parsedGradients.push({ pair: [formatColorData(evaluateColorExpression(match[1])).value, formatColorData(evaluateColorExpression(match[2])).value] }); 
+      while ((match = gradientRegex.exec(code)) !== null) parsedGradients.push({ pair: [formatColorData(evaluateColorExpression(match[1])).value, formatColorData(evaluateColorExpression(match[2])).value] });
       while ((match = auroraRegex.exec(code)) !== null) parsedAuroras.push({ color: formatColorData(evaluateColorExpression(match[1])).value, pos1: match[2], pos2: match[3] });
 
       if (parsedColors.length > 0) colors = parsedColors;
@@ -632,8 +632,8 @@
              let hslA = getHSL(a.colorObj || (a.pair && a.pair.colorObj)); let hslB = getHSL(b.colorObj || (b.pair && b.pair.colorObj));
              let isGrayA = hslA.s < 10 || hslA.l < 15 || hslA.l > 95; let isGrayB = hslB.s < 10 || hslB.l < 15 || hslB.l > 95;
              if(isGrayA && !isGrayB) return 1; if(!isGrayA && isGrayB) return -1;
-             if(isGrayA && isGrayB) return hslB.l - hslA.l; 
-             return hslA.h - hslB.h; 
+             if(isGrayA && isGrayB) return hslB.l - hslA.l;
+             return hslA.h - hslB.h;
            });
         }
       } else list.sort((a, b) => a.originalIndex - b.originalIndex);
@@ -667,20 +667,20 @@
       const list = document.getElementById(containerId);
       list.innerHTML = '';
       if (processedData.length === 0) { list.innerHTML = `<div class="empty-state">🔍 Aranan kriterlere uygun renk bulunamadı.</div>`; return; }
-      
+
       const targetColor = parseSearchQueryToColor(searchQuery);
 
       processedData.forEach((item) => {
         const li = document.createElement('li');
         li.className = 'color-item';
-        
+
         let bgColorStr = ""; let colorObj = null;
         if (type === 'color') { bgColorStr = item.solidHex; colorObj = item.colorObj; }
         else if (type === 'gradient') { bgColorStr = `linear-gradient(to right, ${item.pair[0]}, ${item.pair[1]})`; colorObj = item.colorObj || (item.pair && item.pair.colorObj); }
         else if (type === 'aurora') { bgColorStr = item.color.startsWith('rgb') ? rgbaToHex(item.color) : item.color; colorObj = item.colorObj; }
 
         li.style.background = bgColorStr;
-        
+
         // --- OKUNABİLİRLİK MATEMATİĞİ ---
         let isAuto = (document.getElementById('text-color-mode').value === 'auto');
         let activeTextObj = getActiveTextObjForBg(colorObj);
@@ -692,15 +692,15 @@
         // Okunabilirlik Yüzde Rozeti Sınıfı
         let pClass = perc >= 75 ? 'readability-100' : (perc >= 45 ? 'readability-75' : 'readability-50');
         let pIcon = perc >= 75 ? '✓' : (perc >= 45 ? '!' : '✗');
-        
+
         // Sol Bilgi Alanı
         const infoDiv = document.createElement('div');
         infoDiv.className = 'color-info';
-        
+
         const nameSpan = document.createElement('span');
         nameSpan.className = 'name-preview';
         nameSpan.textContent = item.name;
-        
+
         // Rozet/Yazı Görünüm Kontrolü ve Gölge iptali
         if (isAuto) {
            nameSpan.classList.add('badge-mode');
@@ -830,7 +830,7 @@
       if (targetInfo.type === 'color') currentHex = colors[targetInfo.rowIdx].solidHex;
       else if (targetInfo.type === 'gradient') { const val = surfaceGradients[targetInfo.rowIdx].pair[targetInfo.colorIdx]; currentHex = val.startsWith('rgb') ? rgbaToHex(val) : val; }
       else if (targetInfo.type === 'aurora') { const val = auroraStops[targetInfo.rowIdx].color; currentHex = val.startsWith('rgb') ? rgbaToHex(val) : val; }
-      
+
       widgetColorInput.value = currentHex;
       if (widgetPosX === null || widgetPosY === null) {
         const rect = event.currentTarget.getBoundingClientRect();
@@ -844,8 +844,8 @@
     widgetColorInput.addEventListener('input', (e) => {
       const newHex = e.target.value;
       if (!widgetTarget) return;
-      if (widgetTarget.type === 'color') { colors[widgetTarget.rowIdx].value = newHex; colors[widgetTarget.rowIdx].solidHex = newHex; } 
-      else if (widgetTarget.type === 'gradient') { surfaceGradients[widgetTarget.rowIdx].pair[widgetTarget.colorIdx] = newHex; } 
+      if (widgetTarget.type === 'color') { colors[widgetTarget.rowIdx].value = newHex; colors[widgetTarget.rowIdx].solidHex = newHex; }
+      else if (widgetTarget.type === 'gradient') { surfaceGradients[widgetTarget.rowIdx].pair[widgetTarget.colorIdx] = newHex; }
       else if (widgetTarget.type === 'aurora') { auroraStops[widgetTarget.rowIdx].color = newHex; }
       initializeDataObjects(); renderAll();
     });
