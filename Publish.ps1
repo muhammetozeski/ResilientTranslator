@@ -14,7 +14,10 @@ foreach ($file in @((Join-Path $package 'ResilientTranslator.exe'),(Join-Path $p
 }
 if ($Deploy) {
     $destination = 'C:\E\kp\aaBenimProgramlarim\ResilientTranslator'
-    Get-Process ResilientTranslator -ErrorAction SilentlyContinue | Where-Object Path -eq (Join-Path $destination 'AppData\ResilientTranslator.exe') | Stop-Process
+    foreach ($running in @(Get-Process ResilientTranslator -ErrorAction SilentlyContinue | Where-Object Path -eq (Join-Path $destination 'AppData\ResilientTranslator.exe'))) {
+        Stop-Process -Id $running.Id
+        if (!$running.WaitForExit(5000)) { throw 'The installed application did not exit before deployment.' }
+    }
     New-Item -ItemType Directory -Force $destination | Out-Null
     Copy-Item -Path (Join-Path $package '*') -Destination $destination -Recurse -Force
 }
