@@ -2,13 +2,13 @@
 
 Settings.cs remains the setting registry and serializer. PreferenceAttribute connects a Setting<T> field to a nameof(Strings...) label, technical-section membership and numeric bounds. Preferences reflects registered fields once; UI handlers retain the actual setting object. The technical section renders current boolean and numeric settings without per-field handlers. Add a translated Strings field and its seven XML entries when exposing another preference.
 
-Accepted edits change RAM state immediately. The shared asynchronous writer takes a complete immutable snapshot after acquiring its gate, then performs retryable atomic replacement off the dispatcher. Resolved translation-language history uses this same writer. Font enumeration runs on demand on a worker and stays in the open picker only; only the selected family name is persisted.
+Accepted edits change RAM state immediately. The shared asynchronous writer takes a complete immutable snapshot after acquiring its gate, then performs retryable atomic replacement off the dispatcher. SettingsPersistence preserves invalid input and uses a durable pending file if the primary is locked; the next load promotes the newest valid snapshot. An abandoned physical writer retains its gate until it exits. Resolved translation-language history uses this same writer. Font enumeration runs on demand on a worker and stays in the open picker only; only the selected family name is persisted.
 
 ## Application language
 
 The Language setting controls the application UI and defaults to tr. It is independent of translation source, target and startup defaults. Seven complete XML files in the repository-root languages directory are embedded in MainProject: tr, en, de, fr, es, it and ru. The settings picker applies UI languages off the dispatcher through a serialized language gate, updates tray labels and saves the successful selection. Tests switched all seven UI languages and verified that translation selections were unchanged.
 
-LocManager installs shipped resources into portable UserData. A different executable version or missing string key refreshes the resource, preserving the previous user file as .previous. Checking keys also handles a newer local build with the same version. All seven files are checked before normal startup and share the same 57 nonempty string keys, including technical-setting labels.
+LocManager installs shipped resources into portable UserData. A different executable version or missing string key refreshes the resource, preserving the previous user file as .previous. Checking keys also handles a newer local build with the same version. All seven files are checked before normal startup and share the same 61 nonempty string keys, including technical-setting labels.
 
 ## Status, manual translation and styles
 

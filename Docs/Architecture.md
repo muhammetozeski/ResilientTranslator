@@ -49,3 +49,5 @@ The architecture inspection checks root styles, theme propagation, style compani
 Controlled renderings of the actual Home and Settings components matched the pre-migration screenshots at 1000 by 560 and 500 by 400 pixels, including the host background. Component checks covered concurrent input ordering, stale completion rejection, native attributes, backdrop close, palette updates and preserved component instances. A read-only accessibility observation found actual keyboard focus in the input editor. The user also confirmed the local input, swap controls and settings worked correctly.
 
 See [preferences and layout](Preferences-and-Layout.md), [window interaction](Window-Interaction.md) and [translation recovery](Translation-Recovery.md) for their separate contracts.
+
+Renderer recovery is owned by RecoverableErrorBoundary, with independent native retry routing. See [CSharpProgram review](CSharpProgram-Audit.md) for persistence and durable shutdown changes.

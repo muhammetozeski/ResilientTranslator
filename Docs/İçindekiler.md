@@ -9,3 +9,4 @@ Read the relevant verified project knowledge before changing recovery behavior.
 - [Preferences and layout](Preferences-and-Layout.md): reflected settings, seven UI languages, shared status ticker, independent manual translation and proportional editor widths.
 
 - [Architecture](Architecture.md): active template layers, control extensions, the single identity center and preserved appearance.
+- [CSharpProgram review](CSharpProgram-Audit.md): active requirements, recovery changes and verification boundaries.
