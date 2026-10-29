@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 
 /// <summary>
-/// Generates compile-time navigation constants by reading a TupleExpressionSyntax.
+/// Generates compile-time navigation constants from named tuple or anonymous-object page definitions.
 /// </summary>
 [Generator]
 public class NavigationGenerator : IIncrementalGenerator
@@ -19,7 +19,7 @@ public class NavigationGenerator : IIncrementalGenerator
     {
         IncrementalValuesProvider<Dictionary<string, string>> provider = context.SyntaxProvider.CreateSyntaxProvider(
             predicate: static (node, _) => node is PropertyDeclarationSyntax prop && prop.Identifier.Text == "Pages",
-            transform: static (ctx, _) => ParseTuple((PropertyDeclarationSyntax)ctx.Node)
+            transform: static (ctx, _) => ParsePages((PropertyDeclarationSyntax)ctx.Node)
         ).Where(static dictionary => dictionary.Count > 0);
 
         context.RegisterSourceOutput(provider, static (ctx, dictionary) =>
@@ -30,14 +30,21 @@ public class NavigationGenerator : IIncrementalGenerator
     }
 
     /// <summary>
-    /// Extracts named elements and their literal values from the parsed tuple syntax tree.
+    /// Extracts named page literals while retaining compiler-checked duplicate names.
     /// </summary>
     /// <param name="propertyDeclaration">The property declaration syntax node to parse.</param>
     /// <returns>A dictionary containing tuple element names and string values.</returns>
-    static Dictionary<string, string> ParseTuple(PropertyDeclarationSyntax propertyDeclaration)
+    static Dictionary<string, string> ParsePages(PropertyDeclarationSyntax propertyDeclaration)
     {
         Dictionary<string, string> extractedData = [];
 
+        if (propertyDeclaration.ExpressionBody?.Expression is AnonymousObjectCreationExpressionSyntax singleOrMultiple)
+        {
+            foreach (var entry in singleOrMultiple.Initializers)
+                if (entry.NameEquals is { } name && entry.Expression is LiteralExpressionSyntax value)
+                    extractedData[name.Name.Identifier.Text] = value.Token.ValueText;
+            return extractedData;
+        }
         if (propertyDeclaration.ExpressionBody?.Expression is not TupleExpressionSyntax tuple)
         {
             return extractedData;
