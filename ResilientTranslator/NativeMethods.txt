@@ -2,7 +2,6 @@ RegisterHotKey
 UnregisterHotKey
 SendInput
 GetAsyncKeyState
-GetClipboardSequenceNumber
 WM_HOTKEY
 SetWindowsHookEx
 CallNextHookEx

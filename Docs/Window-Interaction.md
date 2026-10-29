@@ -12,6 +12,10 @@ The injected capture-phase handler starts left dragging only when the exact targ
 
 The settings backdrop closes its dialog on a click while the dialog stops propagation. Native hiding also clears this transient dialog state before the next opening. This behavior is separate from outside-window dismissal.
 
+## Clipboard capture
+
+Opening requests Ctrl+C before activating the editor. Clipboard-change notification allows a newly copied selection to arrive within the existing configurable budget, but a timeout or failed native copy still proceeds to read the current clipboard. Existing text, including text copied by Snipping Tool, is valid input. Capture does not clear the clipboard, require a new sequence number or reject text merely because another clipboard change occurred during the read. Empty/nontext clipboard content starts no translation. Serialized access, request object identity and cancellation retain ownership of the accepted result; a newer command still supersedes the earlier capture. The primary asynchronous reader retains its retry policy and independent STA fallback.
+
 For the compact toolbar, proportional splitter and settings contract, see [Preferences and layout](Preferences-and-Layout.md).
 
 The retained WebView must be ready before requesting DOM focus. Home keeps the first CoreInput instance, which owns the native textarea ElementReference and exposes its asynchronous FocusAsync action through the shared workspace bridge. DesktopHost first verifies real foreground ownership, then focuses the native WebView host and finally requests DOM textarea focus. Completing a DOM focus call is not proof that Windows keyboard focus belongs to the application. Presentation-owned cancellation prevents a delayed focus request from undoing a later dismissal. A shortcut first copies from the previous application; input focus follows clipboard capture so Ctrl+C cannot copy from the translator itself. The template router's competing heading-focus component is removed. Completing a translation does not refocus the editor and therefore cannot interrupt typing in the output pane.

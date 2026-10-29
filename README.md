@@ -1,10 +1,10 @@
 # Resilient Translator
 
-![Version](https://img.shields.io/badge/version-1.0.0-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
+![Version](https://img.shields.io/badge/version-1.0.1-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
 
 A portable, borderless MAUI Blazor translator with a warm hidden window and two editable text panes.
 
-- **Win + <** shows or hides the window. Opening sends Ctrl+C and translates fresh selected text immediately.
+- **Win + <** shows or hides the window. Opening requests Ctrl+C and translates the current clipboard text, including text copied earlier when Ctrl+C makes no change.
 - Typing in either pane translates toward the other pane after one second without edits.
 - Failed service passes retry through fresh sessions and then a sequential alternative. Large input is split without losing Unicode text or separators. Only confirmed successful output is reused from memory.
 - A new command cancels the previous request; only the current request object may publish its result.
@@ -31,7 +31,7 @@ Settings and editable language files live in `UserData`; logs and the WebView ca
 
 ## Source
 
-The solution was created with the installed `MyMauiBlazorWebTemplate` template. The supplied translation engine is copied without changes into `TranslationEngine/ResilientTranslator.cs`. Each recoverable engine attempt owns an isolated engine instance and its HTTP clients; cancellation closes those clients without waiting on the UI thread. Clipboard capture is serialized, and results must still own their request before they can reach the editor.
+The solution was created with the installed `MyMauiBlazorWebTemplate` template. The supplied translation engine is copied without changes into `TranslationEngine/ResilientTranslator.cs`. Each recoverable engine attempt owns an isolated engine instance and its HTTP clients; cancellation closes those clients without waiting on the UI thread. Clipboard capture is serialized, existing text remains usable without a new clipboard event, and results must still own their request before they can reach the editor.
 
 Run `pwsh -File .\Publish.ps1` to produce the signed Windows package under `publish/ResilientTranslator`.
 

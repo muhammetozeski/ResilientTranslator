@@ -408,8 +408,8 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         base.WndProc(ref message);
     }
 
-    /// <summary>Captures fresh selected text with event notifications and observes all asynchronous work.</summary>
-    /// <returns>Completion or cancellation of this fresh-selection capture and its accepted translation.</returns>
+    /// <summary>Requests a selection copy, then reads current clipboard text even when the copy produces no change.</summary>
+    /// <returns>Completion or cancellation of the current clipboard capture and its accepted translation.</returns>
     async Task CaptureAsync()
     {
         CancelCapture();
@@ -430,31 +430,29 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
                 {
                     clipboard.ClipboardContentChanged += handler;
                     subscribed = true;
-                    Log("Capture waiting for modifier release event", Run: IsLogEnabled);
-                    await ModifierReleaseWaiter.WaitAsync(token);
-                    token.ThrowIfCancellationRequested();
-                    uint sequence = PInvoke.GetClipboardSequenceNumber();
-                    Log($"Ctrl+C starting; request={request.Id}; clipboardSequence={sequence}", Run: IsLogEnabled);
-                    SendCopy();
                     try
                     {
+                        Log("Capture waiting for modifier release event", Run: IsLogEnabled);
+                        await ModifierReleaseWaiter.WaitAsync(token);
+                        token.ThrowIfCancellationRequested();
+                        Log($"Ctrl+C starting; request={request.Id}", Run: IsLogEnabled);
+                        SendCopy();
                         await changed.Task.WaitAsync(TimeSpan.FromMilliseconds(Preferences.ClipboardChangeBudget), token);
                     }
                     catch (TimeoutException)
                     {
-                        Log("Selection copy produced no clipboard change", Run: IsLogEnabled);
-                        return;
+                        Log($"Selection copy produced no clipboard change; reading existing clipboard text; request={request.Id}", Run: IsLogEnabled);
+                    }
+                    catch (Win32Exception copyError)
+                    {
+                        LogSafely($"Selection copy could not be sent; reading existing clipboard text; request={request.Id}; error={copyError}", Run: IsLogEnabled);
                     }
 
-                    uint newSequence = PInvoke.GetClipboardSequenceNumber();
-                    Log($"Clipboard event; previousSequence={sequence}; newSequence={newSequence}; hasText={clipboard.HasText}", Run: IsLogEnabled);
-                    if (newSequence == sequence || !clipboard.HasText)
-                        return;
+                    token.ThrowIfCancellationRequested();
                     text = await ReadClipboardTextAsync(token);
-                    uint afterReadSequence = PInvoke.GetClipboardSequenceNumber();
-                    if (request != CaptureRequest || token.IsCancellationRequested || afterReadSequence != newSequence)
+                    if (request != CaptureRequest || token.IsCancellationRequested)
                     {
-                        Log($"Clipboard result discarded; request={request.Id}; currentRequest={CaptureRequest?.Id}; beforeReadSequence={newSequence}; afterReadSequence={afterReadSequence}", Run: IsLogEnabled);
+                        Log($"Clipboard result discarded; request={request.Id}; currentRequest={CaptureRequest?.Id}; canceled={token.IsCancellationRequested}", Run: IsLogEnabled);
                         token.ThrowIfCancellationRequested();
                         return;
                     }
@@ -494,7 +492,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
 
     /// <summary>Retries transient clipboard access, then reads through an independent STA fallback without blocking the UI.</summary>
     /// <param name = "token">Cancels this operation&apos;s checkpoints and bounded wait.</param>
-    /// <returns>Fresh clipboard text from the primary or fallback read method.</returns>
+    /// <returns>Current clipboard text from the primary or fallback read method.</returns>
     async Task<string?> ReadClipboardTextAsync(CancellationToken token)
     {
         try
