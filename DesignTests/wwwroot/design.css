@@ -65,3 +65,6 @@ select,.language-pair select,.variant-1 .language-pair select{field-sizing:conte
 
 .toolbar-status{text-overflow:clip}.status-track{display:inline-block;white-space:nowrap}
 
+
+.speed-control{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:9px 14px;background:#252e38;border:1px solid #4b5968;border-radius:8px;font-size:13px;box-shadow:0 3px 14px #0006}.speed-control input{width:180px;accent-color:#74cf9c}.speed-control output{min-width:70px;font-variant-numeric:tabular-nums}
+

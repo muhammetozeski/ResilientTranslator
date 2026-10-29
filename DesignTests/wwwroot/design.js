@@ -39,11 +39,12 @@ if (status) {
     while (status.firstChild) track.append(status.firstChild);
     status.append(track);
     let motion;
+    let speed = 28;
     const update = () => {
         motion?.cancel();
         const distance = track.scrollWidth - status.clientWidth;
         if (distance <= 0 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        const travel = Math.max(2000, distance / 28 * 1000);
+        const travel = distance / speed * 1000;
         const duration = travel * 2 + 2400;
         const pause = 1200 / duration;
         motion = track.animate([
@@ -55,6 +56,16 @@ if (status) {
         ], { duration, iterations: Infinity, easing: 'linear' });
         if (status.matches(':hover')) motion.pause();
     };
+    const controls = document.createElement('label');
+    controls.className = 'speed-control';
+    controls.innerHTML = 'Hız <input type="range" min="5" max="150" value="28" aria-label="Kayan yazı hızı"><output>28 px/sn</output>';
+    document.body.append(controls);
+    const slider = controls.querySelector('input');
+    slider.addEventListener('input', () => {
+        speed = Number(slider.value);
+        controls.querySelector('output').textContent = `${speed} px/sn`;
+        update();
+    });
     new ResizeObserver(update).observe(status);
     status.addEventListener('mouseenter', () => motion?.pause());
     status.addEventListener('mouseleave', () => motion?.play());
