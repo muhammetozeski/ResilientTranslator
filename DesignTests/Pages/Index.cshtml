@@ -1,0 +1,27 @@
+@page
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Resilient Translator — Yerleşimler</title>
+    <link rel="stylesheet" href="/design.css">
+</head>
+<body class="gallery">
+    <nav class="design-tabs" aria-label="Tasarım">
+        <a href="/design/1" target="preview" class="selected" data-design="1">1 · Tek satır başlık</a>
+        <a href="/design/2" target="preview" data-design="2">2 · Sol başlık</a>
+        <a href="/design/3" target="preview" data-design="3">3 · Diller altta</a>
+    </nav>
+    <div class="preview-tools">
+        <span>Sağ alt köşeden boyutunu değiştirebilirsin.</span>
+        <output id="dimensions">900 × 530</output>
+        <button type="button" data-size="900,530">900 × 530</button>
+        <button type="button" data-size="600,400">600 × 400</button>
+    </div>
+    <div class="preview-window" id="preview-window">
+        <iframe name="preview" id="preview" src="/design/1" title="Resilient Translator yerleşim önizlemesi"></iframe>
+    </div>
+    <script src="/design.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+@page "/design/{variant:int}"
+@{
+    int variant = int.TryParse(RouteData.Values["variant"]?.ToString(), out int number) && number is >= 1 and <= 3 ? number : 1;
+    string input = "Gereksiz boşlukları azaltıp metne daha çok yer ayırmak istiyorum. Pencere küçüldüğünde de rahatça yazabilmeliyim.\n\nDil seçimi ve değiştirme düğmeleri kolayca ulaşılabilir kalsın. İki metin alanı da düzenlenebilsin.\n\nSade bir yerleşim, metni okumayı ve karşılaştırmayı kolaylaştırır. Başlık ve araçlar az yer kapladığında uzun çeviriler aynı ekrana daha rahat sığar.";
+    string output = "I want to reduce unnecessary space and leave more room for the text. I should still be able to type comfortably when the window is smaller.\n\nThe language selectors and swap buttons should remain easy to reach. Both text areas should be editable.\n\nA simple layout makes the text easier to read and compare. When the title and controls take up less space, longer translations fit more comfortably on the same screen.";
+}
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Resilient Translator — Tasarım @variant</title>
+    <link rel="stylesheet" href="/design.css">
+</head>
+<body>
+<svg class="symbols" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="brand" viewBox="0 0 256 256">
+        <rect x="10" y="10" width="236" height="236" rx="58" fill="#74cf9c"/>
+        <path d="M47 151L81 65H98L132 151H110L103 131H76L69 151ZM82 113H97L90 89Z" fill="#112e26"/>
+        <g fill="none" stroke="#112e26" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"><path d="M146 84H210M178 68V84M155 86C159 112 179 133 208 146M202 86C194 115 178 133 149 147M57 188H193M179 174L193 188L179 202"/></g>
+    </symbol>
+    <symbol id="swap-languages" viewBox="0 0 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15L7 5L11 15M4.5 12H9.5M16 7H25M20.5 4V7M18 8C19 11 21 13 25 15M24 8C23 11 21 13 17 15M4 21H23M20 18L23 21L20 24M7 18L4 21L7 24"/></g></symbol>
+    <symbol id="swap-texts" viewBox="0 0 28 28"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6H14M4 10H11M14 18H24M17 22H24M20 5V13M17 8L20 5L23 8M8 23V15M5 20L8 23L11 20"/></g></symbol>
+</svg>
+<main class="app variant-@variant">
+    @if (variant != 2)
+    {
+        <header class="toolbar">
+            <div class="brand"><svg aria-hidden="true"><use href="#brand"/></svg><h1>Resilient Translator</h1></div>
+            <div class="actions">
+                <button type="button" data-action="languages" title="Dilleri değiştir" aria-label="Dilleri değiştir"><svg><use href="#swap-languages"/></svg></button>
+                <button type="button" data-action="texts" title="Metinleri değiştir" aria-label="Metinleri değiştir"><svg><use href="#swap-texts"/></svg></button>
+            </div>
+            @if (variant == 1)
+            {
+                <div class="language-pair">
+                    <select id="source" aria-label="Girdi dili"><option value="tr" selected>Türkçe</option><option value="en">English</option><option value="auto">Otomatik</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></select>
+                    <span aria-hidden="true">→</span>
+                    <select id="target" aria-label="Çıktı dili"><option value="en" selected>English</option><option value="tr">Türkçe</option><option value="auto">Otomatik</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></select>
+                </div>
+            }
+        </header>
+    }
+    <section class="panes" aria-label="Metin alanları">
+        <div class="pane input-pane">
+            @if (variant == 2)
+            {
+                <header class="pane-header">
+                    <div class="left-title">
+                        <div class="brand"><svg aria-hidden="true"><use href="#brand"/></svg><h1>Resilient Translator</h1></div>
+                        <div class="actions">
+                            <button type="button" data-action="languages" title="Dilleri değiştir" aria-label="Dilleri değiştir"><svg><use href="#swap-languages"/></svg></button>
+                            <button type="button" data-action="texts" title="Metinleri değiştir" aria-label="Metinleri değiştir"><svg><use href="#swap-texts"/></svg></button>
+                        </div>
+                    </div>
+                    <select id="source" aria-label="Girdi dili"><option value="tr" selected>Türkçe</option><option value="en">English</option><option value="auto">Otomatik</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></select>
+                </header>
+            }
+            <textarea id="input" aria-label="Girdi" spellcheck="false">@input</textarea>
+            @if (variant == 2)
+            {
+                <div class="status"><i></i>Hazır</div>
+            }
+            @if (variant == 3)
+            {
+                <div class="pane-bottom">
+                    <div class="status"><i></i>Hazır</div>
+                    <select id="source" aria-label="Girdi dili"><option value="tr" selected>Türkçe</option><option value="en">English</option><option value="auto">Otomatik</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></select>
+                </div>
+            }
+        </div>
+        <div class="pane output-pane">
+            @if (variant == 2)
+            {
+                <header class="pane-header">
+                    <select id="target" aria-label="Çıktı dili"><option value="en" selected>English</option><option value="tr">Türkçe</option><option value="auto">Otomatik</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></select>
+                </header>
+            }
+            <textarea id="output" aria-label="Çıktı" spellcheck="false">@output</textarea>
+            @if (variant == 3)
+            {
+                <div class="pane-bottom">
+                    <select id="target" aria-label="Çıktı dili"><option value="en" selected>English</option><option value="tr">Türkçe</option><option value="auto">Otomatik</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option><option value="ru">Русский</option></select>
+                </div>
+            }
+        </div>
+    </section>
+    @if (variant == 1)
+    {
+        <footer class="status"><i></i>Hazır</footer>
+    }
+</main>
+<script src="/design.js"></script>
+</body>
+</html>
