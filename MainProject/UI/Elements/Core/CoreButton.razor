@@ -36,5 +36,7 @@
         ? $"background:{(Gradient is { } gradient ? $"linear-gradient(135deg,{gradient.Start.ToRgbaHex(true)},{gradient.End.ToRgbaHex(true)})" : Background?.ToRgbaHex(true) ?? "transparent")};color:{TextColor?.ToRgbaHex(true) ?? "inherit"};border-radius:{BorderRadius};padding:{Padding};font-size:{FontSize}px;font-weight:{FontWeight};box-shadow:{Shadow};border:{Border};{Style}"
         : Style;
     /// <summary>Focuses this control's native button without rebuilding its owning page.</summary>
+    /// <param name="preventScroll">Preserves the current scroll position while moving keyboard focus.</param>
+    /// <returns>Completion of native browser focus transfer without rebuilding the element.</returns>
     public ValueTask FocusAsync(bool preventScroll=true) => Element.FocusAsync(preventScroll);
 }

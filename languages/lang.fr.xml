@@ -58,4 +58,8 @@
   <s name="SettingClipboardChangeBudget">Délai de modification du presse-papiers (ms)</s>
   <s name="SettingInputShare">Part de la zone gauche (%)</s>
   <s name="SettingCenterSnapRange">Plage d'alignement au centre (%)</s>
+  <s name="TryAgain">Réessayer</s>
+  <s name="ViewFailed">Affichage impossible. Vous pouvez réessayer.</s>
+  <s name="PageNotFound">Page introuvable.</s>
+  <s name="ExitDeferred">Le dernier enregistrement reste non sauvegardé. Le programme reste ouvert ; réessayez de le fermer.</s>
 </strings>

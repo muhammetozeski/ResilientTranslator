@@ -8,6 +8,7 @@
 }
 <CoreModalCss />
 @code {
+    const bool IsLogEnabled = true;
     [Parameter] public bool IsVisible { get; set; }
     [Parameter] public bool IsWobbling { get; set; }
     [Parameter] public bool IsAcrylic { get; set; }
@@ -25,8 +26,9 @@
         (IsAcrylic ? AppStyles.BuildAcrylicStyle(AcrylicLevel.Strong,AppMeasures.Blur.Heavy) : $"background:{Background.ToRgbaHex(true)};border:{AppMeasures.Border.Thin}px solid {BorderColor.ToRgbaHex(true)};box-shadow:{AppStyles.ShadowHeavy};")
         + $"border-radius:{AppMeasures.Radius.XLarge}px;padding:{AppMeasures.Space.XLarge}px;color:{TextColor.ToRgbaHex(true)};";
     /// <summary>Records the outer-surface action and awaits the caller's existing close operation.</summary>
+    /// <returns>Completion of the caller's existing dialog-close callback.</returns>
     async Task HandleBackdropClick()
     {
-        Log("CoreModal backdrop tapped, closing modal",Run:true);
+        Log("CoreModal backdrop tapped, closing modal",Run:IsLogEnabled);
         await OnBackdropClick.InvokeAsync();
     }}

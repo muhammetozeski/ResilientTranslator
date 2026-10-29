@@ -58,4 +58,8 @@
   <s name="SettingClipboardChangeBudget">Время ожидания изменения буфера обмена (мс)</s>
   <s name="SettingInputShare">Доля левого поля (%)</s>
   <s name="SettingCenterSnapRange">Диапазон привязки к центру (%)</s>
+  <s name="TryAgain">Повторить</s>
+  <s name="ViewFailed">Не удалось отобразить окно. Повторите попытку.</s>
+  <s name="PageNotFound">Страница не найдена.</s>
+  <s name="ExitDeferred">Не удалось записать последний журнал на диск. Приложение остаётся открытым; повторите закрытие.</s>
 </strings>

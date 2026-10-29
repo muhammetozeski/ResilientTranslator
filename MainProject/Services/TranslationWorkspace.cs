@@ -43,6 +43,7 @@ public static class TranslationWorkspace
     public static event Action? WindowHidden;
     /// <summary>Closes transient UI when the retained native surface is dismissed.</summary>
     public static void NotifyWindowHidden() => WindowHidden?.Invoke();
+    public static Func<Task>? RecoverView;
     public static Func<CancellationToken,Task>? FocusInput;
     public static Func<CancellationToken,Task>? FocusWebView;
     /// <summary>Restores the language pair before rendering and observes the one-time preload.</summary>
@@ -73,6 +74,8 @@ public static class TranslationWorkspace
     /// <param name="fromInput">Whether the left editor is the translation source.</param>
     /// <param name="immediate">Skips the typing debounce for captured selections.</param>
     /// <param name="expectedRequest">The capture's owner object, or null for a fresh editor command.</param>
+    /// <param name="forceNetwork">Skips confirmed-result reuse for this explicit user translation command.</param>
+    /// <returns>Completion of this request&apos;s debounce, worker wait and ownership-checked publication.</returns>
     public static async Task EditAsync(string text,bool fromInput,bool immediate=false,RequestContext? expectedRequest=null,bool forceNetwork=false)
     {
         RequestContext previous,request;
@@ -153,8 +156,12 @@ public static class TranslationWorkspace
         Log("Editor texts swapped",Run:IsLogEnabled);
     }
     /// <summary>Exchanges the two language selections.</summary>
+    /// <returns>Completion of the same normalized language-selection operation used by selectors.</returns>
     public static Task SwapLanguagesAsync() => SetLanguagesAsync(TargetLanguage,SourceLanguage);
     /// <summary>Changes language selections and persists one immutable preference snapshot.</summary>
+    /// <param name="source">The source provider, language or snapshot identified by this operation.</param>
+    /// <param name="target">The resolved destination language or verified payload executable.</param>
+    /// <returns>Completion of language persistence and the newly selected translation operation.</returns>
     public static async Task SetLanguagesAsync(string source,string target)
     {
         string input;
@@ -180,6 +187,9 @@ public static class TranslationWorkspace
         await Task.WhenAll(persistence,translation);
     }
     /// <summary>Stores only current language preferences through the shared atomic writer.</summary>
+    /// <param name="preferences">The immutable snapshot accepted by the current preference owner.</param>
+    /// <param name="owner">The request object whose identity decides whether this snapshot is current.</param>
+    /// <returns>The serialized preference save, or immediate completion for a superseded owner.</returns>
     static Task PersistPreferencesAsync(LanguagePreferences preferences,RequestContext owner)
     {
         lock(StateGate) return owner == CurrentSettingsRequest ? Preferences.SaveLanguagesAsync(preferences) : Task.CompletedTask;

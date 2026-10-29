@@ -30,8 +30,6 @@ SetWindowLongPtr
 SetWindowPos
 DwmSetWindowAttribute
 GetCursorPos
-GetWindowRect
-GetClientRect
 WINDOW_STYLE
 WINDOW_EX_STYLE
 SUBCLASSPROC

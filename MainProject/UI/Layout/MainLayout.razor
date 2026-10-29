@@ -15,9 +15,13 @@
         ResilientTranslator.MainProject.Events.MainEvents.OnDataChanged += DataChanged;
     }
     /// <summary>Updates root navigation presentation on its owning dispatcher.</summary>
-    void NavigationChanged(object? sender,Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs args) => _ = InvokeAsync(StateHasChanged);
+    /// <param name="sender">The navigation manager delivering this location update.</param>
+    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
+    void NavigationChanged(object? sender,Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs args) => _ = ResilientTranslator.MainProject.Infrastructure.ExceptionBoundary.RunSafelyAsync(async token => await InvokeAsync(StateHasChanged).WaitAsync(token),operationName:"RefreshLayout");
     /// <summary>Propagates an immutable palette change into existing themed children.</summary>
-    void DataChanged(string name,object? value) { if (name == "OnThemeChanged") _ = InvokeAsync(StateHasChanged); }
+    /// <param name="name">The existing shared event name selecting the root redraw operation.</param>
+    /// <param name="value">The optional payload accompanying the shared application notification.</param>
+    void DataChanged(string name,object? value) { if (name == "OnThemeChanged") _ = ResilientTranslator.MainProject.Infrastructure.ExceptionBoundary.RunSafelyAsync(async token => await InvokeAsync(StateHasChanged).WaitAsync(token),operationName:"RefreshLayout"); }
     /// <summary>Releases the shared root's navigation and theme subscriptions.</summary>
     public void Dispose()
     {

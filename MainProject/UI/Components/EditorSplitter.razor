@@ -11,6 +11,8 @@
     DotNetObjectReference<EditorSplitter>? Reference;
 
     /// <summary>Reuses a single local pointer handler; only completed ratio changes cross into .NET.</summary>
+    /// <param name="firstRender">Whether this is the first completed render of this component instance.</param>
+    /// <returns>Completion of this component's native/JavaScript connection work.</returns>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await ExceptionBoundary.RunSafelyAsync(async token =>
@@ -24,9 +26,12 @@
     /// <summary>Persists the final percentage, retaining proportional widths after window resizing.</summary>
     /// <param name="percentage">The completed left pane share between ten and ninety percent.</param>
     [JSInvokable]
+    /// <param name="percentage">The completed left pane share retained across native window resizing.</param>
+    /// <returns>Completion of durable storage for the final divider percentage.</returns>
     public Task SaveShare(double percentage) => Preferences.SetAsync(Settings.InputShare, percentage.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
     /// <summary>Releases pointer listeners and the callback reference with its owning component.</summary>
+    /// <returns>Completion of observer/animation cleanup for this retired component.</returns>
     public async ValueTask DisposeAsync()
     {
         if (Module is not null)

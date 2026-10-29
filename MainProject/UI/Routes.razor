@@ -1,14 +1,31 @@
 @using Microsoft.AspNetCore.Components.Routing
-
-<Router AppAssembly="@typeof(ResilientTranslator.MainProject.UI.Routes).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(ResilientTranslator.MainProject.UI.Layout.MainLayout)" />
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(ResilientTranslator.MainProject.UI.Layout.MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
-
+@using ResilientTranslator.MainProject.Infrastructure
+@using ResilientTranslator.MainProject.Infrastructure.Localization
+@using ResilientTranslator.MainProject.Services
+@using ResilientTranslator.MainProject.UI.Layout.Architecture
+@implements IDisposable
+<RecoverableErrorBoundary @ref="Boundary">
+    <ChildContent>
+        <Router AppAssembly="@typeof(ResilientTranslator.MainProject.UI.Routes).Assembly">
+            <Found Context="routeData"><RouteView RouteData="@routeData" DefaultLayout="@typeof(ResilientTranslator.MainProject.UI.Layout.MainLayout)" /></Found>
+            <NotFound><LayoutView Layout="@typeof(ResilientTranslator.MainProject.UI.Layout.MainLayout)"><PageTitle>@Strings.PageNotFound</PageTitle><p role="alert">@Strings.PageNotFound</p></LayoutView></NotFound>
+        </Router>
+    </ChildContent>
+    <ErrorContent>
+        <div role="alert" data-window-background style="height:100vh;display:grid;place-content:center;gap:16px;padding:24px;background:Canvas;color:CanvasText;font:16px system-ui">
+            <p>@Strings.ViewFailed</p>
+            <button type="button" data-native-command="recover" @onclick="RecoverAsync">@Strings.TryAgain</button>
+        </div>
+    </ErrorContent>
+</RecoverableErrorBoundary>
+@code {
+    RecoverableErrorBoundary? Boundary;
+    /// <summary>Registers recovery against this root instance without replacing the workspace.</summary>
+    protected override void OnInitialized() => TranslationWorkspace.RecoverView = RecoverAsync;
+    /// <summary>Retries rendering only after a user command and only while the boundary is faulted.</summary>
+    /// <returns>Completion of the contained, explicit view recovery dispatch.</returns>
+    Task RecoverAsync() => ExceptionBoundary.RunSafelyAsync(async token =>
+        await InvokeAsync(() => { if (Boundary?.IsFaulted == true) Boundary.Recover(); }).WaitAsync(token),operationName:"RecoverView");
+    /// <summary>Clears only the recovery callback owned by this retired root.</summary>
+    public void Dispose() { if (TranslationWorkspace.RecoverView == RecoverAsync) TranslationWorkspace.RecoverView = null; }
+}

@@ -7,6 +7,8 @@ using ResilientTranslator.MainProject.Infrastructure.Localization;
 namespace ResilientTranslator.MainProject.Infrastructure;
 
 /// <summary>Connects a reflected setting object to its editor metadata without string-based dispatch.</summary>
+/// <param name="Setting">The registered setting object being parsed, validated or edited.</param>
+/// <param name="Editor">The reflected editor label and validation metadata for this setting object.</param>
 internal sealed record PreferenceEntry(ISetting Setting, PreferenceAttribute Editor)
 {
     public string Label => (string)Editor.Resource.GetValue(null)!;
@@ -24,7 +26,7 @@ public static class Preferences
         .Where(item => item.Editor is not null)
         .Select(item => new PreferenceEntry((ISetting)item.Field.GetValue(null)!, item.Editor!)).ToArray();
     public static event Action? Changed;
-    public static Func<Task<string[]>>? LoadFonts;
+    public static Func<CancellationToken,Task<string[]>>? LoadFonts;
     public static double InputShare => Settings.InputShare.Value;
     public static int CenterSnapRange => Settings.CenterSnapRange.Value;
     public static double StatusSpeed => Settings.StatusSpeed.Value;
@@ -71,6 +73,8 @@ public static class Preferences
     }
 
     /// <summary>Serializes complete UI-language changes off the dispatcher and persists only successful selections.</summary>
+    /// <param name="code">The requested UI culture code or native hook status supplied by the caller.</param>
+    /// <returns>True only after complete UI-language apply and durable preference persistence.</returns>
     static async Task<bool> SetLanguageAsync(string code)
     {
         if (!LanguageCatalog.All.Any(language => language.Code == code && code != "auto")) return false;
@@ -87,6 +91,8 @@ public static class Preferences
     }
 
     /// <summary>Keeps resolved language history separate from startup defaults.</summary>
+    /// <param name="languages">One immutable resolved translation-language preference snapshot.</param>
+    /// <returns>Completion of the shared writer for the resolved language snapshot.</returns>
     internal static Task SaveLanguagesAsync(LanguagePreferences languages)
     {
         lock (StateGate)
@@ -102,6 +108,7 @@ public static class Preferences
     /// <summary>Stores the last completed resize, with no file access on the window dispatcher.</summary>
     /// <param name="width">Native window width in pixels.</param>
     /// <param name="height">Native window height in pixels.</param>
+    /// <returns>Completion of durable resize-preference persistence.</returns>
     public static Task SaveWindowSizeAsync(int width, int height)
     {
         lock (StateGate) { Settings.WindowWidth.Value = width; Settings.WindowHeight.Value = height; }
@@ -114,25 +121,31 @@ public static class Preferences
     {
         var outcome = await ExceptionBoundary.RunSafelyAsync(async token =>
         {
-            await SaveGate.WaitAsync(token).WaitAsync(token);
+            if (!await SaveGate.WaitAsync(TimeSpan.FromSeconds(5), token).WaitAsync(token))
+                throw new TimeoutException("The settings writer is still occupied.");
+            Task saving;
             try
             {
                 string snapshot;
                 lock (StateGate) snapshot = SettingsManager.CaptureSnapshot();
-                await Task.Run(() => Policy.Handle<IOException>().Or<UnauthorizedAccessException>()
-                    .WaitAndRetry(3, attempt => TimeSpan.FromMilliseconds(25 * attempt),
-                        (error, delay, attempt, context) => ExceptionBoundary.LogSafely($"Settings write retry; attempt={attempt}; error={error}"))
-                    .Execute(() => SettingsManager.SaveSnapshot(snapshot, AppConstants.ConfigFileName))).ConfigureAwait(false);
-                SaveError = "";
-                Log($"Preferences saved; path={AppConstants.ConfigFileName}", Run: IsLogEnabled);
+                saving = Task.Run(() =>
+                {
+                    try { SettingsPersistence.SaveSnapshot(snapshot); }
+                    finally { SaveGate.Release(); }
+                });
             }
-            finally { SaveGate.Release(); }
+            catch { SaveGate.Release(); throw; }
+            _ = saving.ContinueWith(task => ExceptionBoundary.LogSafely($"Late settings writer failure; error={task.Exception}"),CancellationToken.None,TaskContinuationOptions.OnlyOnFaulted,TaskScheduler.Default);
+            await saving.WaitAsync(TimeSpan.FromSeconds(5),token);
+            SaveError = "";
         }, operationName: "SavePreferences");
         if (!outcome.Succeeded) { SaveError = Strings.SettingsSaveFailed; Changed?.Invoke(); }
         return outcome.Succeeded;
     }
-
     /// <summary>Checks semantic limits in addition to the registered type's parser.</summary>
+    /// <param name="setting">The registered setting object being parsed, validated or edited.</param>
+    /// <param name="metadata">The setting&apos;s reflected numeric and UI-editor constraints.</param>
+    /// <returns>Whether the parsed value satisfies its setting-specific semantic bounds.</returns>
     static bool IsValid(ISetting setting, PreferenceAttribute metadata)
     {
         if (setting.Value is double or int)

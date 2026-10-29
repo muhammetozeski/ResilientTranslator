@@ -58,4 +58,8 @@
   <s name="SettingClipboardChangeBudget">Attesa di modifica degli appunti (ms)</s>
   <s name="SettingInputShare">Proporzione dell'area sinistra (%)</s>
   <s name="SettingCenterSnapRange">Intervallo di aggancio al centro (%)</s>
+  <s name="TryAgain">Riprova</s>
+  <s name="ViewFailed">Impossibile visualizzare la schermata. Puoi riprovare.</s>
+  <s name="PageNotFound">Pagina non trovata.</s>
+  <s name="ExitDeferred">Impossibile salvare il registro finale. Il programma resta aperto; riprova a chiuderlo.</s>
 </strings>

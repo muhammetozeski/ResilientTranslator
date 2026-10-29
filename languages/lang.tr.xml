@@ -58,4 +58,8 @@
   <s name="SettingClipboardChangeBudget">Pano değişimi süresi (ms)</s>
   <s name="SettingInputShare">Sol metin alanı (%)</s>
   <s name="SettingCenterSnapRange">Merkeze yakalama aralığı (%)</s>
+  <s name="TryAgain">Yeniden dene</s>
+  <s name="ViewFailed">Ekran oluşturulamadı. Yeniden deneyebilirsin.</s>
+  <s name="PageNotFound">Sayfa bulunamadı.</s>
+  <s name="ExitDeferred">Son kayıt diske yazılamadı. Program açık tutuluyor; kapanışı yeniden deneyebilirsin.</s>
 </strings>

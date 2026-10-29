@@ -58,4 +58,8 @@
   <s name="SettingClipboardChangeBudget">Espera de cambio del portapapeles (ms)</s>
   <s name="SettingInputShare">Proporción del campo izquierdo (%)</s>
   <s name="SettingCenterSnapRange">Intervalo de ajuste al centro (%)</s>
+  <s name="TryAgain">Reintentar</s>
+  <s name="ViewFailed">No se pudo mostrar la vista. Puedes volver a intentarlo.</s>
+  <s name="PageNotFound">Página no encontrada.</s>
+  <s name="ExitDeferred">No se pudo guardar el último registro. La aplicación sigue abierta; vuelve a intentar cerrarla.</s>
 </strings>

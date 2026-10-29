@@ -15,6 +15,8 @@
     bool Disposed;
 
     /// <summary>Shares the same bounded animation implementation between the live status and settings preview.</summary>
+    /// <param name="firstRender">Whether this is the first completed render of this component instance.</param>
+    /// <returns>Completion of this component's native/JavaScript connection work.</returns>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await ExceptionBoundary.RunSafelyAsync(async token =>
@@ -25,6 +27,7 @@
     }
 
     /// <summary>Disconnects size events and cancels animation when its owning component disappears.</summary>
+    /// <returns>Completion of observer/animation cleanup for this retired component.</returns>
     public async ValueTask DisposeAsync()
     {
         Disposed = true;

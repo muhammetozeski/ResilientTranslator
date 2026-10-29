@@ -58,4 +58,8 @@
   <s name="SettingClipboardChangeBudget">Clipboard change budget (ms)</s>
   <s name="SettingInputShare">Left editor share (%)</s>
   <s name="SettingCenterSnapRange">Center snap range (%)</s>
+  <s name="TryAgain">Retry</s>
+  <s name="ViewFailed">The view could not be rendered. You can retry.</s>
+  <s name="PageNotFound">Page not found.</s>
+  <s name="ExitDeferred">The final record could not be written to disk. The application remains open; retry closing it.</s>
 </strings>

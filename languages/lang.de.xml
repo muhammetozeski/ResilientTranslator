@@ -58,4 +58,8 @@
   <s name="SettingClipboardChangeBudget">Wartezeit auf die Zwischenablage (ms)</s>
   <s name="SettingInputShare">Anteil des linken Textfelds (%)</s>
   <s name="SettingCenterSnapRange">Einrastbereich in der Mitte (%)</s>
+  <s name="TryAgain">Erneut versuchen</s>
+  <s name="ViewFailed">Die Ansicht konnte nicht angezeigt werden. Versuche es erneut.</s>
+  <s name="PageNotFound">Seite nicht gefunden.</s>
+  <s name="ExitDeferred">Der letzte Eintrag konnte nicht gespeichert werden. Die Anwendung bleibt geöffnet; versuche erneut, sie zu schließen.</s>
 </strings>

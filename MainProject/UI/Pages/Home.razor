@@ -43,34 +43,47 @@
         TranslationWorkspace.FocusInput = FocusInputAsync;
     }
     /// <summary>Focuses the first real editor after native activation; opening settings retains its own focus.</summary>
+    /// <param name="token">Cancels the pending UI dispatch or input-focus wait.</param>
+    /// <returns>Completion of focus transfer into the existing first editor.</returns>
     Task FocusInputAsync(CancellationToken token) => InvokeAsync(async () =>
     {
         token.ThrowIfCancellationRequested();
         if (!SettingsOpen) await (InputElement ?? throw new InvalidOperationException("The input component is unavailable.")).FocusAsync(preventScroll: true).AsTask().WaitAsync(token);
     });
     /// <summary>Signals native readiness only after the first complete Blazor render.</summary>
+    /// <param name="firstRender">Whether this is the first completed render of this component instance.</param>
     protected override void OnAfterRender(bool firstRender) { if (firstRender) TranslationWorkspace.ViewReady?.Invoke(); }
     /// <summary>Renders shared-state notifications on the owning dispatcher.</summary>
-    void Refresh() => _ = InvokeAsync(StateHasChanged);
+    void Refresh() => _ = ExceptionBoundary.RunSafelyAsync(async token => await InvokeAsync(StateHasChanged).WaitAsync(token),operationName:"RefreshHome");
     /// <summary>Opens the preferences dialog from the product icon or title.</summary>
     void OpenSettings() => SettingsOpen = true;
     /// <summary>Closes settings without discarding already persisted edits.</summary>
     void CloseSettings() => SettingsOpen = false;
     /// <summary>Discards only the open dialog when outside-window dismissal hides the retained surface.</summary>
-    void DismissSettings() => _ = InvokeAsync(() => { SettingsOpen = false; StateHasChanged(); });
+    void DismissSettings() => _ = ExceptionBoundary.RunSafelyAsync(async token => await InvokeAsync(() => { SettingsOpen = false; StateHasChanged(); }).WaitAsync(token),operationName:"DismissSettings");
     /// <summary>Uses the same immediate hide action when a native browser bridge is unavailable.</summary>
     void Hide() => TranslationWorkspace.HideWindow?.Invoke();
     /// <summary>Starts a fresh forward translation without debounce or cache reuse.</summary>
+    /// <returns>Completion of the fresh forward translation without debounce or confirmed-cache reuse.</returns>
     Task TranslateNow() => TranslationWorkspace.EditAsync(TranslationWorkspace.Input, true, true, forceNetwork: true);
     /// <summary>Accepts input edits through the latest-request translation pipeline.</summary>
+    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
+    /// <returns>Completion or cancellation of this newest forward editor command.</returns>
     Task InputChanged(ChangeEventArgs args) => TranslationWorkspace.EditAsync(args.Value?.ToString() ?? "", true);
     /// <summary>Accepts reverse edits through the same translation pipeline.</summary>
+    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
+    /// <returns>Completion or cancellation of this newest reverse editor command.</returns>
     Task OutputChanged(ChangeEventArgs args) => TranslationWorkspace.EditAsync(args.Value?.ToString() ?? "", false);
     /// <summary>Applies source selection and the existing language collision rules.</summary>
+    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
+    /// <returns>Completion of normalized source selection and its resulting translation.</returns>
     Task SourceChanged(ChangeEventArgs args) => TranslationWorkspace.SetLanguagesAsync(args.Value?.ToString() ?? "en", TranslationWorkspace.TargetLanguage);
     /// <summary>Applies target selection and the existing Automatic fallback rules.</summary>
+    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
+    /// <returns>Completion of normalized target selection and its resulting translation.</returns>
     Task TargetChanged(ChangeEventArgs args) => TranslationWorkspace.SetLanguagesAsync(TranslationWorkspace.SourceLanguage, args.Value?.ToString() ?? "tr");
     /// <summary>Uses the language catalog shared with startup preferences.</summary>
+    /// <returns>The shared language-option fragment used by both native selectors.</returns>
     RenderFragment LanguageOptions() => @<text>@foreach (var language in LanguageCatalog.All) { <option value="@language.Code">@language.Name</option> }</text>;
     /// <summary>Releases retained screen subscriptions when its component is disposed.</summary>
     public override void Dispose()
@@ -78,7 +91,7 @@
         TranslationWorkspace.Changed -= Refresh;
         Preferences.Changed -= Refresh;
         TranslationWorkspace.WindowHidden -= DismissSettings;
-        TranslationWorkspace.FocusInput = null;
+        if (TranslationWorkspace.FocusInput == FocusInputAsync) TranslationWorkspace.FocusInput = null;
         base.Dispose();
     }
 }

@@ -59,4 +59,7 @@ public static class Strings
     public static string SettingClipboardChangeBudget = "Pano değişimi süresi (ms)";
     public static string SettingInputShare = "Sol metin alanı (%)";
     public static string SettingCenterSnapRange = "Merkeze yakalama aralığı (%)";
+    public static string ViewFailed = "Ekran oluşturulamadı. Yeniden deneyebilirsin.";
+    public static string TryAgain = "Yeniden dene";
+    public static string PageNotFound = "Sayfa bulunamadı.";    public static string ExitDeferred = "Son kayıt diske yazılamadı. Program açık tutuluyor; kapanışı yeniden deneyebilirsin.";
 }

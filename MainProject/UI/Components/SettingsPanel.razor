@@ -1,3 +1,4 @@
+@implements IDisposable
 @using System.Globalization
 @using ResilientTranslator.MainProject.Infrastructure
 @using ResilientTranslator.MainProject.Infrastructure.Localization
@@ -13,7 +14,7 @@
                 <label><span>@Label(setting)</span><select value="@setting.Value" @onchange="args => Change(setting,args)"><option value="">—</option>@foreach (var language in LanguageCatalog.All) { <option value="@language.Code">@language.Name</option> }</select></label>
             }
             <div class="font-picker">
-                <label><span>@Label(Settings.EditorFont)</span><CoreButton Appearance="ControlAppearance.Compact" OnClick="LoadFonts" aria-expanded="@(Fonts is not null)">@Settings.EditorFont.Value</CoreButton></label>
+                <label><span>@Label(Settings.EditorFont)</span><CoreButton Appearance="ControlAppearance.Compact" OnClick="LoadFonts" aria-expanded="@FontPickerOpen">@Settings.EditorFont.Value</CoreButton></label>
                 @if (Fonts is not null)
                 {
                     <select size="7" aria-label="@Label(Settings.EditorFont)" value="@Settings.EditorFont.Value" @onchange="SelectFont">@foreach (string font in Fonts) { <option value="@font">@font</option> }</select>
@@ -38,42 +39,71 @@
     [Parameter] public EventCallback OnClose { get; set; }
     CoreButton? CloseButton;
     string[]? Fonts;
+    RequestContext FontRequest = new();
+    bool FontPickerOpen, Disposed;
     string Error = "";
     double Speed = Preferences.StatusSpeed;
 
     /// <summary>Places keyboard focus inside the dialog after it is rendered.</summary>
+    /// <param name="firstRender">Whether this is the first completed render of this component instance.</param>
+    /// <returns>Completion of this component's native/JavaScript connection work.</returns>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender) await ExceptionBoundary.RunSafelyAsync(async token => await (CloseButton ?? throw new InvalidOperationException("The close button is unavailable.")).FocusAsync().AsTask().WaitAsync(token), operationName: "FocusSettings");
     }
     /// <summary>Looks up bilingual metadata by the registered setting's object identity.</summary>
+    /// <param name="setting">The registered preference object edited by this control.</param>
+    /// <returns>The current UI-language label for the registered setting object.</returns>
     static string Label(ISetting setting) => Preferences.Entries.Single(entry => entry.Setting == setting).Label;
     /// <summary>Uses HTML number syntax independently of the display language.</summary>
-    static string Invariant(double number) => number.ToString("0.###", CultureInfo.InvariantCulture);
+    /// <param name="number">The numeric value formatted for invariant HTML input syntax.</param>
+    /// <returns>The exact round-trippable number accepted by HTML controls.</returns>
+    static string Invariant(double number) => number.ToString("G", CultureInfo.InvariantCulture);
     /// <summary>Applies an HTML input value through the common validator and writer.</summary>
+    /// <param name="setting">The registered preference object edited by this control.</param>
+    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
+    /// <returns>Completion of validation and durable persistence for the current input event.</returns>
     Task Change(ISetting setting, ChangeEventArgs args) => Set(setting, Convert.ToString(args.Value, CultureInfo.InvariantCulture) ?? "");
     /// <summary>Preserves the previous value when a UI edit is invalid and reports persistence failures.</summary>
+    /// <param name="setting">The registered preference object edited by this control.</param>
+    /// <param name="text">The complete raw editor value to validate and persist.</param>
+    /// <returns>Completion of the accepted preference edit and its recorded failure handling.</returns>
     async Task Set(ISetting setting, string text) => Error = await Preferences.SetAsync(setting, text) ? "" : Preferences.SaveError.Length > 0 ? Preferences.SaveError : Strings.InvalidSetting;
     /// <summary>Updates the real ticker component locally while the user moves the speed slider.</summary>
+    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
     void PreviewSpeed(ChangeEventArgs args) { if (double.TryParse(args.Value?.ToString(), CultureInfo.InvariantCulture, out double value)) Speed = value; }
     /// <summary>Persists speed on release, avoiding file writes for every slider movement.</summary>
+    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
+    /// <returns>Completion of persistence after the slider interaction ends.</returns>
     Task SaveSpeed(ChangeEventArgs args) => Change(Settings.StatusSpeed, args);
     /// <summary>Changes fractional font size with one-pixel steps without truncating its fraction.</summary>
+    /// <param name="direction">One-pixel increment or decrement applied without dropping the existing fraction.</param>
+    /// <returns>Completion of the exact fractional-size increment or decrement.</returns>
     Task StepFont(int direction) => Set(Settings.EditorFontSize, Invariant(Math.Clamp(Settings.EditorFontSize.Value + direction, 1, 300)));
     /// <summary>Enumerates installed font families only on demand; closing the list releases its RAM reference.</summary>
+    /// <returns>Completion of the current picker's private font enumeration.</returns>
     async Task LoadFonts()
     {
-        if (Fonts is not null) { Fonts = null; return; }
+        FontRequest.Cancel();
+        FontPickerOpen = !FontPickerOpen;
+        Fonts = null;
+        if (!FontPickerOpen) return;
+        var owner = FontRequest = new();
         var result = await ExceptionBoundary.RunSafelyAsync(async token =>
         {
             if (Preferences.LoadFonts is not { } load) throw new InvalidOperationException("The native font provider is unavailable.");
-            return await load().WaitAsync(token);
-        }, operationName: "EnumerateFonts");
+            return await load(token).WaitAsync(token);
+        }, owner.Token, operationName: "EnumerateFonts");
+        if (Disposed || owner != FontRequest || !FontPickerOpen) return;
         if (result.Succeeded) Fonts = result.Value;
-        else Error = Strings.FontsUnavailable;
-    }
-    /// <summary>Saves the selected family name and releases the enumerated list.</summary>
-    async Task SelectFont(ChangeEventArgs args) { await Change(Settings.EditorFont, args); Fonts = null; }
+        else if (result.Status != OperationStatus.Canceled) Error = Strings.FontsUnavailable;
+    }    /// <summary>Saves the selected family name and releases the enumerated list.</summary>
+    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
+    /// <returns>Completion of selected-family persistence and list release.</returns>
+    async Task SelectFont(ChangeEventArgs args) { await Change(Settings.EditorFont, args); FontPickerOpen = false; Fonts = null; }
     /// <summary>Supports closing the dialog without reaching for the mouse.</summary>
+    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
+    /// <returns>Completion of Escape dismissal or immediate completion for other keys.</returns>
     Task KeyDown(KeyboardEventArgs args) => args.Key == "Escape" ? OnClose.InvokeAsync() : Task.CompletedTask;
-}
+    /// <summary>Stops the open picker's private work and releases its RAM-only font list.</summary>
+    public void Dispose() { Disposed = true; FontPickerOpen = false; Fonts = null; FontRequest.Cancel(); }}

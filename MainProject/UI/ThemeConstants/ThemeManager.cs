@@ -6,16 +6,20 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
     /// </summary>
     public static class ThemeManager
     {
+        const bool IsLogEnabled = true;
         public static AppTheme Current { get; private set; } = AppThemes.TranslatorDark;
 
         /// <summary>
         /// Replace the active palette. Fires <see cref="Events.MainEvents.OnDataChanged"/> which the
         /// root layout subscribes to so the entire component tree re-renders against the new theme.
         /// </summary>
+        /// <param name="theme">The immutable palette published through the shared component tree.</param>
         public static void Apply(AppTheme theme)
         {
+            ArgumentNullException.ThrowIfNull(theme);
             if (theme == Current) return;
             Current = theme;
+            Log($"Active palette changed; name={theme.Name}",Run:IsLogEnabled);
             Events.MainEvents.Trigger("OnThemeChanged");
         }
     }
