@@ -62,3 +62,6 @@ select,.language-pair select,.variant-1 .language-pair select{field-sizing:conte
 .toolbar-status i{display:inline-block;margin-right:7px;vertical-align:middle}
 .hide-button{margin-left:auto;flex-shrink:0;width:32px;height:32px;padding:0;font-size:24px;background:transparent;border:0;color:#c7d2df}
 
+
+.toolbar-status{text-overflow:clip}.status-track{display:inline-block;white-space:nowrap}
+

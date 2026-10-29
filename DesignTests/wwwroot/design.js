@@ -30,3 +30,33 @@ if (preview) {
         [input.value, output.value] = [output.value, input.value];
     });
 }
+
+// Animate only overflowing status text; recalculate after resizing.
+const status = document.querySelector('.toolbar-status');
+if (status) {
+    const track = document.createElement('span');
+    track.className = 'status-track';
+    while (status.firstChild) track.append(status.firstChild);
+    status.append(track);
+    let motion;
+    const update = () => {
+        motion?.cancel();
+        const distance = track.scrollWidth - status.clientWidth;
+        if (distance <= 0 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const travel = Math.max(2000, distance / 28 * 1000);
+        const duration = travel * 2 + 2400;
+        const pause = 1200 / duration;
+        motion = track.animate([
+            { transform: 'translateX(0)', offset: 0 },
+            { transform: 'translateX(0)', offset: pause },
+            { transform: `translateX(-${distance}px)`, offset: .5 },
+            { transform: `translateX(-${distance}px)`, offset: .5 + pause },
+            { transform: 'translateX(0)', offset: 1 }
+        ], { duration, iterations: Infinity, easing: 'linear' });
+        if (status.matches(':hover')) motion.pause();
+    };
+    new ResizeObserver(update).observe(status);
+    status.addEventListener('mouseenter', () => motion?.pause());
+    status.addEventListener('mouseleave', () => motion?.play());
+    update();
+}
