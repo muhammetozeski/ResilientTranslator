@@ -1,5 +1,6 @@
 namespace ResilientTranslator.MainProject.Constants.ThemeConstants
 {
+    /// <summary>Defines shared dimensions, typography and timing values consumed by Razor styles.</summary>
     public static class AppMeasures
     {
         /// <summary> Corner radii in CSS px (Circular/Pill are special — see their notes). </summary>
@@ -216,6 +217,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
             public const int CompactToolbar = 880;
             public const int NarrowToolbar = 540;
         }
+        /// <summary>Orders UI surfaces by their semantic stacking role.</summary>
         public static class ZLayer
         {
             public const int Base = 1;

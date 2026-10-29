@@ -8,6 +8,8 @@ internal static class LocalizationLog
 {
     private const bool IsLogEnabled = true;
 
+    /// <summary>Routes localization decisions into the existing application logger.</summary>
+    /// <param name="message">The complete diagnostic text or native Windows message identifier.</param>
     internal static void App(string message)
     {
         if (IsLogEnabled && LocManager.IsLogEnabled)
@@ -16,6 +18,9 @@ internal static class LocalizationLog
         }
     }
 
+    /// <summary>Records localization failures without introducing a second logging sink.</summary>
+    /// <param name="message">The complete diagnostic text or native Windows message identifier.</param>
+    /// <param name="exception">The original exception that must remain available in the final diagnostic.</param>
     internal static void Error(string message, Exception exception)
     {
         if (IsLogEnabled && LocManager.IsLogEnabled)

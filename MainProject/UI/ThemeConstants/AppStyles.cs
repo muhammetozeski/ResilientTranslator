@@ -14,6 +14,12 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
     public static class AppStyles
     {
         /// <summary> Builds a CSS shadow string (x/y offset, blur radius, color, opacity); shared by both box-shadow and text-shadow. </summary>
+        /// <param name="x">The horizontal shadow offset or original pointer coordinate.</param>
+        /// <param name="y">The vertical shadow offset or original pointer coordinate.</param>
+        /// <param name="blur">The backdrop blur radius in CSS pixels.</param>
+        /// <param name="color">The typed gradient-stop color.</param>
+        /// <param name="opacity">The requested alpha fraction between zero and one.</param>
+        /// <returns>An invariant CSS shadow value with the supplied geometry and color.</returns>
         public static string GetShadow(int x, int y, int blur, Color color, float opacity)
             => $"{x}px {y}px {blur}px rgba({(int)(color.Red * 255)}, {(int)(color.Green * 255)}, {(int)(color.Blue * 255)}, {opacity.ToString(System.Globalization.CultureInfo.InvariantCulture)})";
 
@@ -21,6 +27,9 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         public static string SettingsShadow => $"0 12px 40px {AppColors.Overlay.ToRgbaHex(true)}";
 
         /// <summary>Escapes a user-selected font and renders its invariant size and typed theme color.</summary>
+        /// <param name="family">The selected installed font-family name to escape for CSS.</param>
+        /// <param name="size">The original window or CSS-gradient dimensions.</param>
+        /// <returns>Invariant CSS for the selected family, size and shared editor-text color.</returns>
         public static string BuildEditorTypography(string family, double size) =>
             FormattableString.Invariant($"font-family:'{family.Replace("\\", "\\\\").Replace("'", "\\'")}';font-size:{size}px;color:{AppColors.EditorText.ToRgbaHex(true)}");
         public static string ShadowSoft => GetShadow(0, 4, 12, Colors.Black, 0.05f);
@@ -30,12 +39,22 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         public static string ShadowErrorGlow => GetShadow(0, 10, 20, AppColors.Error, 0.4f);
 
         /// <summary> Same shape as <see cref="ShadowPrimaryGlow"/> but tinted by an arbitrary color so gradient cards can glow in their own hue. </summary>
+        /// <param name="tint">The typed color used to derive a glow.</param>
+        /// <param name="opacity">The requested alpha fraction between zero and one.</param>
+        /// <returns>A CSS shadow using the requested tint and opacity.</returns>
         public static string GetGlow(Color tint, float opacity = 0.3f) => GetShadow(0, 8, 20, tint, opacity);
 
         /// <summary> Black drop / text shadow — the common case, so call sites skip passing Colors.Black each time. </summary>
+        /// <param name="x">The horizontal shadow offset or original pointer coordinate.</param>
+        /// <param name="y">The vertical shadow offset or original pointer coordinate.</param>
+        /// <param name="blur">The backdrop blur radius in CSS pixels.</param>
+        /// <param name="opacity">The requested alpha fraction between zero and one.</param>
+        /// <returns>An invariant CSS shadow value with the supplied geometry and color.</returns>
         public static string GetShadow(int x, int y, int blur, float opacity) => GetShadow(x, y, blur, Colors.Black, opacity);
 
         /// <summary> Translucent black darkening layer for image overlays and modal backdrops — one central "scrim" so every dimming surface stays consistent. </summary>
+        /// <param name="opacity">The requested alpha fraction between zero and one.</param>
+        /// <returns>The theme-independent translucent black CSS color used for dimming.</returns>
         public static string Scrim(float opacity) => Colors.Black.WithAlpha(opacity).ToRgbaHex(true);
 
         /// <summary>
@@ -50,6 +69,8 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// dark scrim and boosted saturation, so the whole viewport reads as color-mixing glass (never a foggy
         /// white haze). This is the glass over the viewport, not the card's own surface. One central definition.
         /// </summary>
+        /// <param name="blur">The backdrop blur radius in CSS pixels.</param>
+        /// <returns>CSS declarations for the modal&apos;s dimmed and blurred backdrop.</returns>
         public static string BuildBackdropFrost(int blur = AppMeasures.Blur.Normal)
             => $"background:{Scrim(BackdropScrimOpacity)};" +
                $"backdrop-filter:blur({blur}px) saturate(160%);-webkit-backdrop-filter:blur({blur}px) saturate(160%);";
@@ -69,6 +90,9 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// The <see cref="AcrylicLevel.Strong"/> level (modal / dialog / error surfaces) additionally
         /// stacks a pure-white frost under the surface tint so its content reads clearly.
         /// </summary>
+        /// <param name="level">The semantic acrylic surface intensity.</param>
+        /// <param name="blur">The backdrop blur radius in CSS pixels.</param>
+        /// <returns>A CSS declaration block derived from the active semantic surface and blur.</returns>
         public static string BuildAcrylicStyle(AcrylicLevel level = AcrylicLevel.Normal, int blur = AppMeasures.Blur.Normal)
         {
             Color bg = level switch
@@ -96,6 +120,8 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         }
 
         /// <summary> The frosted bar surface shared by the top header and the bottom navigation: the central acrylic fill, rounded inner corners, and a single hairline on the edge facing the content (the other three borders are dropped because they sit on the screen edges). </summary>
+        /// <param name="pinnedToBottom">Selects bottom-facing rather than top-facing bar corners and borders.</param>
+        /// <returns>CSS for the chosen top or bottom shared bar surface.</returns>
         public static string BuildBarSurface(bool pinnedToBottom)
         {
             string innerEdge = pinnedToBottom
@@ -109,6 +135,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// a vertical base gradient. Three soft blooms give backdrop-filter blur the contrast it needs
         /// to read as real frosted glass instead of a flat color.
         /// </summary>
+        /// <returns>The active backdrop CSS, including a plain gradient when no radial stops are configured.</returns>
         public static string BuildAuroraBackground()
         {
             string radials = string.Join(", ", AppColors.AuroraStops.Select(s =>

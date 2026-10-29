@@ -55,6 +55,7 @@ namespace ResilientTranslator.MainProject.UI.Elements.Structure
             $"--stack-item-pad-bottom:{ItemPaddingBottom}px;" +
             $"--stack-item-pad-left:{ItemPaddingLeft}px;";
 
+        /// <summary>Provides the supported flex directions used by Stack.</summary>
         public static class Directions
         {
             public const string Row = "row";
@@ -63,6 +64,7 @@ namespace ResilientTranslator.MainProject.UI.Elements.Structure
             public const string ColumnReverse = "column-reverse";
         }
 
+        /// <summary>Provides cross-axis alignment values used by Stack.</summary>
         public static class Aligns
         {
             public const string Start = "flex-start";
@@ -72,6 +74,7 @@ namespace ResilientTranslator.MainProject.UI.Elements.Structure
             public const string Baseline = "baseline";
         }
 
+        /// <summary>Provides main-axis alignment values used by Stack.</summary>
         public static class Justifies
         {
             public const string Start = "flex-start";

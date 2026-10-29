@@ -20,6 +20,8 @@ public static class TranslationRecovery
     /// <param name="target">The resolved destination language.</param>
     /// <param name="translate">Creates and retires an independent engine session for each call.</param>
     /// <param name="token">Cancels attempts, retry delays and remaining chunks.</param>
+    /// <param name="bypassCache">Requires a fresh provider call rather than reusing confirmed output.</param>
+    /// <returns>A confirmed complete translation or the propagated final/cancellation failure.</returns>
     public static async Task<ConfirmedTranslation> ExecuteAsync(string text,string source,string target,
         Func<TranslationAttempt,CancellationToken,Task<ConfirmedTranslation>> translate,CancellationToken token=default,bool bypassCache=false)
     {
@@ -117,6 +119,8 @@ public static class TranslationRecovery
     }
 
     /// <summary>Retries only service, transport, timeout and unusable-response failures; deployment and argument faults remain visible.</summary>
+    /// <param name="error">The retained final operation exception, if the operation failed.</param>
+    /// <returns>Whether the failure may safely trigger a fresh translation attempt.</returns>
     static bool CanRetry(Exception error) => error switch
     {
         FileNotFoundException or DirectoryNotFoundException or FileLoadException or BadImageFormatException => false,
@@ -127,6 +131,8 @@ public static class TranslationRecovery
     };
 
     /// <summary>Splits on Unicode text-element boundaries and carries original whitespace separately.</summary>
+    /// <param name="text">The complete immutable text accepted by this operation.</param>
+    /// <returns>Unicode-safe provider-sized segments with the original separators retained.</returns>
     static IEnumerable<Segment> Split(string text)
     {
         int start=0;
@@ -151,11 +157,19 @@ public static class TranslationRecovery
             start=nextStart;
         }
     }
+    /// <summary>Separates confirmed translations by full source text and resolved language pair.</summary>
+    /// <param name="Text">The complete immutable text accepted by this operation.</param>
+    /// <param name="Source">The source ISO language code used by this confirmed-cache key.</param>
+    /// <param name="Target">The destination ISO language code used by this confirmed-cache key.</param>
     sealed record CacheKey(string Text,string Source,string Target);
+    /// <summary>Keeps one provider-sized text segment together with its original following whitespace.</summary>
+    /// <param name="Text">The complete immutable text accepted by this operation.</param>
+    /// <param name="Separator">The original whitespace following this text segment.</param>
     sealed record Segment(string Text,string Separator);
 }
 
 /// <summary>Marks an exhausted engine service pass as recoverable without confusing it with caller cancellation.</summary>
+/// <param name="error">The retained final operation exception, if the operation failed.</param>
 public sealed class TranslationServicesException(Exception error) : Exception("The engine service pass failed.",error);
 
 

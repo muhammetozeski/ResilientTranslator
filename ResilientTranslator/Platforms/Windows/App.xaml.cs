@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -19,6 +19,8 @@ namespace ResilientTranslator.WinUI
             this.InitializeComponent();
         }
 
+        /// <summary>Builds the MAUI service host and connects the shared UI to Windows lifecycle callbacks.</summary>
+        /// <returns>The configured MAUI host, ready for native window creation.</returns>
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
     }
 

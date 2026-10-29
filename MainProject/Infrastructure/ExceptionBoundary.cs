@@ -13,6 +13,9 @@ public enum OperationStatus
 
 /// <summary>Contains the value or the failure reported by the final exception boundary.</summary>
 /// <typeparam name="T">The successful result type.</typeparam>
+/// <param name="Status">The explicit successful, failed or canceled operation outcome.</param>
+/// <param name="Value">The current console character, resource value or setting representation supplied by its caller.</param>
+/// <param name="Error">The retained final operation exception, if the operation failed.</param>
 public readonly record struct OperationResult<T>(OperationStatus Status, T? Value, Exception? Error)
 {
     const bool IsLogEnabled = true;
@@ -148,6 +151,7 @@ public static class ExceptionBoundary
     /// <summary>Prevents logging failures from escaping the final application boundary.</summary>
     /// <param name="message">The record to deliver to the logger or emergency local sink.</param>
     /// <param name="Run">The originating class logging switch.</param>
+    /// <param name="waitForLogging">Whether a terminating caller should use the bounded synchronous queue wait.</param>
     public static void LogSafely(string message, bool Run = true, bool waitForLogging = false)
     {
         if (Run)

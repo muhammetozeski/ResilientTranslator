@@ -21,6 +21,9 @@ internal sealed class TranslationJob
     /// <param name="text">The immutable text snapshot for this job.</param>
     /// <param name="source">The source language code.</param>
     /// <param name="target">The target language code.</param>
+    /// <param name="input">The immutable source text, language direction and execution options for this attempt.</param>
+    /// <param name="detector">The shared one-time offline language-detector initialization task.</param>
+    /// <param name="onDetected">Publishes detection only while the caller still owns the active request.</param>
     public TranslationJob(long revision, TranslationInput input, Task<LanguageDetector> detector, Action<Language> onDetected)
     {
         Revision = revision;
@@ -42,6 +45,9 @@ internal sealed class TranslationJob
     }
 
     /// <summary>Runs and contains one isolated engine invocation; no abandoned engine can update application state.</summary>
+    /// <param name="input">The immutable source text, language direction and execution options for this attempt.</param>
+    /// <param name="detectorTask">The shared offline detector to await before provider-side detection fallback.</param>
+    /// <param name="onDetected">Publishes detection only while the caller still owns the active request.</param>
     void Execute(TranslationInput input, Task<LanguageDetector> detectorTask, Action<Language> onDetected)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();

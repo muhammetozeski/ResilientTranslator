@@ -209,5 +209,8 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
     }
 
     /// <summary> Single radial-gradient stop that paints part of the aurora backdrop. </summary>
+    /// <param name="Color">The typed gradient-stop color.</param>
+    /// <param name="Position">The original native window position captured at pointer-down.</param>
+    /// <param name="Size">The original window or CSS-gradient dimensions.</param>
     public sealed record AuroraStop(Color Color, string Position, string Size);
 }
