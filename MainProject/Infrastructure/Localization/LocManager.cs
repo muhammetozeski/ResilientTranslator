@@ -73,17 +73,23 @@ public static class LocManager
         }
     }
 
+    /// <summary>Selects the mutable public string fields shared by every UI resource file.</summary>
+    /// <returns>Reflection descriptors for mutable public UI strings.</returns>
     private static FieldInfo[] StringFields() => typeof(Strings)
         .GetFields(BindingFlags.Public | BindingFlags.Static)
         .Where(f => f.FieldType == typeof(string))
         .ToArray();
 
+    /// <summary>Resolves one UI-language file inside the portable UserData directory.</summary>
+    /// <param name="language">The resolved UI culture code or source language selected by the operation.</param>
+    /// <returns>The portable XML path for the requested UI language.</returns>
     private static string PathFor(string language) => Path.Combine(Folder, $"lang.{language}.xml");
 
     /// <summary>
     /// Prepares the language files and applies the configured language. Pass "system" to follow the
     /// Windows display language, which is what a first run does.
     /// </summary>
+    /// <param name="configuredLanguage">The stored explicit UI culture or system-language selection.</param>
     public static void Init(string configuredLanguage)
     {
         try
@@ -109,6 +115,10 @@ public static class LocManager
         Apply(configuredLanguage);
     }
 
+    /// <summary>Refreshes a missing or outdated UI-language resource after preserving its previous user-editable file.</summary>
+    /// <param name="path">The portable text/resource path selected by this operation.</param>
+    /// <param name="currentVersion">The executable version stamped on the shipped resource copy.</param>
+    /// <param name="write">Writes the selected shipped resource after version/key validation.</param>
     private static void RefreshShippedFile(string path, string currentVersion, Action write)
     {
         try
@@ -138,6 +148,9 @@ public static class LocManager
         }
     }
 
+    /// <summary>Reads the optional executable-version stamp used to refresh a shipped language.</summary>
+    /// <param name="path">The portable text/resource path selected by this operation.</param>
+    /// <returns>The saved language version, or null when it cannot be read.</returns>
     private static string? ReadVersion(string path)
     {
         try
@@ -152,6 +165,7 @@ public static class LocManager
     }
 
     /// <summary>Loads a language over the <see cref="Strings"/> fields and notifies listeners.</summary>
+    /// <param name="configuredLanguage">The stored explicit UI culture or system-language selection.</param>
     public static void Apply(string configuredLanguage)
     {
         var language = Resolve(configuredLanguage);
@@ -207,6 +221,8 @@ public static class LocManager
     }
 
     /// <summary>Turns "system" into a concrete language code against the Windows display language.</summary>
+    /// <param name="configuredLanguage">The stored explicit UI culture or system-language selection.</param>
+    /// <returns>The concrete UI culture code selected from explicit or system settings.</returns>
     public static string Resolve(string configuredLanguage)
     {
         var configured = (configuredLanguage ?? string.Empty).Trim().ToLowerInvariant();
@@ -240,6 +256,7 @@ public static class LocManager
     }
 
     /// <summary>Reflection-loads values from an XML file over the matching fields.</summary>
+    /// <param name="path">The portable text/resource path selected by this operation.</param>
     private static void ReadInto(string path)
     {
         try
@@ -266,7 +283,38 @@ public static class LocManager
         }
     }
 
+    /// <summary>Captures the currently applied strings so a failed UI-language change can be rolled back without file access.</summary>
+    /// <returns>Current UI strings indexed by their resource field names.</returns>
+    internal static Dictionary<string,string> CaptureValues() => StringFields().ToDictionary(field => field.Name,field => (string?)field.GetValue(null) ?? "",StringComparer.Ordinal);
+
+    /// <summary>Restores the prior complete UI-language state after a rejected apply operation.</summary>
+    /// <param name="language">The resolved UI culture code or source language selected by the operation.</param>
+    /// <param name="values">The complete previously applied UI-string snapshot to restore.</param>
+    internal static void RestoreValues(string language,IReadOnlyDictionary<string,string> values)
+    {
+        foreach(var field in StringFields()) if(values.TryGetValue(field.Name,out var value)) field.SetValue(null,value);
+        Current = language;
+        var culture = CultureInfo.GetCultureInfo(language);
+        CultureInfo.CurrentCulture = culture; CultureInfo.CurrentUICulture = culture;
+        CultureInfo.DefaultThreadCurrentCulture = culture; CultureInfo.DefaultThreadCurrentUICulture = culture;
+        try { LanguageChanged?.Invoke(); } catch(Exception error) { LocalizationLog.Error("Language rollback notification failed",error); }
+    }
+    /// <summary>Repairs one shipped language only after preserving its prior user-editable contents.</summary>
+    /// <param name="language">One of the seven packaged UI-language codes.</param>
+    internal static void RestoreShippedFile(string language)
+    {
+        string path = PathFor(language);
+        if (File.Exists(path))
+        {
+            string backup = path + "." + Guid.NewGuid().ToString("N") + ".previous";
+            File.Copy(path, backup);
+            LocalizationLog.App($"Invalid UI language preserved; source={path}; backup={backup}");
+        }
+        ExtractResource(language, AppPaths.PayloadVersion);
+    }
     /// <summary>Extracts a shipped UI language; its stamp follows the actual executable version.</summary>
+    /// <param name="language">The resolved UI culture code or source language selected by the operation.</param>
+    /// <param name="version">The executable version written into the extracted resource.</param>
     private static void ExtractResource(string language, string version)
     {
         string resource = ResourcePrefix + language + ".xml";
@@ -275,11 +323,14 @@ public static class LocManager
         var document = XDocument.Load(stream);
         document.Root?.Element("Version")?.Remove();
         document.Root?.AddFirst(new XElement("Version", version));
-        document.Save(PathFor(language));
+        PortableFile.WriteAllText(PathFor(language), document.ToString());
         LocalizationLog.App($"Wrote lang.{language}.xml");
     }
     // Multi-line strings are stored single-line with a literal \n so the XML stays clean/indentable.
 
+    /// <summary>Restores persisted literal newline escapes to UI text.</summary>
+    /// <param name="s">Persisted text whose literal newline escapes are restored.</param>
+    /// <returns>UI text with persisted newline escape sequences restored.</returns>
     private static string Unescape(string s) => s.Replace("\\n", "\n");
 }
 

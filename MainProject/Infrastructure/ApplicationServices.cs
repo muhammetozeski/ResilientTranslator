@@ -1,5 +1,7 @@
 using System.Reflection;
 using System.Xml.Linq;
+using System.Xml;
+using Polly;
 using ResilientTranslator.MainProject.Infrastructure.Localization;
 using static ResilientTranslator.MainProject.Infrastructure.ExceptionBoundary;
 
@@ -11,8 +13,9 @@ public static class ApplicationServices
     const bool IsLogEnabled = true;
     static readonly object InitializationLock = new();
     static bool Initialized;
+    static readonly object LanguageLock = new();
 
-    /// <summary>Loads portable settings and prepares both shipped languages once per process.</summary>
+    /// <summary>Loads portable settings and prepares all shipped languages once per process.</summary>
     /// <returns>The final initialization outcome; failures have already been logged and contained.</returns>
     public static OperationResult<bool> Initialize() => RunSafely(() =>
     {
@@ -22,7 +25,7 @@ public static class ApplicationServices
                 return;
 
             Directory.CreateDirectory(AppPaths.UserData);
-            SettingsManager.LoadSettings(ConfigFileName);
+            SettingsPersistence.Load();
             Logger.ActivateLogging = Settings.EnableLogging.Value;
             LocManager.Init(Settings.Language.Value);
             SettingsManagerSettings.IsTurkish = LocManager.Current == "tr";
@@ -39,7 +42,7 @@ public static class ApplicationServices
     public static OperationResult<bool> SaveSettings() => RunSafely(() =>
     {
         Directory.CreateDirectory(AppPaths.UserData);
-        SettingsManager.SaveSettings(ConfigFileName);
+        SettingsPersistence.SaveSnapshot(SettingsManager.CaptureSnapshot());
         Logger.ActivateLogging = Settings.EnableLogging.Value;
         if (IsLogEnabled)
             Log($"Settings saved; path={ConfigFileName}; count={SettingsManager.GetAllSettings().Length}", Run: IsLogEnabled);
@@ -51,25 +54,64 @@ public static class ApplicationServices
     /// <returns>The applied language code or the contained failure.</returns>
     public static OperationResult<string> ChangeLanguage(string language, bool persist = true) => RunSafely(() =>
     {
-        string resolvedLanguage = LocManager.Resolve(language);
-        ValidateLanguageFile(resolvedLanguage);
-        LocManager.Apply(language);
-        SettingsManagerSettings.IsTurkish = LocManager.Current == "tr";
-        ValidateAppliedLanguage(resolvedLanguage);
-        if (persist)
+        lock (LanguageLock)
         {
-            Settings.Language.Value = language;
-            SettingsManager.SaveSettings(ConfigFileName);
-        }
-        if (IsLogEnabled)
-            Log($"Language changed; selection={language}; active={LocManager.Current}; persisted={persist}", Run: IsLogEnabled);
-        return LocManager.Current;
-    });
+            string previousLanguage = LocManager.Current;
+            string previousSelection = Settings.Language.Value;
+            var previousValues = LocManager.CaptureValues();
+            try
+            {
+                string resolvedLanguage = LocManager.Resolve(language);
+                ValidateLanguageFile(resolvedLanguage);
+                Policy.Handle<InvalidDataException>().Retry(1,(error,attempt) => Log($"Retrying complete language apply; language={resolvedLanguage}; error={error}",Run:IsLogEnabled))
+                    .Execute(() => { LocManager.Apply(language); ValidateAppliedLanguage(resolvedLanguage); });
+                SettingsManagerSettings.IsTurkish = LocManager.Current == "tr";
+                if (persist)
+                {
+                    Settings.Language.Value = language;
+                    SettingsPersistence.SaveSnapshot(SettingsManager.CaptureSnapshot());
+                }
+                Log($"Language changed; selection={language}; active={LocManager.Current}; persisted={persist}", Run:IsLogEnabled);
+                return LocManager.Current;
+            }
+            catch(Exception applyError)
+            {
+                try
+                {
+                    Settings.Language.Value = previousSelection;
+                    LocManager.RestoreValues(previousLanguage,previousValues);
+                    SettingsManagerSettings.IsTurkish = previousLanguage == "tr";
+                }
+                catch(Exception rollbackError) { throw new AggregateException("Language apply and rollback failed.",applyError,rollbackError); }
+                throw;
+            }
+        }    });
 
+    /// <summary>Validates a language, repairing malformed packaged files through the embedded original.</summary>
+    /// <param name="language">The resolved UI culture code.</param>
+    /// <returns>A complete resource dictionary, or the aggregate failure after repair.</returns>
+    static Dictionary<string, string> ValidateLanguageFile(string language)
+    {
+        try { return ReadLanguageWithRetry(language); }
+        catch (Exception inputError) when (inputError is XmlException or InvalidDataException or ArgumentException or FileNotFoundException)
+        {
+            if (!LanguageCatalog.All.Any(item => item.Code == language && item.Code != "auto")) throw;
+            Log($"UI language validation failed; restoring shipped resource; language={language}; error={inputError}", Run:IsLogEnabled);
+            try { LocManager.RestoreShippedFile(language); return ReadLanguageWithRetry(language); }
+            catch (Exception repairError) { throw new AggregateException("UI language validation and repair failed.", inputError, repairError); }
+        }
+    }
+    /// <summary>Retries only transient file reads before selecting resource repair.</summary>
+    /// <param name="language">The resolved UI culture code or source language selected by the operation.</param>
+    /// <returns>A complete language dictionary after transient read retries.</returns>
+    static Dictionary<string,string> ReadLanguageWithRetry(string language) => Policy.Handle<IOException>()
+        .WaitAndRetry(2, attempt => TimeSpan.FromMilliseconds(20 * attempt),
+            (error, delay, attempt, context) => Log($"UI language read retry; language={language}; attempt={attempt}; error={error}",Run:IsLogEnabled))
+        .Execute(() => ReadLanguageFile(language));
     /// <summary>Rejects incomplete language files before they can leave a mix of old and new strings.</summary>
     /// <param name="language">The resolved culture code.</param>
     /// <returns>The language values indexed by field name.</returns>
-    static Dictionary<string, string> ValidateLanguageFile(string language)
+    static Dictionary<string, string> ReadLanguageFile(string language)
     {
         _ = System.Globalization.CultureInfo.GetCultureInfo(language);
         string path = Path.Combine(AppPaths.UserData, $"lang.{language}.xml");

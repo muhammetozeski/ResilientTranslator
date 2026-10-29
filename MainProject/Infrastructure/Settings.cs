@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace ResilientTranslator.MainProject.Infrastructure;
 
+/// <summary>Contains serialization metadata and aliases the application&apos;s portable settings location.</summary>
 internal static class SettingsManagerSettings
 {
     public static string ConfigFileName => AppConstants.ConfigFileName;
@@ -29,6 +30,7 @@ internal static class SettingsManagerSettings
 }
 
 // Declare settings here. Field names become file keys automatically.
+/// <summary>Declares the application&apos;s persistent typed values and reflected UI metadata.</summary>
 internal static class Settings
 {
     [Preference(nameof(Strings.ApplicationLanguage))]
@@ -87,6 +89,7 @@ internal static class Settings
     public static readonly Setting<int> WindowHeight = new(560);
 }
 
+/// <summary>Exposes a registered typed setting to generic validation and settings editors.</summary>
 internal interface ISetting
 {
     string Key { get; }
@@ -99,20 +102,38 @@ internal interface ISetting
     object? Value { get; set; }
     object? DefaultValue { get; }
     bool IsDefault { get; }
+    /// <summary>Accepts an unencoded editor value only when parsing succeeds, preserving the current value on rejection.</summary>
+    /// <param name="text">The unencoded editor value; rejection preserves the current setting.</param>
+    /// <returns>True when the typed in-memory setting was updated.</returns>
     bool TrySetFromText(string text);
+    /// <summary>Loads an editor-format value; invalid input restores the declared default and reports a format error.</summary>
+    /// <param name="value">The encoded or editor-format setting value accepted by this serialization operation.</param>
     void LoadFromStr(string value);
+    /// <summary>Restores this preference&apos;s declared default in memory without writing its file.</summary>
     void ResetToDefault();
 }
 
+/// <summary>Connects field-name registration to encoded settings serialization.</summary>
 internal interface ISettingSetup
 {
     string Key { get; }
+    /// <summary>Binds this setting to its declaring field name exactly once.</summary>
+    /// <param name="key">The declaring field name used as the persistent setting key.</param>
     void InitializeKey(string key);
+    /// <summary>Loads an editor-format value; invalid input restores the declared default and reports a format error.</summary>
+    /// <param name="value">The encoded or editor-format setting value accepted by this serialization operation.</param>
     void LoadFromStr(string value);
+    /// <summary>Parses one persisted representation before changing the stored typed value.</summary>
+    /// <param name="value">The encoded value read from the persistent settings file.</param>
+    /// <returns>True only when the persisted representation is valid for the setting type.</returns>
     bool TryLoadSerialized(string value);
+    /// <summary>Encodes this setting without losing nulls, whitespace or invariant numeric values.</summary>
+    /// <returns>The setting&apos;s encoded file representation.</returns>
     string Serialize();
 }
 
+/// <summary>Stores one typed preference, its default and its parser/serialization contract.</summary>
+/// <typeparam name="T">The typed preference value supported by its parser and serializer.</typeparam>
 internal class Setting<T> : ISetting, ISettingSetup
 {
     private static readonly Type ParsedType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
@@ -135,6 +156,7 @@ internal class Setting<T> : ISetting, ISettingSetup
     /// <param name="displayName">Optional label; the field name is otherwise split into words.</param>
     /// <param name="valueExample">Optional input example; the default value is used when blank.</param>
     /// <param name="isOptional">Whether text input may be blank or null when the type allows it.</param>
+    /// <summary>Declares a preference with its initial value and optional editor metadata.</summary>
     public Setting(T defaultValue, string? description = null, string? displayName = null, string? valueExample = null, bool isOptional = true)
     {
         Value = defaultValue;
@@ -174,6 +196,8 @@ internal class Setting<T> : ISetting, ISettingSetup
     object? ISetting.Value { get => Value; set => Value = (T)value!; }
     object? ISetting.DefaultValue => DefaultValue;
 
+    /// <summary>Binds this setting to its declaring field name exactly once.</summary>
+    /// <param name="key">The declaring field name used as the persistent setting key.</param>
     void ISettingSetup.InitializeKey(string key)
     {
         if (!string.IsNullOrEmpty(Key))
@@ -184,6 +208,9 @@ internal class Setting<T> : ISetting, ISettingSetup
     }
 
     // A rejected UI edit leaves the current value intact; a bad file value uses the default.
+    /// <summary>Accepts an unencoded editor value only when parsing succeeds, preserving the current value on rejection.</summary>
+    /// <param name="text">The unencoded editor value; rejection preserves the current setting.</param>
+    /// <returns>True when the typed in-memory setting was updated.</returns>
     public bool TrySetFromText(string text)
     {
         if (!TryParse(text, encoded: false, out T parsed)) return false;
@@ -191,6 +218,8 @@ internal class Setting<T> : ISetting, ISettingSetup
         return true;
     }
 
+    /// <summary>Loads an editor-format value; invalid input restores the declared default and reports a format error.</summary>
+    /// <param name="value">The encoded or editor-format setting value accepted by this serialization operation.</param>
     public void LoadFromStr(string value)
     {
         if (TrySetFromText(value)) return;
@@ -198,8 +227,12 @@ internal class Setting<T> : ISetting, ISettingSetup
         throw new FormatException($"Invalid {typeof(T).Name} for '{Key}': '{value}'. Using the default.");
     }
 
+    /// <summary>Restores this preference&apos;s declared default in memory without writing its file.</summary>
     public void ResetToDefault() => Value = DefaultValue;
 
+    /// <summary>Parses one persisted representation before changing the stored typed value.</summary>
+    /// <param name="text">The encoded value read from the persistent settings file.</param>
+    /// <returns>True only when the persisted representation is valid for the setting type.</returns>
     bool ISettingSetup.TryLoadSerialized(string text)
     {
         if (!TryParse(text, encoded: true, out T parsed)) return false;
@@ -207,6 +240,11 @@ internal class Setting<T> : ISetting, ISettingSetup
         return true;
     }
 
+    /// <summary>Converts editor or persisted text through the setting type&apos;s supported conversion contract.</summary>
+    /// <param name="text">The setting text to parse without changing its stored value on rejection.</param>
+    /// <param name="encoded">Whether the input uses the persisted serialization syntax.</param>
+    /// <param name="parsed">Receives the typed result only when conversion succeeds.</param>
+    /// <returns>True only when a typed value was parsed successfully.</returns>
     private bool TryParse(string text, bool encoded, out T parsed)
     {
         parsed = default!;
@@ -246,6 +284,8 @@ internal class Setting<T> : ISetting, ISettingSetup
         }
     }
 
+    /// <summary>Encodes this setting without losing nulls, whitespace or invariant numeric values.</summary>
+    /// <returns>The setting&apos;s encoded file representation.</returns>
     string ISettingSetup.Serialize()
     {
         if (Value is null) return "null";
@@ -262,9 +302,13 @@ internal class Setting<T> : ISetting, ISettingSetup
             : Value is IFormattable formatted ? formatted.ToString(null, CultureInfo.InvariantCulture) : Value.ToString() ?? string.Empty;
     }
 
+    /// <summary>Reads the current typed preference without creating an independent value store.</summary>
+    /// <param name="setting">The registered preference object.</param>
+    /// <returns>The currently stored typed value.</returns>
     public static implicit operator T(Setting<T> setting) => setting.Value;
 }
 
+/// <summary>Registers typed setting fields and owns the existing key/value serialization contract.</summary>
 internal static class SettingsManager
 {
     public static string ConfigPath => Path.Combine(SettingsManagerSettings.ThisExeFolder, SettingsManagerSettings.ConfigFileName);
@@ -274,6 +318,7 @@ internal static class SettingsManager
     private static readonly Dictionary<string, ISettingSetup> iSettingSetups = new(StringComparer.Ordinal);
     private static readonly Dictionary<string, ISetting> iSettings = new(StringComparer.Ordinal);
 
+    /// <summary>Registers setting fields and their file keys before the first load or save.</summary>
     static SettingsManager()
     {
         foreach (FieldInfo field in typeof(Settings).GetFields(BindingFlags.Public | BindingFlags.Static))
@@ -285,9 +330,13 @@ internal static class SettingsManager
         }
     }
 
+    /// <summary>Returns the registered setting objects used by editors and snapshot serialization.</summary>
+    /// <returns>The registered mutable setting objects, not copies with independent identities.</returns>
     public static ISetting[] GetAllSettings() => [.. iSettings.Values];
 
     /// <summary>Loads settings, creating the file if missing. Invalid values use their defaults and produce a FormatException.</summary>
+    /// <param name="filePath">The selected portable settings path; null selects the existing default.</param>
+    /// <param name="isTurkish">Selects Turkish metadata descriptions for the existing settings editor.</param>
     public static void LoadSettings(string? filePath = null, bool isTurkish = false)
     {
         lock (FileLock)
@@ -320,9 +369,11 @@ internal static class SettingsManager
     }
 
     /// <summary>Saves settings and raises SettingsSaved after a successful write. Errors propagate to the caller.</summary>
+    /// <param name="filePath">The selected portable settings path; null selects the existing default.</param>
     public static void SaveSettings(string? filePath = null) => SaveSnapshot(CaptureSnapshot(), filePath);
 
     /// <summary>Serializes current values without performing file access; callers hold their state gate.</summary>
+    /// <returns>The existing settings engine&apos;s complete immutable serialized snapshot.</returns>
     internal static string CaptureSnapshot()
     {
         var content = new StringBuilder($"{SettingsManagerSettings.CommentPrefix} {SettingsManagerSettings.AppTitle} Configuration{Environment.NewLine}");
@@ -336,24 +387,17 @@ internal static class SettingsManager
     /// <param name="filePath">Portable destination or the default config path.</param>
     internal static void SaveSnapshot(string content, string? filePath = null)
     {
-        lock (FileLock)
-        {
-            string path = Path.GetFullPath(filePath ?? ConfigPath);
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            string tempPath = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
-            try
-            {
-                File.WriteAllText(tempPath, content, new UTF8Encoding(false));
-                if (File.Exists(path)) File.Replace(tempPath, path, null);
-                else File.Move(tempPath, path);
-            }
-            finally { if (File.Exists(tempPath)) File.Delete(tempPath); }
-        }
+        lock (FileLock) PortableFile.WriteAllText(filePath ?? ConfigPath, content);
         SettingsSaved?.Invoke();
     }
+    /// <summary>Applies a parsed editor value without replacing an invalid current value.</summary>
+    /// <param name="setting">The registered setting object being parsed, validated or edited.</param>
+    /// <param name="value">The encoded or editor-format setting value accepted by this serialization operation.</param>
+    /// <returns>True only when the editor value was accepted.</returns>
     public static bool Apply(ISetting setting, string value) => setting.TrySetFromText(value);
 
     /// <summary>Opens an optional console settings editor. Changes are saved immediately.</summary>
+    /// <param name="filePath">The selected portable settings path; null selects the existing default.</param>
     public static void OpenSettingsMenu(string? filePath = null)
     {
         ISetting[] allSettings = GetAllSettings();
@@ -398,6 +442,9 @@ internal static class SettingsManager
         foreach (ISetting setting in iSettings.Values) setting.ResetToDefault();
     }
 
+    /// <summary>Builds a readable metadata label from a registered PascalCase field or type name.</summary>
+    /// <param name="text">The setting text to parse without changing its stored value on rejection.</param>
+    /// <returns>The human-readable metadata name.</returns>
     internal static string SplitPascalCase(string text) => Regex.Replace(text, "(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ");
 }
 
