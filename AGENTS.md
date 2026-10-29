@@ -13,3 +13,5 @@ For project handoff, follow [the Walkthrough guide](Walkthrough/Walkthrough-Rehb
 
 UI styles belong in paired Css.razor components explicitly rendered by their owning component. Do not replace this architecture with scoped .razor.css files.
 
+
+Follow [the active template architecture](Docs/Architecture.md). Reuse existing Core controls and the AppColors/AppMeasures/AppStyles centers while preserving the approved product appearance. Optional accounts and Firebase are excluded from this application.

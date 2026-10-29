@@ -16,7 +16,7 @@ StatusTicker is the same Razor component in the toolbar and settings preview. It
 
 The manual arrow has a capture-phase native-browser command path. It reads the current input DOM value and calls the workspace with immediate=true and forceNetwork=true. This supersedes previous work and bypasses confirmed-result reuse, while retaining provider recovery and final failure reporting. It does not depend on the typing debounce or a completed old job. The hide command uses the same independent browser command routing.
 
-UI styles use explicitly rendered Css.razor companions. HomeCss defines the translator surface, SettingsPanelCss the dialog, StatusTickerCss the status component and EditorSplitterCss the divider. Home does not use a scoped .razor.css file.
+UI styles use explicitly rendered Css.razor companions backed by AppColors, AppMeasures and AppStyles. MainLayoutCss owns the root background, HomeCss the translator surface, SettingsPanelCss the dialog, StatusTickerCss the status component and EditorSplitterCss the divider. Settings delegates backdrop behavior to CoreModal; editor values and native focus flow through CoreInput. See [Architecture](Architecture.md).
 
 ## Proportional divider
 
