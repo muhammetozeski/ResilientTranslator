@@ -13,6 +13,7 @@ using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.UI.Input.KeyboardAndMouse;
 using Preferences = ResilientTranslator.MainProject.Infrastructure.Preferences;
+using ResilientTranslator.MainProject.Constants;
 using Forms = System.Windows.Forms;
 using NativeWindow = Microsoft.UI.Xaml.Window;
 namespace ResilientTranslator;
@@ -75,7 +76,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         Tray = new Forms.NotifyIcon
         {
             Icon = System.Drawing.Icon.ExtractAssociatedIcon(Environment.ProcessPath!) ?? System.Drawing.SystemIcons.Application,
-            Text = "Resilient Translator", Visible = true, ContextMenuStrip = new Forms.ContextMenuStrip()
+            Text = AppConstants.AppNameHumanReadable, Visible = true, ContextMenuStrip = new Forms.ContextMenuStrip()
         };
         Tray.ContextMenuStrip.Items.Add(Strings.Open, null, (_,_) => Dispatch(Show, DesktopAction.TrayOpen));
         Tray.ContextMenuStrip.Items.Add(Strings.Exit, null, (_,_) => Dispatch(Exit, DesktopAction.TrayExit));

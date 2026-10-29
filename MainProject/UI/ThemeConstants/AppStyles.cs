@@ -17,24 +17,17 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         public static string GetShadow(int x, int y, int blur, Color color, float opacity)
             => $"{x}px {y}px {blur}px rgba({(int)(color.Red * 255)}, {(int)(color.Green * 255)}, {(int)(color.Blue * 255)}, {opacity.ToString(System.Globalization.CultureInfo.InvariantCulture)})";
 
+        /// <summary>Builds the approved settings shadow from the same overlay color as its backdrop.</summary>
+        public static string SettingsShadow => $"0 12px 40px {AppColors.Overlay.ToRgbaHex(true)}";
+
+        /// <summary>Escapes a user-selected font and renders its invariant size and typed theme color.</summary>
+        public static string BuildEditorTypography(string family, double size) =>
+            FormattableString.Invariant($"font-family:'{family.Replace("\\", "\\\\").Replace("'", "\\'")}';font-size:{size}px;color:{AppColors.EditorText.ToRgbaHex(true)}");
         public static string ShadowSoft => GetShadow(0, 4, 12, Colors.Black, 0.05f);
         public static string ShadowMedium => GetShadow(0, 10, 25, Colors.Black, 0.15f);
         public static string ShadowHeavy => GetShadow(0, 20, 40, Colors.Black, 0.25f);
         public static string ShadowPrimaryGlow => GetShadow(0, 8, 20, AppColors.Primary, 0.3f);
-        public static string ShadowGoldGlow => GetShadow(0, 10, 20, AppColors.Gold, 0.4f);
-        public static string ShadowDiamondGlow => GetShadow(0, 0, 24, AppColors.Diamond, 0.6f);
         public static string ShadowErrorGlow => GetShadow(0, 10, 20, AppColors.Error, 0.4f);
-
-        /// <summary> A taller, warmer gold halo than <see cref="ShadowGoldGlow"/> — the premium "lift" under PRO badges and the Upgrade button so they read as the most valuable surface on screen. </summary>
-        public static string ShadowPremiumGlow => GetShadow(0, 12, 32, AppColors.Gold, 0.45f);
-
-        /// <summary>
-        /// CSS <c>background</c> value for premium PRO surfaces: a diagonal gold sheen that runs Gold → GoldDark → Gold
-        /// so the surface catches a metallic highlight band instead of reading as a flat fill. One central definition
-        /// so every PRO accent (badge ring, Upgrade button, premium card edge) sheens identically.
-        /// </summary>
-        public static string PremiumSheenGradient =>
-            $"linear-gradient(135deg, {AppColors.Gold.ToRgbaHex(true)} 0%, {AppColors.GoldDark.ToRgbaHex(true)} 48%, {AppColors.Gold.ToRgbaHex(true)} 100%)";
 
         /// <summary> Same shape as <see cref="ShadowPrimaryGlow"/> but tinted by an arbitrary color so gradient cards can glow in their own hue. </summary>
         public static string GetGlow(Color tint, float opacity = 0.3f) => GetShadow(0, 8, 20, tint, opacity);
@@ -120,37 +113,8 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         {
             string radials = string.Join(", ", AppColors.AuroraStops.Select(s =>
                 $"radial-gradient(ellipse {s.Size} at {s.Position}, {s.Color.WithAlpha(0.55f).ToRgbaHex(true)} 0%, transparent 70%)"));
-            return $"background:{radials}, linear-gradient(180deg, {AppColors.BackgroundBase.ToRgbaHex(true)} 0%, {AppColors.BackgroundDeep.ToRgbaHex(true)} 100%);";
+            return $"background:{(radials.Length > 0 ? radials + ", " : "")}linear-gradient(180deg, {AppColors.BackgroundBase.ToRgbaHex(true)} 0%, {AppColors.BackgroundDeep.ToRgbaHex(true)} 100%);";
         }
 
-        //TODO: improve this comment. do we use these css variables or they are only for bootstrap and other css stuff?
-        //yani demek istediğim: bu değişkenler MainProject içinde herhangi bir yerde kullanılıyor mu? bunun cevabını summary'ye ekle kesin ve net bir şekilde emin olarak. sonra da bu todo'yu sil.
-        /// <summary>
-        /// Emits a <c>:root { --color-*: ...; --blur-*: ...; }</c> block. Single emitter for global CSS
-        /// variables so legacy <c>var(--color-*)</c> consumers and Bootstrap styles read from one place.
-        /// </summary>
-        public static string BuildCssVariables()
-        {
-            // TODO: bu fonksiyonu ve içindekileri silmek bir sorun çıkartmayacaksa silelim gitsin. biz direkt c#'taki renkleri kullanıyoruz zaten. "kara düzen" bir kod görmek istemiyorum projede
-            return ":root{" +
-                   $"--color-primary:{AppColors.Primary.ToRgbaHex(true)};" +
-                   $"--color-primary-light:{AppColors.PrimaryLight.ToRgbaHex(true)};" +
-                   $"--color-primary-dark:{AppColors.PrimaryDark.ToRgbaHex(true)};" +
-                   $"--color-secondary:{AppColors.Secondary.ToRgbaHex(true)};" +
-                   $"--color-accent:{AppColors.Accent.ToRgbaHex(true)};" +
-                   $"--color-background:{AppColors.BackgroundDeep.ToRgbaHex(true)};" +
-                   $"--color-surface:{AppColors.SurfaceNormal.ToRgbaHex(true)};" +
-                   $"--color-text-primary:{AppColors.TextPrimary.ToRgbaHex(true)};" +
-                   $"--color-text-secondary:{AppColors.TextSecondary.ToRgbaHex(true)};" +
-                   $"--color-text-muted:{AppColors.TextMuted.ToRgbaHex(true)};" +
-                   $"--color-success:{AppColors.Success.ToRgbaHex(true)};" +
-                   $"--color-error:{AppColors.Error.ToRgbaHex(true)};" +
-                   $"--color-warning:{AppColors.Warning.ToRgbaHex(true)};" +
-                   $"--blur-subtle:{AppMeasures.Blur.Subtle}px;" +
-                   $"--blur-normal:{AppMeasures.Blur.Normal}px;" +
-                   $"--blur-strong:{AppMeasures.Blur.Strong}px;" +
-                   $"--blur-heavy:{AppMeasures.Blur.Heavy}px;" +
-                   "}";
-        }
     }
 }

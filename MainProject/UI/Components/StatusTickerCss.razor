@@ -1,9 +1,9 @@
 <style>
-    .status-ticker{display:flex;align-items:center;gap:7px;border:1px solid var(--control-border);border-radius:6px;padding:5px 8px;height:32px;min-width:0;color:var(--muted-text);font:12px 'Segoe UI',sans-serif}
-    .status-light{width:6px;height:6px;border-radius:50%;background:var(--success);flex:0 0 6px}
-    .status-light.busy{background:var(--pending)}.status-light.error{background:var(--failure)}
+    .status-ticker{display:flex;align-items:center;gap:@(AppMeasures.Size.Px7)px;border:@(AppMeasures.Size.Px1)px solid @AppColors.ControlBorder.ToRgbaHex(true);border-radius:@(AppMeasures.Size.Px6)px;padding:@(AppMeasures.Size.Px5)px @(AppMeasures.Size.Px8)px;height:@(AppMeasures.Size.Px32)px;min-width:0;color:@AppColors.TextSecondary.ToRgbaHex(true);font:@(AppMeasures.Size.Px12)px @AppMeasures.Font.SystemStack}
+    .status-light{width:@(AppMeasures.Size.Px6)px;height:@(AppMeasures.Size.Px6)px;border-radius:50%;background:@AppColors.Success.ToRgbaHex(true);flex:0 0 @(AppMeasures.Size.Px6)px}
+    .status-light.busy{background:@AppColors.Warning.ToRgbaHex(true)}.status-light.error{background:@AppColors.Error.ToRgbaHex(true)}
     .status-viewport{display:block;overflow:hidden;min-width:0;flex:1}
     .status-track{display:flex;width:max-content;white-space:nowrap}
-    .status-track>span{display:block;flex-shrink:0;padding-right:28px}
+    .status-track>span{display:block;flex-shrink:0;padding-right:@(AppMeasures.Size.Px28)px}
     .status-track>span[hidden]{display:none}
 </style>

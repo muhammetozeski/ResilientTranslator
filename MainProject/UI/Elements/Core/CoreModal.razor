@@ -1,46 +1,32 @@
 @if (IsVisible)
 {
-    <div class="core-modal-backdrop" @onclick="HandleBackdropClick">
-        <div class="core-modal-content @(IsWobbling ? "wobbling-animation" : "")" style="@_computedStyle" @onclick:stopPropagation>
+    <div class="@(Appearance == ControlAppearance.Standard ? "core-modal-backdrop" : "core-modal-overlay") @BackdropClass" @onclick="HandleBackdropClick">
+        <div @attributes="AdditionalAttributes" class="@(Appearance == ControlAppearance.Standard ? "core-modal-content" : "core-modal-body") @ContentClass @(IsWobbling ? "wobbling-animation" : "")" style="@ComputedStyle" role="dialog" aria-modal="true" @onkeydown="OnKeyDown" @onclick:stopPropagation>
             @ChildContent
         </div>
     </div>
 }
-
 <CoreModalCss />
-
 @code {
-    const bool ActivateModalLogs = false;
-
     [Parameter] public bool IsVisible { get; set; }
     [Parameter] public bool IsWobbling { get; set; }
+    [Parameter] public bool IsAcrylic { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public EventCallback OnBackdropClick { get; set; }
-    [Parameter] public bool IsAcrylic { get; set; }
-
-    // bu magic string değer'leri yerel nesnelere al. orneğin background bir Color nesnesine işaret etsin. public yap arkaplan gibi önemli şeyleri.
-    /// <summary> Card surface of the non-acrylic modal. Public so a consumer can read/override the same fill the modal paints itself with. </summary>
+    [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
+    [Parameter] public ControlAppearance Appearance { get; set; } = ControlAppearance.Standard;
+    [Parameter] public string BackdropClass { get; set; } = "";
+    [Parameter] public string ContentClass { get; set; } = "";
+    [Parameter(CaptureUnmatchedValues=true)] public IReadOnlyDictionary<string,object>? AdditionalAttributes { get; set; }
     public static Color Background => AppColors.SurfaceStrong;
-
-    /// <summary> Hairline border color of the non-acrylic modal card. </summary>
     public static Color BorderColor => AppColors.GlassBorderDefault;
-
-    /// <summary> Foreground text color shared by both modal variants. </summary>
     public static Color TextColor => AppColors.TextPrimary;
-
-    string _computedStyle => IsAcrylic
-        ? AppStyles.BuildAcrylicStyle(AcrylicLevel.Strong, AppMeasures.Blur.Heavy)
-          + $"border-radius:{AppMeasures.Radius.XLarge}px;padding:{AppMeasures.Space.XLarge}px;"
-          + $"color:{TextColor.ToRgbaHex(true)};"
-        : $"background:{Background.ToRgbaHex(true)};"
-          + $"border:{AppMeasures.Border.Thin}px solid {BorderColor.ToRgbaHex(true)};"
-          + $"border-radius:{AppMeasures.Radius.XLarge}px;padding:{AppMeasures.Space.XLarge}px;"
-          + $"box-shadow:{AppStyles.ShadowHeavy};"
-          + $"color:{TextColor.ToRgbaHex(true)};";
-
-    void HandleBackdropClick()
+    string? ComputedStyle => Appearance != ControlAppearance.Standard ? null :
+        (IsAcrylic ? AppStyles.BuildAcrylicStyle(AcrylicLevel.Strong,AppMeasures.Blur.Heavy) : $"background:{Background.ToRgbaHex(true)};border:{AppMeasures.Border.Thin}px solid {BorderColor.ToRgbaHex(true)};box-shadow:{AppStyles.ShadowHeavy};")
+        + $"border-radius:{AppMeasures.Radius.XLarge}px;padding:{AppMeasures.Space.XLarge}px;color:{TextColor.ToRgbaHex(true)};";
+    /// <summary>Records the outer-surface action and awaits the caller's existing close operation.</summary>
+    async Task HandleBackdropClick()
     {
-        Log("CoreModal backdrop tapped, closing modal", Run: ActivateModalLogs);
-        if (OnBackdropClick.HasDelegate) OnBackdropClick.InvokeAsync();
-    }
-}
+        Log("CoreModal backdrop tapped, closing modal",Run:true);
+        await OnBackdropClick.InvokeAsync();
+    }}

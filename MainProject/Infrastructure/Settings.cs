@@ -14,10 +14,10 @@ namespace ResilientTranslator.MainProject.Infrastructure;
 
 internal static class SettingsManagerSettings
 {
-    public const string ConfigFileName = "config.txt";
+    public static string ConfigFileName => AppConstants.ConfigFileName;
     public const string CommentPrefix = "#";
     public const string KeyValueSeparator = "=";
-    public static readonly string AppTitle = Assembly.GetEntryAssembly()?.GetName().Name ?? Path.GetFileNameWithoutExtension(Environment.ProcessPath) ?? "Application";
+    public const string AppTitle = AppConstants.AppTitle;
     public static readonly string ThisExeFolder = AppContext.BaseDirectory;
     public static bool IsTurkish;
     public const string DescriptionFormatEnglish = "{0} expects {1}. Default: {2}.";
@@ -46,9 +46,9 @@ internal static class Settings
     [Preference(nameof(Strings.SettingStatusSpeed), minimum: 5, maximum: 150)]
     public static readonly Setting<double> StatusSpeed = new(70);
     [Preference(nameof(Strings.SettingEditorFont))]
-    public static readonly Setting<string> EditorFont = new("Segoe UI");
+    public static readonly Setting<string> EditorFont = new(AppMeasures.Font.DefaultFamily);
     [Preference(nameof(Strings.SettingEditorFontSize), minimum: 1, maximum: 300)]
-    public static readonly Setting<double> EditorFontSize = new(14);
+    public static readonly Setting<double> EditorFontSize = new(AppMeasures.Font.Normal);
     [Preference(nameof(Strings.SettingEditorColor))]
     public static readonly Setting<string> EditorColor = new("#ffffff");
     [Preference(nameof(Strings.SettingTypingDelay), true, 0, 10000)]

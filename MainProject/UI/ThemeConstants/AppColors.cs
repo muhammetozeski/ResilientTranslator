@@ -8,6 +8,21 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
     /// </summary>
     public static class AppColors
     {
+        public static Color Control => ThemeManager.Current.Control;
+        public static Color ControlHover => ThemeManager.Current.ControlHover;
+        public static Color ControlBorder => ThemeManager.Current.ControlBorder;
+        public static Color EditorBorder => ThemeManager.Current.EditorBorder;
+        public static Color OutputBorder => ThemeManager.Current.OutputBorder;
+        public static Color FocusBorder => ThemeManager.Current.FocusBorder;
+        public static Color IconSurface => ThemeManager.Current.IconSurface;
+        public static Color IconBorder => ThemeManager.Current.IconBorder;
+        public static Color IconText => ThemeManager.Current.IconText;
+        public static Color WindowBorder => ThemeManager.Current.WindowBorder;
+        public static Color CommandText => ThemeManager.Current.CommandText;
+        public static Color BrandInk => ThemeManager.Current.BrandInk;
+        public static Color Overlay => ThemeManager.Current.Overlay;
+        public static Color EditorText => ThemeManager.Current.EditorText;
+
         /// <inheritdoc cref="AppTheme.Primary"/>
         public static Color Primary => ThemeManager.Current.Primary;
 
@@ -62,8 +77,6 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// <inheritdoc cref="AppTheme.SurfaceDarken"/>
         public static Color SurfaceDarken => ThemeManager.Current.SurfaceDarken;
 
-        /// <inheritdoc cref="AppTheme.PaywallBackground"/>
-        public static Color PaywallBackground => ThemeManager.Current.PaywallBackground;
 
         /// <inheritdoc cref="AppTheme.TooltipBackground"/>
         public static Color TooltipBackground => ThemeManager.Current.TooltipBackground;
@@ -157,35 +170,17 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
 
 
 
-        /// <inheritdoc cref="AppTheme.Gold"/>
-        public static Color Gold => ThemeManager.Current.Gold;
 
-        /// <inheritdoc cref="AppTheme.GoldDark"/>
-        public static Color GoldDark => ThemeManager.Current.GoldDark;
 
-        /// <inheritdoc cref="AppTheme.PremiumText"/>
-        public static Color PremiumText => ThemeManager.Current.PremiumText;
 
-        /// <inheritdoc cref="AppTheme.Diamond"/>
-        public static Color Diamond => ThemeManager.Current.Diamond;
 
-        /// <inheritdoc cref="AppTheme.DiamondDark"/>
-        public static Color DiamondDark => ThemeManager.Current.DiamondDark;
 
-        /// <inheritdoc cref="AppTheme.Silver"/>
-        public static Color Silver => ThemeManager.Current.Silver;
 
-        /// <inheritdoc cref="AppTheme.SilverDark"/>
-        public static Color SilverDark => ThemeManager.Current.SilverDark;
 
-        /// <inheritdoc cref="AppTheme.Bronze"/>
-        public static Color Bronze => ThemeManager.Current.Bronze;
 
-        /// <inheritdoc cref="AppTheme.BronzeDark"/>
-        public static Color BronzeDark => ThemeManager.Current.BronzeDark;
 
-        /// <inheritdoc cref="AppTheme.MonthGradients"/>
-        public static (Color Start, Color End)[] MonthGradients => ThemeManager.Current.MonthGradients;
+        /// <inheritdoc cref="AppTheme.SurfaceGradients"/>
+        public static (Color Start, Color End)[] SurfaceGradients => ThemeManager.Current.SurfaceGradients;
 
         /// <inheritdoc cref="AppTheme.AuroraStops"/>
         public static AuroraStop[] AuroraStops => ThemeManager.Current.AuroraStops;

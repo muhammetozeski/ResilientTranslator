@@ -1,2 +1,27 @@
 @inherits LayoutComponentBase
-@Body
+@inject NavigationManager NavManager
+@implements IDisposable
+<CascadingValue Value="ThemeManager.Current">
+    <MainLayoutCss />
+    <ResilientTranslator.MainProject.UI.Layout.Architecture.PageBaseCss />
+    <div class="app-page"><main><article class="content">@Body</article></main></div>
+    @if (UiConstants.Navigation.ShowBottomNavigation) { <AppBottomNav /> }
+</CascadingValue>
+@code {
+    /// <summary>Connects the template's root redraw path without replacing page instances.</summary>
+    protected override void OnInitialized()
+    {
+        NavManager.LocationChanged += NavigationChanged;
+        ResilientTranslator.MainProject.Events.MainEvents.OnDataChanged += DataChanged;
+    }
+    /// <summary>Updates root navigation presentation on its owning dispatcher.</summary>
+    void NavigationChanged(object? sender,Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs args) => _ = InvokeAsync(StateHasChanged);
+    /// <summary>Propagates an immutable palette change into existing themed children.</summary>
+    void DataChanged(string name,object? value) { if (name == "OnThemeChanged") _ = InvokeAsync(StateHasChanged); }
+    /// <summary>Releases the shared root's navigation and theme subscriptions.</summary>
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= NavigationChanged;
+        ResilientTranslator.MainProject.Events.MainEvents.OnDataChanged -= DataChanged;
+    }
+}

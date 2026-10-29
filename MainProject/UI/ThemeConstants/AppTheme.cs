@@ -7,6 +7,21 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
     /// </summary>
     public sealed record AppTheme
     {
+        public required Color Control { get; init; }
+        public required Color ControlHover { get; init; }
+        public required Color ControlBorder { get; init; }
+        public required Color EditorBorder { get; init; }
+        public required Color OutputBorder { get; init; }
+        public required Color FocusBorder { get; init; }
+        public required Color IconSurface { get; init; }
+        public required Color IconBorder { get; init; }
+        public required Color IconText { get; init; }
+        public required Color WindowBorder { get; init; }
+        public required Color CommandText { get; init; }
+        public required Color BrandInk { get; init; }
+        public required Color Overlay { get; init; }
+        public required Color EditorText { get; init; }
+
         public required string Name { get; init; }
 
         // Page background — the aurora-lit night sky behind every screen.
@@ -19,22 +34,22 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
 
         // Brand colors — the two/three colors that identify the app.
 
-        /// <summary> Main brand color — fills the start of PrimaryButton gradients, active tab indicators, link text, progress bars, and "current user" rank borders. </summary>
+        /// <summary> Main brand color — fills the start of PrimaryButton gradients, active tab indicators, link text, progress bars, and selected-item borders. </summary>
         public required Color Primary { get; init; }
 
         /// <summary> Lighter Primary — second stop in the active-tab gradient and decorative highlight tints. </summary>
         public required Color PrimaryLight { get; init; }
 
-        /// <summary> Darker Primary — second stop in the Login background gradient and deep card tints. </summary>
+        /// <summary> Darker Primary — second stop in the page background gradient and deep card tints. </summary>
         public required Color PrimaryDark { get; init; }
 
-        /// <summary> Secondary brand color — the warm coral paired with Primary in two-tone marketing gradients (Login backdrop, Profile header). </summary>
+        /// <summary> Secondary brand color — the warm coral paired with Primary in two-tone page and card gradients. </summary>
         public required Color Secondary { get; init; }
 
         /// <summary> Darker Secondary — gradient companion to <see cref="Secondary"/>. </summary>
         public required Color SecondaryDark { get; init; }
 
-        /// <summary> Warm amber accent — streak flames, badge glows, IconButton gradient endpoints, and any "pop" highlight that must catch the eye. </summary>
+        /// <summary> Warm amber accent — decorative highlights and IconButton gradient endpoints, and any "pop" highlight that must catch the eye. </summary>
         public required Color Accent { get; init; }
 
         /// <summary> Darker Accent — gradient companion to <see cref="Accent"/>. </summary>
@@ -65,7 +80,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// <summary> Glass tint with a Primary-colored cast — applied to cards representing "current user" or "active selection". </summary>
         public required Color SurfaceTintPrimary { get; init; }
 
-        /// <summary> Glass tint with an Accent-colored cast — used on streak / XP surfaces to thematically connect them to <see cref="Accent"/>. </summary>
+        /// <summary> Glass tint with an Accent-colored cast — used on emphasized surfaces to thematically connect them to <see cref="Accent"/>. </summary>
         public required Color SurfaceTintAccent { get; init; }
 
         /// <summary> Translucent dark film — modal backdrops dimming the page underneath, and shaded card insets. </summary>
@@ -87,61 +102,28 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// <summary> Solid fill of floating tooltip bubbles — opaque enough to keep tooltip text legible over any surface beneath. </summary>
         public required Color TooltipBackground { get; init; }
 
-        /// <summary> Solid backdrop of the paywall screen — a darker, more focused palette that draws attention to the upsell card. </summary>
-        public required Color PaywallBackground { get; init; }
 
         // Semantic status colors.
 
-        /// <summary> Positive-result green — correct-answer flashes, success toasts, "completed" badges. </summary>
+        /// <summary> Positive-result green — successful operations and completion indicators. </summary>
         public required Color Success { get; init; }
 
         /// <summary> Darker Success — gradient endpoint for Success-themed buttons and chip backgrounds. </summary>
         public required Color SuccessDark { get; init; }
 
-        /// <summary> Destructive / error red — DangerButton gradient start, validation error icons, wrong-answer flashes. </summary>
+        /// <summary> Destructive / error red — DangerButton gradient start, validation error icons, failed operations. </summary>
         public required Color Error { get; init; }
 
         /// <summary> Darker Error — gradient endpoint for DangerButton and error-state chip backgrounds. </summary>
         public required Color ErrorDark { get; init; }
 
-        /// <summary> Caution amber — warning toasts, "are you sure?" prompts, daily-limit reminders. </summary>
+        /// <summary> Caution amber — warning toasts, "are you sure?" prompts, attention prompts. </summary>
         public required Color Warning { get; init; }
 
+// Composite assets — gradient lists and backdrop stops.
 
-
-        // Medal colors — leaderboard rankings and top-tier achievements.
-
-        /// <summary> Gold medal fill — first place on leaderboards and top-tier achievement badges. </summary>
-        public required Color Gold { get; init; }
-
-        /// <summary> Darker Gold — gradient endpoint for gold medals. </summary>
-        public required Color GoldDark { get; init; }
-
-        /// <summary> High-contrast warm-ivory used for PRO / premium headings and labels so gold-tier copy stays sharply legible over the dark premium surfaces (where plain Gold would smear into the glow). </summary>
-        public required Color PremiumText { get; init; }
-
-        /// <summary> Hard-currency ice-blue accent — diamond balance pill and shop highlights. </summary>
-        public required Color Diamond { get; init; }
-
-        /// <summary> Darker diamond companion for gradients. </summary>
-        public required Color DiamondDark { get; init; }
-
-        /// <summary> Silver medal fill — second place ranking. </summary>
-        public required Color Silver { get; init; }
-
-        /// <summary> Darker Silver — gradient endpoint for silver medals. </summary>
-        public required Color SilverDark { get; init; }
-
-        /// <summary> Bronze medal fill — third place ranking. </summary>
-        public required Color Bronze { get; init; }
-
-        /// <summary> Darker Bronze — gradient endpoint for bronze medals. </summary>
-        public required Color BronzeDark { get; init; }
-
-        // Composite assets — gradient lists and backdrop stops.
-
-        /// <summary> 12 month-indexed gradient pairs — painted into the Calendar month cards and the day-of-year header of Daily content cards. </summary>
-        public required (Color Start, Color End)[] MonthGradients { get; init; }
+        /// <summary> Optional named-surface gradient pairs for custom cards and palette tooling. </summary>
+        public (Color Start, Color End)[] SurfaceGradients { get; init; } = [];
 
         /// <summary> Radial-gradient stops blurred under every glass surface to form the aurora backdrop. Position and Size use CSS background-position / background-size syntax. </summary>
         public required AuroraStop[] AuroraStops { get; init; }
@@ -158,7 +140,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// </summary>
         public Color TextOnFilledSurface => Colors.White;
 
-        /// <summary> Text painted onto Primary / Secondary / Accent gradient buttons — PrimaryButton label, "YOU" chip on Primary, active-tab label. </summary>
+        /// <summary> Text painted onto Primary / Secondary / Accent gradient buttons — PrimaryButton label, selected controls and active-tab labels. </summary>
         public Color TextOnAccent => TextOnFilledSurface;
 
         /// <summary> Text painted onto Error / Danger gradient buttons (DangerButton "Delete Account") and error toasts. </summary>
@@ -199,10 +181,10 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// <summary> Emoji painted on a Warning fill — mirrors <see cref="TextOnWarning"/>. </summary>
         public Color EmojiOnWarning => TextOnWarning;
 
-        /// <summary> Decorative emoji tinted with Accent — streak flames, badge highlights, "hot" indicators. </summary>
+        /// <summary> Decorative emoji tinted with Accent — decorative highlights. </summary>
         public Color EmojiAccent => Accent;
 
-        /// <summary> Decorative emoji tinted with Primary — XP stars, navigation glyphs. </summary>
+        /// <summary> Decorative emoji tinted with Primary — navigation and decorative glyphs. </summary>
         public Color EmojiPrimary => Primary;
 
         /// <summary> Decorative emoji tinted with Warning. </summary>
@@ -216,9 +198,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
 
         // Convenience aliases (kept for back-compat with earlier token names).
 
-
-
-        /// <summary> Aliased to <see cref="SurfaceNormal"/> — use this ONLY for glass-card backgrounds. For text on filled surfaces use <see cref="TextOnFilledSurface"/> (or one of the <c>TextOn*</c> aliases). </summary>
+/// <summary> Aliased to <see cref="SurfaceNormal"/> — use this ONLY for glass-card backgrounds. For text on filled surfaces use <see cref="TextOnFilledSurface"/> (or one of the <c>TextOn*</c> aliases). </summary>
         public Color Surface => SurfaceNormal;
 
         /// <summary> Aliased to <see cref="SurfaceDarken"/> for back-compat with the original SurfaceDark token. </summary>

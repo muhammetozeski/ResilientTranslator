@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Components;
-using ResilientTranslator.MainProject.Services;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace ResilientTranslator.MainProject.UI.Layout.Architecture
 {
-    public partial class PageBase : LayoutComponentBase
+    public partial class PageBase : LayoutComponentBase, IDisposable
     {
+        [CascadingParameter] public ResilientTranslator.MainProject.Constants.ThemeConstants.AppTheme? ActiveTheme { get; set; }
         [Inject] public NavigationManager NavManager { get; set; } = default!;
 
         public bool HasNavigatedAway { get; private set; }
@@ -15,9 +16,14 @@ namespace ResilientTranslator.MainProject.UI.Layout.Architecture
 
         protected override void OnInitialized()
         {
-            NavManager.LocationChanged += (s, e) => { HasNavigatedAway = true; };
+            NavManager.LocationChanged += OnLocationChanged;
         }
 
+        /// <summary>Records navigation away without leaving an anonymous event subscription behind.</summary>
+        void OnLocationChanged(object? sender, LocationChangedEventArgs args) => HasNavigatedAway = true;
+
+        /// <summary>Releases navigation ownership when a page instance is retired.</summary>
+        public virtual void Dispose() => NavManager.LocationChanged -= OnLocationChanged;
         protected void RecoverFromError()
         {
             NavManager.NavigateTo("/", true);

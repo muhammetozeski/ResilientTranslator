@@ -32,7 +32,8 @@ public static class Preferences
     public static int WindowHeight => Settings.WindowHeight.Value;
     public static int ClipboardChangeBudget => Settings.ClipboardChangeBudget.Value;
     public static string SaveError { get; private set; } = "";
-    public static string EditorStyle => FormattableString.Invariant($"font-family:'{Settings.EditorFont.Value.Replace("\\", "\\\\").Replace("'", "\\'")}';font-size:{Settings.EditorFontSize.Value}px;color:{Settings.EditorColor.Value}");
+    public static string EditorFontFamily => Settings.EditorFont.Value;
+    public static double EditorFontSize => Settings.EditorFontSize.Value;
 
     /// <summary>Rejects invalid persisted limits before any window or worker consumes them.</summary>
     public static void Initialize()
@@ -43,6 +44,7 @@ public static class Preferences
                 Log($"Invalid persisted preference reset; key={entry.Setting.Key}; value={entry.Setting.Value}", Run: IsLogEnabled);
                 entry.Setting.ResetToDefault();
             }
+        ThemeManager.Apply(ThemeManager.Current with { EditorText = Color.FromRgba(Settings.EditorColor.Value) });
         if (Settings.WindowWidth.Value < 480) Settings.WindowWidth.ResetToDefault();
         if (Settings.WindowHeight.Value < 280) Settings.WindowHeight.ResetToDefault();
     }
@@ -62,6 +64,7 @@ public static class Preferences
             if (!IsValid(setting, entry.Editor)) { setting.Value = previous; return false; }
             Logger.ActivateLogging = Settings.EnableLogging.Value;
         }
+        if (setting == Settings.EditorColor) ThemeManager.Apply(ThemeManager.Current with { EditorText = Color.FromRgba(Settings.EditorColor.Value) });
         Log($"Preference changed; key={setting.Key}; value={setting.Value}", Run: IsLogEnabled);
         Changed?.Invoke();
         return await SaveAsync();

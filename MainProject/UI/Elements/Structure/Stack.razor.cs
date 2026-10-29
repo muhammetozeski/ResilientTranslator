@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using ResilientTranslator.MainProject.UI.Layout.Architecture;
 using ResilientTranslator.MainProject.Constants.ThemeConstants;
 
 namespace ResilientTranslator.MainProject.UI.Elements.Structure
@@ -10,7 +11,7 @@ namespace ResilientTranslator.MainProject.UI.Elements.Structure
     /// receive padding from <see cref="ItemPaddingTop"/>..<see cref="ItemPaddingLeft"/> via CSS
     /// custom properties cascaded from the Stack itself.
     /// </summary>
-    public partial class Stack : ComponentBase
+    public partial class Stack : ThemeComponent
     {
         [Parameter] public RenderFragment? ChildContent { get; set; }
 

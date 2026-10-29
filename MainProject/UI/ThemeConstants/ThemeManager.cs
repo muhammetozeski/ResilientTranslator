@@ -6,7 +6,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
     /// </summary>
     public static class ThemeManager
     {
-        public static AppTheme Current { get; private set; } = AppThemes.PlayfulStarlight;
+        public static AppTheme Current { get; private set; } = AppThemes.TranslatorDark;
 
         /// <summary>
         /// Replace the active palette. Fires <see cref="Events.MainEvents.OnDataChanged"/> which the

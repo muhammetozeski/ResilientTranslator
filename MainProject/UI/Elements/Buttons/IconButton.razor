@@ -1,29 +1,17 @@
-<CoreButton Background="@(Background ?? AppColors.Surface)"
-            Gradient="@Gradient"
-            TextColor="@(TextColor ?? AppColors.TextPrimary)"
-            BorderRadius="@(AppMeasures.Radius.Circular + "%")"
-            Padding="0"
-            Shadow="@Shadow"
-            Disabled="@Disabled"
-            OnClick="@OnClick"
-            CustomClass="icon-button-fixed">
+<CoreButton @attributes="AdditionalAttributes" Appearance="Appearance" Background="@(Background ?? AppColors.Surface)" Gradient="Gradient" TextColor="@(TextColor ?? AppColors.TextPrimary)" BorderRadius="@(AppMeasures.Radius.Circular + "%")" Padding="0" Shadow="Shadow" Disabled="Disabled" OnClick="OnClick" CustomClass="@($"icon-button-fixed {CustomClass}")" Style="@FormattableString.Invariant($"width:{Size}px;height:{Size}px;")">
     @ChildContent
 </CoreButton>
-
-<style>
-    .icon-button-fixed {
-        width: @(AppMeasures.Size.Px40)px;
-        height: @(AppMeasures.Size.Px40)px;
-        flex-shrink: 0;
-    }
-</style>
-
+<IconButtonCss />
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public EventCallback OnClick { get; set; }
     [Parameter] public bool Disabled { get; set; }
-    [Parameter] public Microsoft.Maui.Graphics.Color? Background { get; set; }
-    [Parameter] public Microsoft.Maui.Graphics.Color? TextColor { get; set; }
-    [Parameter] public (Microsoft.Maui.Graphics.Color Start, Microsoft.Maui.Graphics.Color End)? Gradient { get; set; }
+    [Parameter] public Color? Background { get; set; }
+    [Parameter] public Color? TextColor { get; set; }
+    [Parameter] public (Color Start, Color End)? Gradient { get; set; }
     [Parameter] public string Shadow { get; set; } = AppStyles.ShadowSoft;
+    [Parameter] public int Size { get; set; } = AppMeasures.Size.Px40;
+    [Parameter] public string CustomClass { get; set; } = "";
+    [Parameter] public ControlAppearance Appearance { get; set; } = ControlAppearance.Standard;
+    [Parameter(CaptureUnmatchedValues=true)] public IReadOnlyDictionary<string,object>? AdditionalAttributes { get; set; }
 }

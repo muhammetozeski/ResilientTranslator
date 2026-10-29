@@ -1,36 +1,42 @@
-<div class="core-input-group" style="@_groupStyle">
-    @if (!string.IsNullOrEmpty(Icon))
-    {
-        <span class="core-input-icon">@Icon</span>
-    }
-    <input type="@Type" placeholder="@Placeholder" @bind="CurrentValue" @bind:event="oninput" required="@IsRequired" class="core-input-element" />
-    @ChildContent
-</div>
-
+@if (IsGrouped && !Multiline)
+{
+    <div class="core-input-group" style="@GroupStyle">
+        @if (!string.IsNullOrEmpty(Icon)) { <span class="core-input-icon">@Icon</span> }
+        @NativeInput()
+        @ChildContent
+    </div>
+}
+else { @NativeInput() }
 <CoreInputCss />
-
 @code {
     [Parameter] public string Type { get; set; } = "text";
-    [Parameter] public string Placeholder { get; set; } = string.Empty;
-    [Parameter] public string Icon { get; set; } = string.Empty;
+    [Parameter] public string Placeholder { get; set; } = "";
+    [Parameter] public string Icon { get; set; } = "";
+    [Parameter] public string CustomClass { get; set; } = "";
     [Parameter] public bool IsRequired { get; set; }
-    [Parameter] public RenderFragment? ChildContent { get; set; }
-    
-    [Parameter] public string Value { get; set; } = string.Empty;
+    [Parameter] public bool IsGrouped { get; set; } = true;
+    [Parameter] public bool Multiline { get; set; }
+    [Parameter] public string Value { get; set; } = "";
     [Parameter] public EventCallback<string> ValueChanged { get; set; }
-    
-    private string CurrentValue
+    [Parameter] public EventCallback<ChangeEventArgs> OnInput { get; set; }
+    [Parameter] public EventCallback<ChangeEventArgs> OnChange { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues=true)] public IReadOnlyDictionary<string,object>? AdditionalAttributes { get; set; }
+    ElementReference Element;
+    string InputClass => $"{(IsGrouped && !Multiline ? "core-input-element" : "core-input-standalone")} {CustomClass}";
+    string GroupStyle => $"background-color:{AppColors.Background.ToRgbaHex(true)};border-radius:{AppMeasures.Radius.Medium}px;";
+    /// <summary>Renders the existing input contract as either one native input or one native multiline editor.</summary>
+    RenderFragment NativeInput() => @<text>
+        @if (Multiline) { <textarea @attributes="AdditionalAttributes" @ref="Element" class="@InputClass" placeholder="@Placeholder" required="@IsRequired" value="@Value" @oninput="HandleInput" @onchange="OnChange"></textarea> }
+        else { <input @attributes="AdditionalAttributes" @ref="Element" type="@Type" class="@InputClass" placeholder="@Placeholder" required="@IsRequired" value="@Value" @oninput="HandleInput" @onchange="OnChange" /> }
+    </text>;
+    /// <summary>Publishes current text before awaiting the consumer's operation, preserving rapid input ordering.</summary>
+    async Task HandleInput(ChangeEventArgs args)
     {
-        get => Value;
-        set
-        {
-            if (Value != value)
-            {
-                Value = value;
-                ValueChanged.InvokeAsync(value);
-            }
-        }
+        string next = args.Value?.ToString() ?? "";
+        if (Value != next) { Value = next; await ValueChanged.InvokeAsync(next); }
+        if (OnInput.HasDelegate) await OnInput.InvokeAsync(args);
     }
-
-    string _groupStyle => $"background-color: {AppColors.Background.ToRgbaHex(true)}; border-radius: {AppMeasures.Radius.Medium}px;";
+    /// <summary>Moves browser focus into the actual input/textarea element.</summary>
+    public ValueTask FocusAsync(bool preventScroll=true) => Element.FocusAsync(preventScroll);
 }

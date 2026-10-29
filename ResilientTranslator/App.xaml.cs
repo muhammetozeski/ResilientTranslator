@@ -1,4 +1,5 @@
-﻿namespace ResilientTranslator
+using ResilientTranslator.MainProject.Constants;
+namespace ResilientTranslator
 {
     public partial class App : Application
     {
@@ -9,7 +10,7 @@
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new MainPage()) { Title = "ResilientTranslator" };
+            return new Window(new MainPage()) { Title = AppConstants.AppName };
         }
     }
 }

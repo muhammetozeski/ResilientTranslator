@@ -5,6 +5,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// <summary> Corner radii in CSS px (Circular/Pill are special — see their notes). </summary>
         public static class Radius
         {
+            public const int Px3 = 3, Px5 = 5, Px7 = 7, Px10 = 10;
             public const int Px2 = 2;
             public const int Px4 = 4;
             public const int Px6 = 6;
@@ -71,6 +72,18 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// <summary> Element dimensions (width / height / min / max) in CSS px. Px* are exact so layouts do not shift. </summary>
         public static class Size
         {
+            public const int Px2 = 2;
+            public const int Px3 = 3;
+            public const int Px6 = 6;
+            public const int Px7 = 7;
+            public const int Px8 = 8;
+            public const int Px9 = 9;
+            public const int Px10 = 10;
+            public const int Px11 = 11;
+            public const int Px13 = 13;
+            public const int Px18 = 18;
+            public const int Px23 = 23;
+            public const int Px25 = 25, Px29 = 29, Px30 = 30, Px31 = 31, Px43 = 43, Px680 = 680;
             public const int Px1 = 1;
             public const int Px4 = 4;
             public const int Px5 = 5;
@@ -139,6 +152,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// <summary> Letter-spacing (tracking) in CSS px. Strings (not int) so the decimal renders as "0.5" regardless of OS culture. </summary>
         public static class Tracking
         {
+            public const string Compact = "-0.4";
             public const string Normal = "0.5";
             public const string Wide = "0.8";
             public const string Widest = "1.5";
@@ -147,6 +161,9 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// <summary> Font sizes in CSS px. </summary>
         public static class Font
         {
+            public const int Px13 = 13, Px18 = 18;
+            public const string DefaultFamily = "Segoe UI";
+            public const string SystemStack = "Segoe UI,sans-serif";
             public const int XSmall = 10;
             public const int Small = 12;
             public const int Normal = 14;
@@ -175,6 +192,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         /// <summary> Line-height multipliers (unitless ratio of line box height to font size). </summary>
         public static class LineHeight
         {
+            public const string Editor = "1.48";
             public const string None = "1";
             public const string Tight = "1.2";
             public const string Snug = "1.4";
@@ -193,6 +211,11 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
         }
 
         /// <summary> z-index layers, ordered low to high, naming the kind of UI element that sits at each level. </summary>
+        public static class Breakpoints
+        {
+            public const int CompactToolbar = 880;
+            public const int NarrowToolbar = 540;
+        }
         public static class ZLayer
         {
             public const int Base = 1;

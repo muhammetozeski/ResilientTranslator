@@ -1,5 +1,5 @@
 <CoreButton Background="@Background"
-            Gradient="@(Gradient ?? (AppColors.Primary, AppColors.Accent))"
+            Gradient="@(Gradient ?? (Background is null ? (AppColors.Primary, AppColors.Accent) : ((Color Start, Color End)?)null))"
             TextColor="@(TextColor ?? AppColors.TextOnAccent)"
             Shadow="@(Shadow ?? AppStyles.ShadowPrimaryGlow)"
             IsFullWidth="@IsFullWidth"
