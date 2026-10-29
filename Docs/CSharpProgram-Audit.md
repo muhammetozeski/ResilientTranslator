@@ -58,3 +58,5 @@ Scope: the active Windows application, shared first-party code, generator, launc
 | 50 | Existing diagnostic coverage was retained and expanded; it was not removed to hide a failed path. |
 
 The protected engine and unrequested hosts are explicit scope boundaries, not claims that every file in those independent implementations was rewritten to these rules. A passing static check is not a promise that external services or file systems can never fail.
+
+Native shutdown was also checked on the installed application: after the user invoked tray middle-click, no application process remained and the final disk record was Final application shutdown record at 2026-10-29 22:44:16 Istanbul time.
