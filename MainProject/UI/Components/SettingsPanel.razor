@@ -6,7 +6,7 @@
 <CoreModal IsVisible="true" Appearance="ControlAppearance.Bare" BackdropClass="settings-backdrop" ContentClass="settings-panel" OnBackdropClick="OnClose" OnKeyDown="KeyDown" aria-label="@Strings.SettingsTitle">
         <header><h2>@Strings.SettingsTitle</h2><CoreButton Appearance="ControlAppearance.Compact" @ref="CloseButton" OnClick="OnClose" aria-label="@Strings.Close">×</CoreButton></header>
         <div class="settings-fields">
-            <label><span>@Strings.ApplicationLanguage</span><select value="@Settings.Language.Value" @onchange="args => Change(Settings.Language,args)">@foreach (var language in LanguageCatalog.All.Where(item => item.Code != "auto")) { <option value="@language.Code">@language.Name</option> }</select></label>
+            <label><span>@Strings.ApplicationLanguage</span><select value="@Settings.Language.Value" @onchange="args => Change(Settings.Language,args)"><option value="@LocManager.SystemLanguage">@Strings.Automatic</option>@foreach (var language in UiLanguages) { <option value="@language.Code">@language.Name</option> }</select></label>
             <label class="speed-row"><span>@Label(Settings.StatusSpeed)</span><CoreInput IsGrouped="false" type="range" min="5" max="150" step="1" Value="@Invariant(Speed)" OnInput="PreviewSpeed" OnChange="SaveSpeed" /><output>@Invariant(Speed) px/s</output></label>
             <StatusTicker Text="@Strings.StatusPreview" Speed="@Speed" />
             @foreach (var setting in new[] { Settings.DefaultSourceLanguage, Settings.DefaultTargetLanguage })
@@ -41,8 +41,17 @@
     string[]? Fonts;
     RequestContext FontRequest = new();
     bool FontPickerOpen, Disposed;
+    (string Code, string Name)[] UiLanguages = LanguageCatalog.All.Where(item => item.Code != "auto").Select(item => (item.Code, item.Name)).ToArray();
     string Error = "";
     double Speed = Preferences.StatusSpeed;
+
+    /// <summary>Discovers user-added UI resources off the dispatcher whenever settings opens.</summary>
+    /// <returns>Completion of the current dialog's language-list discovery.</returns>
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ExceptionBoundary.RunSafelyAsync(_ => Task.Run(() => LocManager.Available), operationName: "DiscoverUiLanguages");
+        if (!Disposed && result is { Succeeded: true, Value: { } languages }) UiLanguages = languages;
+    }
 
     /// <summary>Places keyboard focus inside the dialog after it is rendered.</summary>
     /// <param name="firstRender">Whether this is the first completed render of this component instance.</param>

@@ -26,7 +26,7 @@ internal static class SettingsPersistence
                 ExceptionBoundary.LogSafely($"Invalid setting values retained their parsed defaults; source={selected}; error={error}", Run: IsLogEnabled);
             }
             if (Settings.Language.Value != Localization.LocManager.SystemLanguage &&
-                !LanguageCatalog.All.Any(language => language.Code == Settings.Language.Value && language.Code != "auto"))
+                !Localization.LocManager.IsAvailable(Settings.Language.Value))
             {
                 if (!repaired && File.Exists(selected)) Preserve(selected);
                 Settings.Language.ResetToDefault();

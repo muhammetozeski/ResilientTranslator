@@ -6,7 +6,9 @@ Accepted edits change RAM state immediately. The shared asynchronous writer take
 
 ## Application language
 
-The Language setting controls the application UI and defaults to tr. It is independent of translation source, target and startup defaults. Seven complete XML files in the repository-root languages directory are embedded in MainProject: tr, en, de, fr, es, it and ru. The settings picker applies UI languages off the dispatcher through a serialized language gate, updates tray labels and saves the successful selection. Tests switched all seven UI languages and verified that translation selections were unchanged.
+The Language setting controls the application UI and defaults to system. It is independent of translation source, target and startup defaults. LocManager captures the initial Windows user UI culture before any application language is applied; Automatic resolves that culture and falls back to English when unavailable. Explicit saved selections remain unchanged.
+
+Seven complete XML files in the repository-root languages directory are embedded in MainProject: tr, en, de, fr, es, it and ru. The main package also contains their plain copies in AppData/languages. The settings picker discovers UserData language files on a worker whenever it opens, applies UI languages through a serialized language gate, updates tray labels and saves the successful selection. A complete lang.<culture-code>.xml with a valid .NET culture code can add another UI language. Custom files are retained and validated before applying; shipped-resource refresh only manages the seven shipped cultures. Earlier tests switched all seven UI languages and verified that translation selections were unchanged.
 
 LocManager installs shipped resources into portable UserData. A different executable version or missing string key refreshes the resource, preserving the previous user file as .previous. Checking keys also handles a newer local build with the same version. All seven files are checked before normal startup and share the same 61 nonempty string keys, including technical-setting labels.
 

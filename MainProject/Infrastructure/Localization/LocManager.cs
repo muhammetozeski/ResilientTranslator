@@ -18,6 +18,8 @@ public static class LocManager
     internal const bool IsLogEnabled = true;
     public const string SystemLanguage = "system";
     private const string ResourcePrefix = "ResilientTranslator.MainProject.Infrastructure.Localization.lang.";
+    // Capture Windows' initial user UI culture before applying an explicit application language.
+    static readonly string WindowsLanguage = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
 
     /// <summary>Fires after the active language changes so open windows can re-apply their text.</summary>
     public static event Action? LanguageChanged;
@@ -84,6 +86,18 @@ public static class LocManager
     /// <param name="language">The resolved UI culture code or source language selected by the operation.</param>
     /// <returns>The portable XML path for the requested UI language.</returns>
     private static string PathFor(string language) => Path.Combine(Folder, $"lang.{language}.xml");
+
+    /// <summary>Recognizes shipped cultures and user-supplied culture files without changing the active language.</summary>
+    /// <param name="language">A concrete UI culture code, independent of translation languages.</param>
+    /// <returns>Whether the culture is valid and has a shipped or portable language resource.</returns>
+    internal static bool IsAvailable(string language)
+    {
+        if (string.IsNullOrWhiteSpace(language)) return false;
+        try { _ = CultureInfo.GetCultureInfo(language); }
+        catch (CultureNotFoundException) { return false; }
+        return LanguageCatalog.All.Any(item => item.Code != "auto" && string.Equals(item.Code, language, StringComparison.OrdinalIgnoreCase))
+            || File.Exists(PathFor(language));
+    }
 
     /// <summary>
     /// Prepares the language files and applies the configured language. Pass "system" to follow the
@@ -234,18 +248,7 @@ public static class LocManager
 
         try
         {
-            var system = CultureInfo.InstalledUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
-            if (File.Exists(PathFor(system)))
-            {
-                return system;
-            }
-
-            // A first run happens before the files are written, so fall back to the two languages
-            // that always exist.
-            if (system is "tr" or "en")
-            {
-                return system;
-            }
+            if (IsAvailable(WindowsLanguage)) return WindowsLanguage;
         }
         catch (Exception ex)
         {

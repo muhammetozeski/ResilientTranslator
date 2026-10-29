@@ -23,7 +23,11 @@ Extract the release ZIP and start `ResilientTranslator.exe`. Windows x64 and the
 
 The executables are digitally signed. To let Windows verify the signature, run `Install-Certificate.cmd` from `SignatureTrust.zip` once. The programs run without it; only the signature stays unverified.
 
-Settings and language files live in `UserData`; logs and the WebView cache live in `AppCache`. Both folders are relative to the portable program root.
+On first launch, the UI follows the Windows user display language; an unsupported language falls back to English. A language selected in settings is retained. Automatic remains available to follow Windows again.
+
+The main package includes all seven XML files under `AppData/languages`; embedded copies also prepare editable files in `UserData`. Add a complete `UserData/lang.<culture-code>.xml` to offer another UI language in settings. Use an existing file as a starting point and retain every string key. Custom language files are loaded from disk and preserved across updates.
+
+Settings and editable language files live in `UserData`; logs and the WebView cache live in `AppCache`. Both folders are relative to the portable program root.
 
 ## Source
 

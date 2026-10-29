@@ -77,7 +77,6 @@ public static class Preferences
     /// <returns>True only after complete UI-language apply and durable preference persistence.</returns>
     static async Task<bool> SetLanguageAsync(string code)
     {
-        if (!LanguageCatalog.All.Any(language => language.Code == code && code != "auto")) return false;
         await LanguageGate.WaitAsync();
         try
         {

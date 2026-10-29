@@ -34,7 +34,7 @@ internal static class SettingsManagerSettings
 internal static class Settings
 {
     [Preference(nameof(Strings.ApplicationLanguage))]
-    public static readonly Setting<string> Language = new("tr");
+    public static readonly Setting<string> Language = new(LocManager.SystemLanguage);
     public static readonly Setting<string> SourceLanguage = new("en");
     public static readonly Setting<string> TargetLanguage = new("tr");
     public static readonly Setting<string> LastConcreteSourceLanguage = new("en");
