@@ -12,6 +12,8 @@ internal sealed class TranslationSession : IDisposable
     readonly long Request;
     readonly int Attempt;
     /// <summary>Loads an independent provider state so cleanup cannot cancel the next attempt.</summary>
+    /// <param name="request">The diagnostic request label; object identity controls publication instead.</param>
+    /// <param name="attempt">The diagnostic attempt number within its owning translation request.</param>
     internal TranslationSession(long request,int attempt)
     {
         Request=request; Attempt=attempt;
@@ -37,6 +39,9 @@ internal sealed class TranslationSession : IDisposable
         catch { Dispose(); throw; }
     }
     /// <summary>Passes the same inner cancellation token to cleanup and the bounded wait around the original API.</summary>
+    /// <param name="input">The immutable source text, language direction and execution options for this attempt.</param>
+    /// <param name="token">Cancels this operation&apos;s checkpoints and bounded wait.</param>
+    /// <returns>A confirmed complete translation or the propagated final/cancellation failure.</returns>
     internal async Task<ConfirmedTranslation> ExecuteAsync(TranslationAttempt input,CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
@@ -55,8 +60,19 @@ internal sealed class TranslationSession : IDisposable
     {
         foreach(var client in Interlocked.Exchange(ref Clients,[]))
         {
-            try { client.CancelPendingRequests(); client.Dispose(); }
-            catch(Exception error) { ExceptionBoundary.LogSafely($"Translation client shutdown failed; request={Request}; attempt={Attempt}; error={error}",IsLogEnabled); }
+            Exception? cancellationError = null;
+            try { client.CancelPendingRequests(); }
+            catch(Exception error) { cancellationError = error; }
+            finally
+            {
+                try { client.Dispose(); }
+                catch(Exception disposalError)
+                {
+                    cancellationError = cancellationError is null ? disposalError : new AggregateException(cancellationError, disposalError);
+                }
+            }
+            if(cancellationError is not null)
+                ExceptionBoundary.LogSafely($"Translation client shutdown encountered errors; disposal was attempted; request={Request}; attempt={Attempt}; error={cancellationError}",IsLogEnabled);
         }
         var context=Interlocked.Exchange(ref Context,null);
         if(context is not null)
@@ -66,8 +82,13 @@ internal sealed class TranslationSession : IDisposable
             ExceptionBoundary.LogSafely($"Translation session closed; request={Request}; attempt={Attempt}",IsLogEnabled);
         }
     }
+    /// <summary>Loads only private engine/provider dependencies into an isolated collectible attempt.</summary>
+    /// <param name="directory">The immutable directory containing private engine assemblies.</param>
     sealed class EngineContext(string directory) : AssemblyLoadContext(isCollectible:true)
     {
+        /// <summary>Resolves private engine assemblies while leaving platform assemblies in the default context.</summary>
+        /// <param name="name">The native human-readable language or diagnostic label.</param>
+        /// <returns>The isolated dependency assembly, or null to use the default loader.</returns>
         protected override Assembly? Load(AssemblyName name) => name.Name is "TranslationEngine" or "GTranslate" or "Polly" or "Polly.Core"
             ? LoadFromAssemblyPath(Path.Combine(directory,name.Name+".dll")) : null;
     }
