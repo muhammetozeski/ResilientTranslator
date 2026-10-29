@@ -6,6 +6,7 @@ public static class AppConstants
 {
     public const bool TestBuild = false;
     public const bool PublishMode = false;
+    public const string PayloadFolderName = "AppData";
     public const string AppName = "ResilientTranslator";
     public const string AppNameHumanReadable = "Resilient Translator";
     public const string AppTitle = AppNameHumanReadable;

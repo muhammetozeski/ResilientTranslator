@@ -1,3 +1,4 @@
+using ResilientTranslator.MainProject.Constants;
 using System.Reflection;
 
 namespace ResilientTranslator.MainProject.Infrastructure;
@@ -8,7 +9,7 @@ public static class AppPaths
     internal const bool IsLogEnabled = true;
 
     public static readonly string PayloadDirectory = Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory);
-    public static readonly string Root = string.Equals(Path.GetFileName(PayloadDirectory), "AppData", StringComparison.OrdinalIgnoreCase)
+    public static readonly string Root = string.Equals(Path.GetFileName(PayloadDirectory), AppConstants.PayloadFolderName, StringComparison.OrdinalIgnoreCase)
         ? Directory.GetParent(PayloadDirectory)!.FullName
         : PayloadDirectory;
 
