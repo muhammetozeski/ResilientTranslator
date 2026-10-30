@@ -1,0 +1,3 @@
+CreateDXGIFactory1
+IDXGIFactory1
+DXGI_ERROR_NOT_FOUND

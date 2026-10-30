@@ -1,0 +1,12 @@
+[
+  {"id":"tr01","source":"tr","target":"en","category":"ordinary","text":"Toplantı ertelendiği için bugün evden çalışacağım."},
+  {"id":"tr02","source":"tr","target":"en","category":"negation","text":"Sana kızgın değilim; sadece ne demek istediğini anlamadım."},
+  {"id":"tr03","source":"tr","target":"en","category":"conditional","text":"Keşke dosyayı silmeden önce bir kopyasını alsaydım."},
+  {"id":"tr04","source":"tr","target":"en","category":"idiom","text":"Bu iş sandığımdan daha uzun sürdü ama sonunda içinden çıkabildim."},
+  {"id":"tr05","source":"tr","target":"en","category":"technical","text":"Yeni bir istek geldiğinde, önceki çevirinin sonucunu kullanma."},
+  {"id":"en01","source":"en","target":"tr","category":"ordinary","text":"I left my keys on the kitchen table, but I can't find them now."},
+  {"id":"en02","source":"en","target":"tr","category":"negation","text":"Please don't close the window until the translation has finished."},
+  {"id":"en03","source":"en","target":"tr","category":"aspect","text":"I was about to leave when you called."},
+  {"id":"en04","source":"en","target":"tr","category":"idiom","text":"We ran out of time, so let's pick this up tomorrow."},
+  {"id":"en05","source":"en","target":"tr","category":"technical","text":"The update should preserve my settings even if the internet connection drops."}
+]

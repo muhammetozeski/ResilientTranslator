@@ -1,0 +1,5 @@
+{
+  "comInterop": {
+    "preserveSigMethods": ["IDXGIFactory1.EnumAdapters1", "IDXGIAdapter1.GetDesc1"]
+  }
+}

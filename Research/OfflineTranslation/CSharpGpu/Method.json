@@ -1,0 +1,32 @@
+{
+  "purpose": "Isolated C# CPU and GTX 1050 experiments using the same ten Turkish-English sentences; not an application integration or a release.",
+  "root": "Research/OfflineTranslation, relative to the repository root",
+  "corpus": "Corpus/toz-bergamot-cases.json",
+  "hardware": "Intel Core i5-8300H, NVIDIA GeForce GTX 1050 4 GB, driver 582.66; DXGI adapter index 1",
+  "dependencies": {
+    "dotnet": "10",
+    "onnxRuntimeManaged": "1.31.1",
+    "onnxRuntimeNative": "1.31.1, existing Microsoft Windows x64 DLLs extracted from onnxruntime-node under Runtimes/Onnx/node_modules/onnxruntime-node/bin/napi-v6/win32/x64",
+    "tokenizers": "3.0.0-preview.26513.4; public in-memory Unigram factory avoids the protobuf factory's negative-BOS issue without modifying the library",
+    "csWin32": "0.3.363, used for typed DXGI adapter enumeration"
+  },
+  "inputs": {
+    "toz": "Models/Toz/encoder_q8.onnx, decoder_q8.onnx and tokenizer.model, from https://huggingface.co/TozAI/Toz-Cevir-1",
+    "bergamot": "The original binary models and vocabularies under Models/Mozilla/tr-en and en-tr, from Mozilla's translations-models Remote Settings collection",
+    "nativeRuntimeSource": "https://registry.npmjs.org/onnxruntime-node/-/onnxruntime-node-1.31.1.tgz"
+  },
+  "commandsFromRepositoryRoot": [
+    "dotnet build Research/OfflineTranslation/CSharpGpu/CSharpGpu.csproj -c Release",
+    "Research/OfflineTranslation/CSharpGpu/bin/Release/net10.0-windows/CSharpGpu.exe --convert-bergamot",
+    "Research/OfflineTranslation/CSharpGpu/bin/Release/net10.0-windows/CSharpGpu.exe --convert-toz",
+    "Research/OfflineTranslation/CSharpGpu/bin/Release/net10.0-windows/CSharpGpu.exe --warm",
+    "Research/OfflineTranslation/CSharpGpu/bin/Release/net10.0-windows/CSharpGpu.exe --gpu --warm",
+    "Research/OfflineTranslation/CSharpGpu/bin/Release/net10.0-windows/CSharpGpu.exe --toz-float --warm",
+    "Research/OfflineTranslation/CSharpGpu/bin/Release/net10.0-windows/CSharpGpu.exe --toz-float --gpu --warm",
+    "Research/OfflineTranslation/CSharpGpu/bin/Release/net10.0-windows/CSharpGpu.exe --bergamot --warm",
+    "Research/OfflineTranslation/CSharpGpu/bin/Release/net10.0-windows/CSharpGpu.exe --bergamot --gpu --warm"
+  ],
+  "timing": "First pass retained separately; second pass timed after warmup. CPU and GPU compared sequentially with the same files, C# decoding and beam=4. Profiling is enabled only by --probe and disabled for timed runs.",
+  "validation": "C# Bergamot token IDs matched Google SentencePiece on all ten inputs. Runtime profiles confirm DML execution on the NVIDIA adapter. CPU helpers remain in Toz; the Bergamot GPU probe has DML node events only.",
+  "knownDifference": "The custom Bergamot float32 path is experimental and is not output-equivalent to the original quantized runtime: the tr05 negation is lost on both CPU and GPU. Results record this difference; no application integration was performed."
+}
