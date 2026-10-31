@@ -34,8 +34,8 @@ internal static class SettingsManagerSettings
 internal static class Settings
 {
     [Preference(nameof(Strings.EnableTooltips))] public static readonly Setting<bool> EnableTooltips=new(true);
-    [Preference(nameof(Strings.TooltipDelay),true,0,60)] public static readonly Setting<double> TooltipDelay=new(4);
-    [Preference(nameof(Strings.TooltipFade),true,0,5)] public static readonly Setting<double> TooltipFade=new(1);
+    [Preference(nameof(Strings.TooltipDelay),true,0,60)] public static readonly Setting<double> TooltipDelay=new(1);
+    [Preference(nameof(Strings.TooltipFade),true,0,5)] public static readonly Setting<double> TooltipFade=new(0.6);
     [Preference(nameof(Strings.ApplicationLanguage))]
     public static readonly Setting<string> Language = new(LocManager.SystemLanguage);
     public static readonly Setting<string> SourceLanguage = new("en");
