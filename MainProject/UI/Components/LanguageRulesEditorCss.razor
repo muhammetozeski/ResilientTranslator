@@ -1,0 +1,15 @@
+<style>
+    .language-rules-editor{display:grid;gap:@(AppMeasures.Space.Px8)px;min-width:0;color:@AppColors.TextPrimary.ToRgbaHex(true)}
+    .language-rules-help,.language-rules-empty{margin:0;font-size:@(AppMeasures.Font.Small)px;color:@AppColors.TextSecondary.ToRgbaHex(true);line-height:@AppMeasures.LineHeight.Snug}
+    .language-rule-block{display:flex;align-items:center;flex-wrap:wrap;gap:@(AppMeasures.Space.Px8)px;border:@(AppMeasures.Border.Thin)px solid @AppColors.Primary.ToRgbaHex(true);border-radius:@(AppMeasures.Radius.Small)px;background:@AppColors.SurfaceSubtle.ToRgbaHex(true);padding:@(AppMeasures.Space.Px8)px}
+    .language-rule-order{display:flex;gap:@(AppMeasures.Space.Px2)px}
+    .language-rule-condition{flex:1;min-width:0;display:grid;gap:@(AppMeasures.Space.Px4)px}
+    .language-rule-condition strong{font-size:@(AppMeasures.Font.Small)px;color:@AppColors.Primary.ToRgbaHex(true)}
+    .language-rule-sources,.language-rule-source,.language-rule-destination,.language-rule-footer{display:flex;align-items:center;flex-wrap:wrap;gap:@(AppMeasures.Space.Px6)px}
+    .language-rule-source{gap:0}
+    .language-rule-or{font-size:@(AppMeasures.Font.Small)px;color:@AppColors.TextSecondary.ToRgbaHex(true)}
+    .language-rule-destination{flex-wrap:nowrap;font-size:@(AppMeasures.Font.Small)px}
+    .language-rule-footer{justify-content:space-between;color:@AppColors.TextSecondary.ToRgbaHex(true);font-size:@(AppMeasures.Font.Small)px}
+    .language-rule-block select{width:auto;min-width:0;max-width:100%;padding:@(AppMeasures.Space.Px4)px @(AppMeasures.Space.Px6)px;border:@(AppMeasures.Border.Thin)px solid @AppColors.GlassBorderDefault.ToRgbaHex(true);border-radius:@(AppMeasures.Radius.Small)px;color:inherit;background:@AppColors.Surface.ToRgbaHex(true);font:inherit}
+    .language-rule-source .core-btn{padding:@(AppMeasures.Space.Px4)px;color:@AppColors.TextSecondary.ToRgbaHex(true)}
+</style>

@@ -1,0 +1,125 @@
+@using System.Collections.Immutable
+@using ResilientTranslator.MainProject.Infrastructure
+@using ResilientTranslator.MainProject.Infrastructure.Localization
+<LanguageRulesEditorCss />
+<section class="language-rules-editor" aria-label="@Strings.RoutingRules">
+    <p class="language-rules-help">@Strings.RoutingRulesHelp</p>
+    @if (Value.Rules.IsDefaultOrEmpty)
+    {
+        <p class="language-rules-empty">@Strings.RoutingRulesEmpty</p>
+    }
+    @for (int ruleIndex = 0; ruleIndex < Value.Rules.Length; ruleIndex++)
+    {
+        int index = ruleIndex;
+        var rule = Value.Rules[index];
+        <div class="language-rule-block" @key="rule">
+            <div class="language-rule-order">
+                <CoreTooltip Text="@Strings.MoveUp"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => Move(index, -1)" Disabled="@(index == 0)" aria-label="@Strings.MoveUp">↑</CoreButton></CoreTooltip>
+                <CoreTooltip Text="@Strings.MoveDown"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => Move(index, 1)" Disabled="@(index == Value.Rules.Length - 1)" aria-label="@Strings.MoveDown">↓</CoreButton></CoreTooltip>
+            </div>
+            <div class="language-rule-condition">
+                <strong>@Strings.IfLanguage</strong>
+                <div class="language-rule-sources">
+                    @for (int sourceIndex = 0; sourceIndex < rule.Sources.Length; sourceIndex++)
+                    {
+                        int condition = sourceIndex;
+                        if (condition > 0) { <span class="language-rule-or">@Strings.Or</span> }
+                        <span class="language-rule-source">
+                            <CoreTooltip Text="@Strings.IfLanguage"><select value="@rule.Sources[condition]" @onchange="args => SetSource(index, condition, args.Value?.ToString())" aria-label="@Strings.IfLanguage">@LanguageOptions()</select></CoreTooltip>
+                            @if (rule.Sources.Length > 1)
+                            {
+                                <CoreTooltip Text="@Strings.RemoveCondition"><CoreButton Appearance="ControlAppearance.Bare" OnClick="() => RemoveSource(index, condition)" aria-label="@Strings.RemoveCondition">×</CoreButton></CoreTooltip>
+                            }
+                        </span>
+                    }
+                    <CoreTooltip Text="@Strings.AddCondition"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => AddSource(index)" Disabled="@(rule.Sources.Length >= Languages.Length)" aria-label="@Strings.AddCondition">+ @Strings.Or</CoreButton></CoreTooltip>
+                </div>
+            </div>
+            <div class="language-rule-destination">
+                <span>@Strings.TranslateTo</span>
+                <CoreTooltip Text="@Strings.TranslateTo"><select value="@rule.Target" @onchange="args => SetTarget(index, args.Value?.ToString())" aria-label="@Strings.TranslateTo">@LanguageOptions()</select></CoreTooltip>
+            </div>
+            <CoreTooltip Text="@Strings.RemoveRule"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => Remove(index)" aria-label="@Strings.RemoveRule">×</CoreButton></CoreTooltip>
+        </div>
+    }
+    <div class="language-rule-footer">
+        <CoreTooltip Text="@Strings.AddRule"><CoreButton Appearance="ControlAppearance.Compact" OnClick="Add">+ @Strings.AddRule</CoreButton></CoreTooltip>
+        <span>@Strings.RoutingOtherwise</span>
+    </div>
+</section>
+@code {
+    [Parameter] public LanguageRuleSet Value { get; set; } = LanguageRuleSet.Empty;
+    [Parameter] public EventCallback<LanguageRuleSet> ValueChanged { get; set; }
+    static LanguageCatalog.LanguageChoice[] Languages => LanguageCatalog.All.Where(item => item.Code != TranslationLanguageRules.Automatic).ToArray();
+
+    /// <summary>Renders the same concrete-language options used by the application selectors.</summary>
+    /// <returns>The supported languages without the automatic sentinel.</returns>
+    static RenderFragment LanguageOptions() => @<text>@foreach (var language in Languages) { <option value="@language.Code">@language.Name</option> }</text>;
+
+    /// <summary>Adds a concrete source-to-destination block to the ordered rule list.</summary>
+    /// <returns>Completion of the parent's durable rule update.</returns>
+    Task Add() => Publish(Value.Rules.Add(new(["en"], "tr")));
+
+    /// <summary>Deletes one condition block without changing the order of its neighbours.</summary>
+    /// <param name="index">The block selected in the current immutable value.</param>
+    /// <returns>Completion of the parent's durable rule update.</returns>
+    Task Remove(int index) => Publish(Value.Rules.RemoveAt(index));
+
+    /// <summary>Changes which matching block has priority by moving it one position.</summary>
+    /// <param name="index">The block selected in the current immutable value.</param>
+    /// <param name="offset">One preceding or following position.</param>
+    /// <returns>Completion of the parent's durable rule update.</returns>
+    Task Move(int index, int offset)
+    {
+        if (index + offset < 0 || index + offset >= Value.Rules.Length) return Task.CompletedTask;
+        var moved = Value.Rules.ToBuilder();
+        (moved[index], moved[index + offset]) = (moved[index + offset], moved[index]);
+        return Publish(moved.ToImmutable());
+    }
+
+    /// <summary>Adds the first unused language as an OR condition in one block.</summary>
+    /// <param name="index">The block that receives another source language.</param>
+    /// <returns>Completion of the parent's durable rule update.</returns>
+    Task AddSource(int index)
+    {
+        var rule = Value.Rules[index];
+        var language = Languages.FirstOrDefault(item => !rule.Sources.Contains(item.Code));
+        return language is null ? Task.CompletedTask : Replace(index, new(rule.Sources.Add(language.Code), rule.Target));
+    }
+
+    /// <summary>Removes one OR condition while retaining at least one source language.</summary>
+    /// <param name="index">The current block index.</param>
+    /// <param name="sourceIndex">The selected source condition.</param>
+    /// <returns>Completion of the parent's durable rule update.</returns>
+    Task RemoveSource(int index, int sourceIndex) => Replace(index, new(Value.Rules[index].Sources.RemoveAt(sourceIndex), Value.Rules[index].Target));
+
+    /// <summary>Updates a source condition using a concrete language chosen by the user.</summary>
+    /// <param name="index">The current block index.</param>
+    /// <param name="sourceIndex">The source condition edited in the block.</param>
+    /// <param name="language">The concrete selector value.</param>
+    /// <returns>Completion of the parent's durable rule update.</returns>
+    Task SetSource(int index, int sourceIndex, string? language) => TranslationLanguageRules.IsConcrete(language)
+        ? Replace(index, new(Value.Rules[index].Sources.SetItem(sourceIndex, language!), Value.Rules[index].Target)) : Task.CompletedTask;
+
+    /// <summary>Changes one matching block's output language.</summary>
+    /// <param name="index">The block whose destination was edited.</param>
+    /// <param name="language">The concrete selector value.</param>
+    /// <returns>Completion of the parent's durable rule update.</returns>
+    Task SetTarget(int index, string? language) => TranslationLanguageRules.IsConcrete(language)
+        ? Replace(index, new(Value.Rules[index].Sources, language!)) : Task.CompletedTask;
+
+    /// <summary>Replaces one immutable block and sends a complete snapshot to the parent.</summary>
+    /// <param name="index">The existing block position.</param>
+    /// <param name="rule">The validated replacement condition.</param>
+    /// <returns>Completion of the parent's durable rule update.</returns>
+    Task Replace(int index, AutoLanguageRule rule) => Publish(Value.Rules.SetItem(index, rule));
+
+    /// <summary>Retains the new value immediately so subsequent user gestures cannot edit an obsolete array.</summary>
+    /// <param name="rules">The complete immutable ordered rule list.</param>
+    /// <returns>Completion of the parent's durable rule update.</returns>
+    Task Publish(ImmutableArray<AutoLanguageRule> rules)
+    {
+        Value = new(rules);
+        return ValueChanged.InvokeAsync(Value);
+    }
+}

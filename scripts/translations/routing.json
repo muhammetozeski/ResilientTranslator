@@ -1,0 +1,47 @@
+{
+  "RoutingRules": {
+    "tr": "Dil yönlendirme kuralları", "en": "Language routing rules", "de": "Regeln für die Sprachzuordnung", "fr": "Règles de choix de langue", "es": "Reglas de selección de idioma", "it": "Regole di scelta della lingua", "ru": "Правила выбора языка"
+  },
+  "RoutingRulesHelp": {
+    "tr": "Kurallar yukarıdan aşağıya uygulanır. İlk eşleşme kullanılır; aynı bloktaki diller VEYA ile birleştirilir.",
+    "en": "Rules are checked from top to bottom. The first match is used; languages in the same block are joined by OR.",
+    "de": "Regeln werden von oben nach unten geprüft. Der erste Treffer gilt; Sprachen im selben Block sind mit ODER verknüpft.",
+    "fr": "Les règles sont vérifiées de haut en bas. La première correspondance est utilisée ; les langues d’un même bloc sont reliées par OU.",
+    "es": "Las reglas se comprueban de arriba abajo. Se usa la primera coincidencia; los idiomas del mismo bloque se unen con O.",
+    "it": "Le regole vengono controllate dall’alto verso il basso. Si usa la prima corrispondenza; le lingue nello stesso blocco sono unite da O.",
+    "ru": "Правила проверяются сверху вниз. Используется первое совпадение; языки в одном блоке соединены условием ИЛИ."
+  },
+  "IfLanguage": {
+    "tr": "Algılanan dil", "en": "If detected language is", "de": "Wenn die erkannte Sprache ist", "fr": "Si la langue détectée est", "es": "Si el idioma detectado es", "it": "Se la lingua rilevata è", "ru": "Если определённый язык"
+  },
+  "TranslateTo": {
+    "tr": "Şu dile çevir", "en": "Translate to", "de": "Übersetzen in", "fr": "Traduire en", "es": "Traducir a", "it": "Traduci in", "ru": "Перевести на"
+  },
+  "AddRule": {
+    "tr": "Kural ekle", "en": "Add rule", "de": "Regel hinzufügen", "fr": "Ajouter une règle", "es": "Añadir regla", "it": "Aggiungi regola", "ru": "Добавить правило"
+  },
+  "AddCondition": {
+    "tr": "Bu koşula alternatif bir dil ekle", "en": "Add an alternative language to this condition", "de": "Eine alternative Sprache zu dieser Bedingung hinzufügen", "fr": "Ajouter une autre langue à cette condition", "es": "Añadir otro idioma a esta condición", "it": "Aggiungi un’altra lingua a questa condizione", "ru": "Добавить другой язык в это условие"
+  },
+  "Or": {
+    "tr": "VEYA", "en": "OR", "de": "ODER", "fr": "OU", "es": "O", "it": "O", "ru": "ИЛИ"
+  },
+  "RemoveRule": {
+    "tr": "Bu kuralı kaldır", "en": "Remove this rule", "de": "Diese Regel entfernen", "fr": "Supprimer cette règle", "es": "Eliminar esta regla", "it": "Rimuovi questa regola", "ru": "Удалить это правило"
+  },
+  "MoveUp": {
+    "tr": "Önce kontrol etmek için yukarı taşı", "en": "Move up to check this rule earlier", "de": "Nach oben verschieben, um diese Regel früher zu prüfen", "fr": "Monter pour vérifier cette règle plus tôt", "es": "Subir para comprobar antes esta regla", "it": "Sposta in alto per controllare prima questa regola", "ru": "Переместить выше, чтобы проверять это правило раньше"
+  },
+  "MoveDown": {
+    "tr": "Daha sonra kontrol etmek için aşağı taşı", "en": "Move down to check this rule later", "de": "Nach unten verschieben, um diese Regel später zu prüfen", "fr": "Descendre pour vérifier cette règle plus tard", "es": "Bajar para comprobar después esta regla", "it": "Sposta in basso per controllare dopo questa regola", "ru": "Переместить ниже, чтобы проверять это правило позже"
+  },
+  "RemoveCondition": {
+    "tr": "Bu alternatif dili kaldır", "en": "Remove this alternative language", "de": "Diese alternative Sprache entfernen", "fr": "Supprimer cette langue alternative", "es": "Eliminar este idioma alternativo", "it": "Rimuovi questa lingua alternativa", "ru": "Удалить этот альтернативный язык"
+  },
+  "RoutingOtherwise": {
+    "tr": "Eşleşme yoksa basit moddaki dil çifti kullanılır.", "en": "If nothing matches, the simple-mode language pair is used.", "de": "Ohne Treffer wird das Sprachpaar des einfachen Modus verwendet.", "fr": "Sans correspondance, la paire de langues du mode simple est utilisée.", "es": "Si nada coincide, se usa el par de idiomas del modo simple.", "it": "Se non ci sono corrispondenze, si usa la coppia di lingue della modalità semplice.", "ru": "Если совпадений нет, используется пара языков простого режима."
+  },
+  "RoutingRulesEmpty": {
+    "tr": "İlk koşulu ekleyerek hangi dilin hangi dile çevrileceğini seç.", "en": "Add the first condition to choose which language translates to which.", "de": "Füge die erste Bedingung hinzu, um die Zielsprache für jede Ausgangssprache festzulegen.", "fr": "Ajoutez la première condition pour choisir la langue de traduction de chaque langue source.", "es": "Añade la primera condición para elegir a qué idioma se traduce cada idioma de origen.", "it": "Aggiungi la prima condizione per scegliere in quale lingua tradurre ogni lingua di origine.", "ru": "Добавьте первое условие, чтобы выбрать язык перевода для каждого исходного языка."
+  }
+}
