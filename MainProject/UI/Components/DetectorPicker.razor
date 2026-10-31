@@ -4,21 +4,21 @@
 @using ResilientTranslator.MainProject.Infrastructure.Localization
 <DetectorPickerCss />
 <div class="detector-picker" @onkeydown="KeyDown">
-    <CoreButton @ref="TriggerButton" Appearance="ControlAppearance.Compact" OnClick="Toggle" aria-haspopup="listbox" aria-expanded="@Open" aria-label="@T("DetectorLabel")">
+    <CoreButton @ref="TriggerButton" Appearance="ControlAppearance.Compact" OnClick="Toggle" aria-haspopup="listbox" aria-expanded="@Open" aria-label="@T("DetectorLabel")" data-tooltip="@Strings.HelpDetectorChoice">
         <span>@Selected.Name</span><span aria-hidden="true">⌄</span>
     </CoreButton>
     @if (Open)
     {
 
-        <CorePopup IsVisible="true" Anchor="@(TriggerButton?.DomElement)" DismissOnOutside="true" OnDismiss="Close" SurfaceClass="detector-picker-options" Role="listbox" aria-label="@T("DetectorLabel")">
+        <CorePopup IsVisible="true" Anchor="@(TriggerButton?.DomElement)" DismissOnOutside="true" OnDismiss="Close" SurfaceClass="detector-picker-options" Role="listbox" aria-label="@T("DetectorLabel")" data-tooltip="@Strings.HelpDetectorChoice">
             @foreach (var detector in DetectorRegistry.Available)
             {
                 <div class="detector-picker-row @(detector.Kind == Value ? "selected" : "")" role="option" aria-selected="@(detector.Kind == Value)">
-                    <CoreButton Appearance="ControlAppearance.Bare" CustomClass="detector-picker-name" OnClick="() => SelectAsync(detector.Kind)">@detector.Name</CoreButton>
+                    <CoreButton Appearance="ControlAppearance.Bare" CustomClass="detector-picker-name" data-tooltip="@FeatureText.Get("HelpDetector"+detector.Kind)" OnClick="() => SelectAsync(detector.Kind)">@detector.Name</CoreButton>
                     <CoreTooltip PanelClass="detector-benchmark-tooltip">
                         <ChildContent><CoreButton Appearance="ControlAppearance.Bare" CustomClass="detector-picker-info" aria-label="@($"{T("DetectorInfo")}: {detector.Name}")"><span aria-hidden="true">i</span></CoreButton></ChildContent>
                         <Content>
-                            <strong>@detector.Name</strong>
+                            <strong>@detector.Name</strong><p>@FeatureText.Get("HelpDetector"+detector.Kind)</p>
                             <table class="detector-benchmark">
                                 <thead><tr><th>@T("DetectorLabel")</th><th>@T("DetectorSize")</th><th>@T("DetectorTime")</th><th>@T("DetectorTurkishEnglish")</th><th>@T("DetectorOtherLanguages")</th></tr></thead>
                                 <tbody>@foreach (var row in DetectorRegistry.Available) {

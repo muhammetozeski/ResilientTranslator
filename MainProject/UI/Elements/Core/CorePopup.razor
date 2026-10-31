@@ -43,7 +43,7 @@
     }
     RenderFragment Surface()=>@<div @attributes="AdditionalAttributes" @ref="NativeElement" id="@Id" role="@Role" aria-modal="@(IsModal ? "true" : null)"
         class="core-popup-surface @(IsModal ? "modal-surface" : "anchored-surface") @(Positioned?"is-positioned":"") @SurfaceClass" style="@SurfaceCss"
-        @onclick:stopPropagation @onpointerdown:stopPropagation @onkeydown="KeyDown" @onpointerenter="OnPointerEnter" @onpointerleave="OnPointerLeave" @onscroll="Scrolled">
+        @onclick:stopPropagation @onclick:preventDefault="@(Role=="tooltip")" @onpointerdown:stopPropagation @onkeydown="KeyDown" @onpointerenter="OnPointerEnter" @onpointerleave="OnPointerLeave" @onscroll="Scrolled">
         <CascadingValue Value="this" IsFixed="true">@ChildContent</CascadingValue>
     </div>;
     string SurfaceCss=>WithPosition(IsModal ? SurfaceStyle??"" : $"{SurfaceStyle};{Position};visibility:{(Positioned?"visible":"hidden")};");

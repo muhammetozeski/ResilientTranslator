@@ -1,0 +1,749 @@
+{
+  "HelpLocalTranslationTimeout": {
+    "de": "Millisekunden pro lokalem Versuch, bevor Worker gestoppt und Wiederherstellung versucht wird.",
+    "fr": "Millisecondes par tentative locale avant arrêt du worker et reprise.",
+    "en": "Milliseconds per local translation attempt before stopping its worker and recovering.",
+    "tr": "Bir yerel çeviri denemesinin milisaniye sınırı; aşılırsa işçi durdurulur ve kurtarma denenir.",
+    "ru": "Миллисекунды локальной попытки до остановки обработчика и восстановления.",
+    "es": "Milisegundos por intento local antes de detener el trabajador y recuperar.",
+    "it": "Millisecondi per tentativo locale prima di fermare il worker e recuperare."
+  },
+  "HelpTypingDelay": {
+    "de": "Millisekunden nach dem Tippen bis zur Übersetzung. Tastenkürzel und Senden überspringen die Wartezeit.",
+    "fr": "Millisecondes après la saisie avant traduction. Le raccourci et l’envoi ignorent cette attente.",
+    "en": "Milliseconds after typing before translation. Shortcut and send bypass this wait.",
+    "tr": "Son tuştan sonra çeviriye başlamadan beklenen milisaniye. Kısayol ve gönder düğmesi bunu atlar.",
+    "ru": "Миллисекунды после ввода до перевода. Горячая клавиша и отправка пропускают ожидание.",
+    "es": "Milisegundos tras escribir antes de traducir. Atajo y envío omiten esta espera.",
+    "it": "Millisecondi dopo la digitazione prima di tradurre. Scorciatoia e invio saltano l’attesa."
+  },
+  "HelpProfileName": {
+    "de": "Name eingeben, um diese Zeiteinstellungen später wiederzufinden.",
+    "fr": "Donnez un nom pour retrouver ces réglages de durée.",
+    "en": "Enter a name to find these timing settings again later.",
+    "tr": "Mevcut süre ayarlarını sonradan bulmak için kendi profil adını yaz.",
+    "ru": "Введите имя, чтобы позднее найти эти настройки времени.",
+    "es": "Escribe un nombre para recuperar estos tiempos después.",
+    "it": "Scrivi un nome per ritrovare queste impostazioni di tempo."
+  },
+  "HelpEditorColor": {
+    "de": "Ändert die Textfarbe beider Felder. White setzt Weiß zurück.",
+    "fr": "Change la couleur des deux textes. White rétablit le blanc.",
+    "en": "Changes text color in both editors. White restores white.",
+    "tr": "İki kutudaki yazı rengini değiştirir. White rengi beyaza döndürür.",
+    "ru": "Меняет цвет текста обоих полей. White возвращает белый.",
+    "es": "Cambia el color de ambos textos. White restablece blanco.",
+    "it": "Cambia il colore dei due testi. White ripristina il bianco."
+  },
+  "HelpDetectorTinyLd": {
+    "de": "Leichter Zeichenmuster-Detektor für die sieben App-Sprachen.",
+    "fr": "Détecteur léger de motifs de caractères pour les sept langues.",
+    "en": "Lightweight character-pattern detector selecting among the app’s seven languages.",
+    "tr": "Karakter örüntülerini karşılaştıran hafif algılayıcı. Uygulamanın yedi dili arasında seçim yapar.",
+    "ru": "Лёгкий детектор символьных шаблонов для семи языков приложения.",
+    "es": "Detector ligero de patrones de caracteres para los siete idiomas.",
+    "it": "Rilevatore leggero di schemi di caratteri per le sette lingue."
+  },
+  "HelpFontStep": {
+    "de": "Ändert die Schriftgröße um ein Pixel und behält Dezimalstellen.",
+    "fr": "Change la taille d’un pixel en conservant la partie décimale.",
+    "en": "Changes font size by one pixel, preserving any fractional part.",
+    "tr": "Yazı boyutunu bir piksel değiştirir; varsa ondalık kısmı korur.",
+    "ru": "Меняет размер шрифта на пиксель, сохраняя дробную часть.",
+    "es": "Cambia el tamaño un píxel conservando los decimales.",
+    "it": "Cambia la dimensione di un pixel conservando i decimali."
+  },
+  "HelpTozBeam": {
+    "de": "Übersetzungskandidaten pro Schritt. Mehr können Qualität verbessern, benötigen aber länger.",
+    "fr": "Candidats examinés à chaque étape. Plus peut améliorer la qualité mais ralentit.",
+    "en": "Translation candidates explored per step. More may improve quality but takes longer.",
+    "tr": "Her adımda değerlendirilen çeviri adaylarının sayısı. Artırmak kaliteye yardımcı olabilir fakat yavaşlatır.",
+    "ru": "Кандидаты перевода на шаге. Больше может улучшить качество, но замедляет.",
+    "es": "Candidatos examinados por paso. Más puede mejorar calidad, pero ralentiza.",
+    "it": "Candidati valutati per passo. Aumentarli può migliorare la qualità ma rallenta."
+  },
+  "HelpEnableLogging": {
+    "de": "Speichert Vorgänge, Fehler und übersetzte Texte in Diagnosedateien.",
+    "fr": "Enregistre opérations, erreurs et textes traduits dans les diagnostics.",
+    "en": "Records operations, errors and translated text in diagnostic files.",
+    "tr": "İşlemleri, hataları ve çevirilen metinleri tanılama dosyalarına kaydeder.",
+    "ru": "Записывает действия, ошибки и переводимые тексты в диагностические файлы.",
+    "es": "Guarda operaciones, errores y textos traducidos en archivos de diagnóstico.",
+    "it": "Registra operazioni, errori e testi tradotti nei file diagnostici."
+  },
+  "HelpDetectorTimeout": {
+    "de": "Millisekunden für die Spracherkennung; ein blockierter Worker kann beendet werden.",
+    "fr": "Millisecondes pour détecter la langue ; un worker bloqué peut être arrêté.",
+    "en": "Milliseconds allowed for detection; a stuck browser worker can be stopped.",
+    "tr": "Dil tespiti çağrısının milisaniye sınırı; takılan tarayıcı işçisi durdurulabilir.",
+    "ru": "Миллисекунды определения языка; зависший обработчик может быть остановлен.",
+    "es": "Milisegundos para detectar el idioma; se puede detener un trabajador bloqueado.",
+    "it": "Millisecondi per rilevare la lingua; un worker bloccato può essere fermato."
+  },
+  "HelpModelLoadTimeout": {
+    "de": "Millisekunden zum Laden eines lokalen Modells von der Platte, getrennt von der Übersetzungszeit.",
+    "fr": "Millisecondes pour charger un modèle local, séparées du temps de traduction.",
+    "en": "Milliseconds allowed to load a local model from disk, separate from translation time.",
+    "tr": "Yerel modelin diskten yüklenmesini bekleme sınırı, milisaniye. Çeviri süresinden ayrıdır.",
+    "ru": "Миллисекунды на загрузку локальной модели отдельно от времени перевода.",
+    "es": "Milisegundos para cargar un modelo local, separados del tiempo de traducción.",
+    "it": "Millisecondi per caricare un modello locale, separati dal tempo di traduzione."
+  },
+  "HelpCenterSnapRange": {
+    "de": "Breite des Einrastbereichs. Sechs setzt 47–53 Prozent auf 50 Prozent.",
+    "fr": "Largeur de l’accrochage central. Six ramène 47–53 % à 50 %.",
+    "en": "Center snapping width. Six snaps positions from 47–53 percent to 50 percent.",
+    "tr": "Ortada %50’ye yakalama aralığı. 6 seçilirse %47–53 arası %50’ye oturur.",
+    "ru": "Ширина центрального прилипания. Шесть приводит 47–53% к 50%.",
+    "es": "Anchura de ajuste central. Seis ajusta 47–53 % a 50 %.",
+    "it": "Ampiezza dell’aggancio centrale. Sei porta 47–53% al 50%."
+  },
+  "HelpLocalRetryDelay": {
+    "de": "Millisekunden bis zum erneuten Versuch eines lokalen Moduls.",
+    "fr": "Millisecondes avant de réessayer le moteur local.",
+    "en": "Milliseconds before retrying a failed local engine.",
+    "tr": "Yerel motoru yeniden denemeden önce beklenen milisaniye.",
+    "ru": "Миллисекунды до повторной попытки локального мотора.",
+    "es": "Milisegundos antes de reintentar el motor local.",
+    "it": "Millisecondi prima di ritentare il motore locale."
+  },
+  "HelpDetectorLingua": {
+    "de": "Musterbasierter Detektor auch für kurze Wörter, auf sieben App-Sprachen begrenzt.",
+    "fr": "Détecteur de motifs adapté aux mots courts, configuré pour les sept langues.",
+    "en": "Pattern-based detector designed for short words too, configured for the app’s seven languages.",
+    "tr": "Kısa kelimelerde de dil bulmaya odaklanan örüntü tabanlı algılayıcı. Uygulamadaki yedi dil için hazırlanmıştır.",
+    "ru": "Детектор по символьным шаблонам, включая короткие слова; настроен на семь языков.",
+    "es": "Detector de patrones apto para palabras cortas, configurado para los siete idiomas.",
+    "it": "Rilevatore di schemi adatto anche a parole brevi, configurato per sette lingue."
+  },
+  "HelpSequentialRetries": {
+    "de": "Zusätzliche sequenzielle Dienstversuche, wenn die parallele Phase scheitert.",
+    "fr": "Tentatives séquentielles supplémentaires après l’échec de la phase parallèle.",
+    "en": "Extra sequential-service attempts after the parallel phase fails.",
+    "tr": "Paralel aşama başarısız olduktan sonra, servisleri sırayla deneyen aşamanın ek tekrarları.",
+    "ru": "Дополнительные последовательные попытки после сбоя параллельного этапа.",
+    "es": "Intentos secuenciales adicionales tras fallar la fase paralela.",
+    "it": "Tentativi sequenziali aggiuntivi dopo il fallimento della fase parallela."
+  },
+  "HelpBergamotBeam": {
+    "de": "Übersetzungskandidaten pro Schritt. Mehr können Qualität verbessern, benötigen aber länger.",
+    "fr": "Candidats examinés à chaque étape. Plus peut améliorer la qualité mais ralentit.",
+    "en": "Translation candidates explored per step. More may improve quality but takes longer.",
+    "tr": "Her adımda değerlendirilen çeviri adaylarının sayısı. Artırmak kaliteye yardımcı olabilir fakat yavaşlatır.",
+    "ru": "Кандидаты перевода на шаге. Больше может улучшить качество, но замедляет.",
+    "es": "Candidatos examinados por paso. Más puede mejorar calidad, pero ralentiza.",
+    "it": "Candidati valutati per passo. Aumentarli può migliorare la qualità ma rallenta."
+  },
+  "HelpLanguage": {
+    "de": "Ändert die Oberflächensprache unabhängig von Übersetzungen. Automatisch folgt Windows.",
+    "fr": "Change la langue de l’interface. Automatique suit Windows, sans changer la traduction.",
+    "en": "Changes interface language, independently of translation. Automatic follows Windows.",
+    "tr": "Arayüzün dilini değiştirir; çeviri dillerini değiştirmez. Otomatik, Windows dilini izler.",
+    "ru": "Меняет язык интерфейса отдельно от перевода. Автоматически — язык Windows.",
+    "es": "Cambia el idioma de interfaz. Automático sigue Windows, sin cambiar la traducción.",
+    "it": "Cambia la lingua dell’interfaccia. Automatico segue Windows senza cambiare la traduzione."
+  },
+  "HelpBergamotCachedDirections": {
+    "de": "Modellrichtungen pro Worker, höchstens zwei gegen Speichererschöpfung.",
+    "fr": "Directions gardées par worker, au maximum deux pour limiter la mémoire.",
+    "en": "Model directions retained per worker, at most two to avoid exhausting model memory.",
+    "tr": "İşçi başına bellekte tutulan dil yönü. En fazla 2; model belleğinin tükenmesini önler.",
+    "ru": "Направления моделей на обработчик; максимум два во избежание нехватки памяти.",
+    "es": "Direcciones guardadas por trabajador; máximo dos para evitar agotar memoria.",
+    "it": "Direzioni mantenute per worker, massimo due per evitare esaurimento della memoria."
+  },
+  "HelpDefaultTargetLanguage": {
+    "de": "Wählt die Sprache dieses Feldes beim Start. — behält die letzte Auswahl.",
+    "fr": "Choisit la langue de cette zone au démarrage. — conserve le dernier choix.",
+    "en": "Selects this pane’s language at startup. — preserves the last choice.",
+    "tr": "Uygulama açılınca bu kutunun dilini seçer. — son kullanılanı korur.",
+    "ru": "Задаёт язык этого поля при запуске. — сохраняет последний выбор.",
+    "es": "Elige el idioma de esta zona al iniciar. — conserva el último.",
+    "it": "Sceglie la lingua di questo riquadro all’avvio. — conserva l’ultima scelta."
+  },
+  "HelpChunkByteLimit": {
+    "de": "Blockgröße für lange Online-Texte, gemessen in Bytes statt Zeichen.",
+    "fr": "Taille des segments envoyés en ligne, mesurée en octets plutôt qu’en caractères.",
+    "en": "Chunk size for sending long text online, measured in bytes rather than characters.",
+    "tr": "Uzun metni çevrimiçi servise göndermek için parça boyutu; bayt sayılır, karakter değil.",
+    "ru": "Размер отправляемых онлайн-фрагментов в байтах, а не символах.",
+    "es": "Tamaño de fragmentos enviados en línea, medido en bytes y no caracteres.",
+    "it": "Dimensione dei segmenti online, misurata in byte anziché caratteri."
+  },
+  "HelpInputShare": {
+    "de": "Prozentualer Platzanteil des linken Feldes; bleibt bei Größenänderungen erhalten.",
+    "fr": "Pourcentage d’espace de gauche ; ce rapport est conservé au redimensionnement.",
+    "en": "Left editor’s percentage of available space; resizing preserves this ratio.",
+    "tr": "Sol kutunun toplam alandaki yüzdesi. Pencere boyutu değişse de bu oran korunur.",
+    "ru": "Доля левого поля в процентах; сохраняется при изменении размера окна.",
+    "es": "Porcentaje del espacio izquierdo; se conserva al redimensionar.",
+    "it": "Percentuale di spazio del riquadro sinistro; resta invariata ridimensionando."
+  },
+  "HelpMaximumCacheEntries": {
+    "de": "Maximal gespeicherte erfolgreiche Online-Übersetzungen im RAM. Null deaktiviert den Cache.",
+    "fr": "Maximum de traductions en ligne réussies gardées en mémoire. Zéro désactive le cache.",
+    "en": "Maximum successful online translations kept in RAM. Zero disables caching.",
+    "tr": "Başarılı çevrimiçi çevirilerden RAM’de tutulacak en fazla kayıt. 0 önbelleği kapatır.",
+    "ru": "Максимум успешных онлайн-переводов в памяти. Ноль отключает кэш.",
+    "es": "Máximo de traducciones correctas en RAM. Cero desactiva la caché.",
+    "it": "Massimo di traduzioni online riuscite in RAM. Zero disabilita la cache."
+  },
+  "HelpDeleteProfile": {
+    "de": "Löscht das eigene Profil, ohne aktuelle Werte zu ändern.",
+    "fr": "Supprime le profil personnel sans changer les valeurs actuelles.",
+    "en": "Deletes the selected personal preset without changing current values.",
+    "tr": "Seçili kişisel profili siler; şu anki ayar değerlerini değiştirmez.",
+    "ru": "Удаляет личный профиль без изменения текущих значений.",
+    "es": "Borra el perfil personal sin cambiar los valores actuales.",
+    "it": "Elimina il profilo personale senza cambiare i valori attuali."
+  },
+  "HelpConcurrentRetries": {
+    "de": "Zusätzliche parallele Dienstversuche nach Fehlern innerhalb eines Online-Durchlaufs.",
+    "fr": "Tentatives parallèles supplémentaires après échec dans un cycle en ligne.",
+    "en": "Extra parallel-service attempts after failure within one online recovery burst.",
+    "tr": "Bir çevrimiçi turda, paralel servis çağrısı başarısız olursa yapılacak ek deneme sayısı.",
+    "ru": "Дополнительные параллельные попытки после ошибки в одном онлайн-цикле.",
+    "es": "Intentos paralelos adicionales tras un fallo en un ciclo en línea.",
+    "it": "Tentativi paralleli aggiuntivi dopo un errore in un ciclo online."
+  },
+  "HelpDetectorFastText": {
+    "de": "Metas komprimierter mehrsprachiger Klassifikator; hier das kleine Offline-Modell.",
+    "fr": "Classificateur multilingue compressé de Meta ; petit modèle hors ligne utilisé ici.",
+    "en": "Meta’s compressed multilingual classifier; the small offline model is used here.",
+    "tr": "Meta’nın sıkıştırılmış çok dilli metin sınıflandırma modeli. Burada küçük çevrimdışı sürümü kullanılır.",
+    "ru": "Сжатая многоязычная модель Meta; здесь используется небольшой локальный вариант.",
+    "es": "Clasificador multilingüe comprimido de Meta; aquí se usa el modelo pequeño local.",
+    "it": "Classificatore multilingue compresso Meta; qui si usa il modello locale piccolo."
+  },
+  "HelpDetectorChoice": {
+    "de": "Erkennt die Quellsprache bei Automatisch; wählt nicht das Übersetzungsmodul.",
+    "fr": "Détecte la langue source en Automatique ; ne choisit pas le moteur de traduction.",
+    "en": "Identifies source language for Automatic. It does not select the translation engine.",
+    "tr": "Otomatik seçilen kutudaki metnin dilini bulur. Bu seçim metni çeviren motoru değiştirmez.",
+    "ru": "Определяет исходный язык в автоматическом режиме, а не выбирает переводчик.",
+    "es": "Detecta el idioma de origen en Automático; no elige el motor traductor.",
+    "it": "Riconosce la lingua sorgente in Automatico; non sceglie il traduttore."
+  },
+  "HelpAutoLanguageRules": {
+    "de": "Regeln laufen von oben nach unten. Erster Treffer gewinnt, sonst gilt das einfache Paar.",
+    "fr": "Règles de haut en bas. Premier résultat retenu ; sinon la paire simple.",
+    "en": "Rules run top to bottom. First match wins; otherwise the simple pair applies.",
+    "tr": "Koşullar yukarıdan aşağı denenir. İlk eşleşen hedef seçilir; eşleşme yoksa basit dil çifti kullanılır.",
+    "ru": "Правила проверяются сверху вниз. Первое совпадение определяет цель; иначе простая пара.",
+    "es": "Reglas de arriba abajo. Gana la primera coincidencia; si no, se usa el par simple.",
+    "it": "Regole dall’alto in basso. Vale la prima corrispondenza; altrimenti la coppia semplice."
+  },
+  "HelpClose": {
+    "de": "Schließt Einstellungen; übernommene Änderungen sind bereits gespeichert.",
+    "fr": "Ferme les réglages ; les modifications acceptées sont déjà enregistrées.",
+    "en": "Closes settings; accepted changes have already been saved.",
+    "tr": "Ayarları kapatır; kabul edilen değişiklikler zaten kaydedilmiştir.",
+    "ru": "Закрывает настройки; принятые изменения уже сохранены.",
+    "es": "Cierra ajustes; los cambios aceptados ya están guardados.",
+    "it": "Chiude le impostazioni; le modifiche accettate sono già salvate."
+  },
+  "HelpConcurrentRetryDelay": {
+    "de": "Anfängliche Millisekunden zwischen Wiederholungen dieser Phase; spätere Pausen können steigen.",
+    "fr": "Millisecondes initiales entre reprises de cette phase ; les suivantes peuvent augmenter.",
+    "en": "Initial milliseconds between retries in this phase; later waits may increase.",
+    "tr": "Aynı aşamadaki tekrarlar arasındaki başlangıç beklemesi, milisaniye. Sonraki beklemeler artabilir.",
+    "ru": "Начальная пауза повторов этого этапа в миллисекундах; следующие могут увеличиваться.",
+    "es": "Milisegundos iniciales entre reintentos de esta fase; las siguientes esperas pueden aumentar.",
+    "it": "Millisecondi iniziali fra tentativi della fase; le attese successive possono aumentare."
+  },
+  "HelpEditorFontSize": {
+    "de": "Textgröße beider Felder in Pixeln; Dezimalwerte sind erlaubt.",
+    "fr": "Taille des deux textes en pixels ; les décimales sont acceptées.",
+    "en": "Text size in pixels for both editors. Fractional values are accepted.",
+    "tr": "İki kutudaki metnin piksel boyutu. Ondalıklı değer girebilirsin.",
+    "ru": "Размер текста обоих полей в пикселях; допустимы дробные значения.",
+    "es": "Tamaño de ambos textos en píxeles; admite decimales.",
+    "it": "Dimensione dei due testi in pixel; sono ammessi decimali."
+  },
+  "HelpMaximumCachedCharacters": {
+    "de": "Zeichenlimit für einen Cache-Eintrag; längere Texte werden weiterhin übersetzt.",
+    "fr": "Limite de caractères pour le cache ; les textes plus longs sont toujours traduits.",
+    "en": "Character limit for caching one text; longer texts still translate.",
+    "tr": "Önbelleğe alınabilecek bir metnin karakter sınırı; daha uzun metin yine çevrilir.",
+    "ru": "Лимит символов для кэширования; более длинные тексты всё равно переводятся.",
+    "es": "Límite de caracteres para caché; los textos largos siguen traduciéndose.",
+    "it": "Limite di caratteri per la cache; i testi lunghi vengono comunque tradotti."
+  },
+  "HelpDetectorCld2": {
+    "de": "Googles Compact Language Detector 2 aus Firefox; kurze Wörter können falsch erkannt werden.",
+    "fr": "Compact Language Detector 2 de Google, utilisé par Firefox ; les mots courts peuvent tromper.",
+    "en": "Google’s Compact Language Detector 2, used by Firefox; short words can be misidentified.",
+    "tr": "Google’ın Compact Language Detector 2 motoru; Firefox’un kullandığı algılayıcı. Özellikle kısa kelimelerde yanılabilir.",
+    "ru": "Compact Language Detector 2 Google из Firefox; возможны ошибки на коротких словах.",
+    "es": "Compact Language Detector 2 de Google, usado por Firefox; puede fallar en palabras cortas.",
+    "it": "Compact Language Detector 2 di Google, usato da Firefox; può sbagliare parole brevi."
+  },
+  "HelpTechnical": {
+    "de": "Feineinstellung von Zeiten, Wiederholungen, Speicher und Parallelität.",
+    "fr": "Réglage précis des durées, reprises, mémoire et parallélisme.",
+    "en": "Fine-tunes engine timing, retries, memory and parallelism limits.",
+    "tr": "Motorların süre, tekrar, bellek ve paralellik sınırlarını ayrıntılı değiştirir.",
+    "ru": "Точная настройка времени, повторов, памяти и параллельности.",
+    "es": "Ajusta límites de tiempos, reintentos, memoria y paralelismo.",
+    "it": "Regola limiti di tempi, tentativi, memoria e parallelismo."
+  },
+  "HelpStartupLanguage": {
+    "de": "Wählt die Sprache dieses Feldes beim Start. — behält die letzte Auswahl.",
+    "fr": "Choisit la langue de cette zone au démarrage. — conserve le dernier choix.",
+    "en": "Selects this pane’s language at startup. — preserves the last choice.",
+    "tr": "Uygulama açılınca bu kutunun dilini seçer. — son kullanılanı korur.",
+    "ru": "Задаёт язык этого поля при запуске. — сохраняет последний выбор.",
+    "es": "Elige el idioma de esta zona al iniciar. — conserva el último.",
+    "it": "Sceglie la lingua di questo riquadro all’avvio. — conserva l’ultima scelta."
+  },
+  "HelpTranslateNow": {
+    "de": "Übersetzt links sofort neu, ersetzt alte Arbeit und umgeht den Cache.",
+    "fr": "Retraduit immédiatement le texte gauche, remplaçant l’ancien travail sans cache.",
+    "en": "Retranslates current left text immediately, replacing old work and bypassing cache.",
+    "tr": "Soldaki güncel metni beklemeden yeniden çevirir; eski işi ve önbelleği atlar.",
+    "ru": "Сразу переводит левый текст заново, отменяя старую задачу и пропуская кэш.",
+    "es": "Retraduce inmediatamente el texto izquierdo, reemplazando trabajo anterior sin caché.",
+    "it": "Ritraduce subito il testo sinistro, sostituendo il lavoro precedente senza cache."
+  },
+  "HelpDetectorFranc": {
+    "de": "Kleiner Trigramm-Detektor, hier auf sieben Sprachen begrenzt.",
+    "fr": "Petit détecteur à trigrammes, limité ici à sept langues.",
+    "en": "Small trigram-based detector restricted here to seven languages.",
+    "tr": "Üç karakterlik örüntülere dayanan küçük algılayıcı. Burada yedi dil ile sınırlandırılmıştır.",
+    "ru": "Небольшой детектор по тройкам символов; здесь ограничен семью языками.",
+    "es": "Pequeño detector por trigramas, aquí limitado a siete idiomas.",
+    "it": "Piccolo rilevatore a trigrammi, limitato qui a sette lingue."
+  },
+  "HelpTozWorkers": {
+    "de": "Anzahl vorgehaltener Worker. Mehr parallele Aufgaben benötigen mehr RAM.",
+    "fr": "Nombre de workers conservés. Plus de travaux parallèles consomment plus de mémoire.",
+    "en": "Retained worker count. More parallel jobs use more RAM.",
+    "tr": "Hazır tutulan işçi sayısı. Daha fazla paralel iş yapılabilir fakat RAM tüketimi artar.",
+    "ru": "Число готовых обработчиков. Больше параллельных задач требует больше памяти.",
+    "es": "Número de trabajadores preparados. Más trabajos paralelos consumen más RAM.",
+    "it": "Numero di worker pronti. Più lavori paralleli richiedono più RAM."
+  },
+  "HelpSequentialBudget": {
+    "de": "Gesamtsekunden für sequenzielle Dienstversuche und Wartezeiten.",
+    "fr": "Secondes totales accordées aux essais séquentiels et attentes.",
+    "en": "Total seconds allowed for sequential service attempts and waits.",
+    "tr": "Sıralı servis denemeleri ve beklemeleri için toplam saniye sınırı.",
+    "ru": "Общие секунды последовательных попыток и пауз.",
+    "es": "Segundos totales permitidos para intentos secuenciales y esperas.",
+    "it": "Secondi complessivi concessi a tentativi sequenziali e attese."
+  },
+  "HelpClipboardChangeBudget": {
+    "de": "Wartezeit auf Zwischenablageänderung nach Strg+C; vorhandener Text bleibt verwendbar.",
+    "fr": "Attente après Ctrl+C ; le texte déjà présent reste utilisable après expiration.",
+    "en": "Wait for clipboard changes after Ctrl+C; existing clipboard text remains usable afterward.",
+    "tr": "Ctrl+C sonrasında yeni pano verisini bekleme sınırı. Süre dolsa da mevcut pano metni kullanılır.",
+    "ru": "Ожидание изменений после Ctrl+C; уже скопированный текст остаётся доступен.",
+    "es": "Espera tras Ctrl+C; el texto que ya estaba copiado sigue siendo utilizable.",
+    "it": "Attesa dopo Ctrl+C; il testo già copiato resta utilizzabile alla scadenza."
+  },
+  "HelpActiveRecoveryProfile": {
+    "de": "Wendet Online-Zeiten und Pausen gemeinsam an, ohne andere Module zu verzögern.",
+    "fr": "Applique durées et pauses en ligne ensemble, sans retarder les moteurs locaux.",
+    "en": "Applies online timing and retry pauses together, without delaying other engines.",
+    "tr": "Çevrimiçi süreleri ve tekrar aralıklarını birlikte uygular. Diğer motorların hemen başlamasını değiştirmez.",
+    "ru": "Применяет онлайн-лимиты и паузы вместе, не задерживая другие моторы.",
+    "es": "Aplica tiempos y pausas en línea juntos, sin retrasar otros motores.",
+    "it": "Applica tempi e pause online insieme, senza ritardare gli altri motori."
+  },
+  "HelpWorkers": {
+    "de": "Anzahl vorgehaltener Worker. Mehr parallele Aufgaben benötigen mehr RAM.",
+    "fr": "Nombre de workers conservés. Plus de travaux parallèles consomment plus de mémoire.",
+    "en": "Retained worker count. More parallel jobs use more RAM.",
+    "tr": "Hazır tutulan işçi sayısı. Daha fazla paralel iş yapılabilir fakat RAM tüketimi artar.",
+    "ru": "Число готовых обработчиков. Больше параллельных задач требует больше памяти.",
+    "es": "Número de trabajadores preparados. Más trabajos paralelos consumen más RAM.",
+    "it": "Numero di worker pronti. Più lavori paralleli richiedono più RAM."
+  },
+  "HelpBrand": {
+    "de": "Öffnet Sprach-, Darstellungs-, Modul- und erweiterte Einstellungen.",
+    "fr": "Ouvre les réglages de langue, apparence, moteurs et options avancées.",
+    "en": "Opens language, appearance, engine and advanced settings.",
+    "tr": "Dil, görünüm, motorlar ve gelişmiş seçenekler için ayarları açar.",
+    "ru": "Открывает настройки языка, оформления, моторов и расширенных параметров.",
+    "es": "Abre ajustes de idioma, aspecto, motores y opciones avanzadas.",
+    "it": "Apre impostazioni di lingua, aspetto, motori e opzioni avanzate."
+  },
+  "HelpHide": {
+    "de": "Verbirgt das Fenster; die Anwendung bleibt im Infobereich aktiv.",
+    "fr": "Masque la fenêtre ; l’application reste dans la zone de notification.",
+    "en": "Hides the window while the application remains in the tray.",
+    "tr": "Pencereyi gizler; uygulama tepside çalışmaya devam eder.",
+    "ru": "Скрывает окно; приложение продолжает работать в трее.",
+    "es": "Oculta la ventana; la aplicación sigue en la bandeja.",
+    "it": "Nasconde la finestra; l’applicazione resta nell’area di notifica."
+  },
+  "HelpOnlineRetryPause": {
+    "de": "Millisekunden zwischen fehlgeschlagenen Online-Durchläufen; lokales Ergebnis bleibt sichtbar.",
+    "fr": "Millisecondes entre cycles échoués ; la traduction locale affichée est conservée.",
+    "en": "Milliseconds between failed online bursts; the displayed local translation is retained.",
+    "tr": "Başarısız çevrimiçi turlar arasındaki milisaniye beklemesi; ekrandaki yerel sonuç korunur.",
+    "ru": "Миллисекунды между неудачными онлайн-циклами; локальный результат сохраняется.",
+    "es": "Milisegundos entre ciclos fallidos; se conserva la traducción local visible.",
+    "it": "Millisecondi fra cicli falliti; il risultato locale visualizzato viene mantenuto."
+  },
+  "HelpSwapLanguages": {
+    "de": "Vertauscht die Sprachauswahl beider Felder.",
+    "fr": "Échange les langues sélectionnées des deux zones.",
+    "en": "Exchanges the two pane language selections.",
+    "tr": "İki kutunun dil seçimlerini karşılıklı değiştirir.",
+    "ru": "Меняет местами выбранные языки обоих полей.",
+    "es": "Intercambia los idiomas seleccionados de ambas zonas.",
+    "it": "Scambia le lingue selezionate dei due riquadri."
+  },
+  "HelpWhite": {
+    "de": "Setzt den Text beider Felder auf Weiß.",
+    "fr": "Rétablit le texte blanc dans les deux zones.",
+    "en": "Restores white text in both editors.",
+    "tr": "İki metin kutusundaki yazı rengini doğrudan beyaza döndürür.",
+    "ru": "Возвращает белый цвет текста обоих полей.",
+    "es": "Restablece texto blanco en ambas zonas.",
+    "it": "Ripristina il testo bianco nei due riquadri."
+  },
+  "HelpUseToz": {
+    "de": "Nutzt Töz für Türkisch-Paare, bei Bedarf mit Bergamot über Englisch.",
+    "fr": "Utilise Töz pour le turc, combiné à Bergamot via l’anglais si nécessaire.",
+    "en": "Uses Töz for Turkish pairs, combining with Bergamot through English when needed.",
+    "tr": "Türkçe içeren çiftlerde Töz’ü kullanır. Diğer dil için gerektiğinde Bergamot ile İngilizce üzerinden zincir kurar.",
+    "ru": "Использует Töz для турецкого, при необходимости с Bergamot через английский.",
+    "es": "Usa Töz para pares turcos, combinado con Bergamot mediante inglés cuando hace falta.",
+    "it": "Usa Töz per coppie turche, combinandolo con Bergamot tramite inglese se necessario."
+  },
+  "HelpDetectorGateBudget": {
+    "de": "Millisekunden Wartezeit bei belegtem Lingua, bevor eine Alternative versucht wird.",
+    "fr": "Attente maximale en millisecondes si Lingua est occupé, avant une alternative.",
+    "en": "Milliseconds to wait when shared Lingua is busy before trying a fallback.",
+    "tr": "Paylaşılan Lingua meşgulse kilidini bekleme sınırı, milisaniye; sonra alternatif denenir.",
+    "ru": "Ожидание занятого Lingua в миллисекундах до перехода к альтернативе.",
+    "es": "Espera máxima en milisegundos si Lingua está ocupado, antes de otra vía.",
+    "it": "Attesa massima in millisecondi se Lingua è occupato, prima dell’alternativa."
+  },
+  "HelpTwoWayAutomatic": {
+    "de": "Erlaubt Automatisch in beiden Feldern; Regeln wählen die Gegensprache.",
+    "fr": "Autorise Automatique des deux côtés ; les règles choisissent la langue opposée.",
+    "en": "Allows both panes to stay Automatic; rules choose the opposite language.",
+    "tr": "İki kutunun da Otomatik kalmasına izin verir; yazdığın dilin karşılığı kurallardan seçilir.",
+    "ru": "Разрешает автоматический язык обоих полей; целевой язык выбирают правила.",
+    "es": "Permite Automático en ambos lados; las reglas eligen el idioma opuesto.",
+    "it": "Consente Automatico su entrambi i lati; le regole scelgono l’altra lingua."
+  },
+  "HelpBeam": {
+    "de": "Übersetzungskandidaten pro Schritt. Mehr können Qualität verbessern, benötigen aber länger.",
+    "fr": "Candidats examinés à chaque étape. Plus peut améliorer la qualité mais ralentit.",
+    "en": "Translation candidates explored per step. More may improve quality but takes longer.",
+    "tr": "Her adımda değerlendirilen çeviri adaylarının sayısı. Artırmak kaliteye yardımcı olabilir fakat yavaşlatır.",
+    "ru": "Кандидаты перевода на шаге. Больше может улучшить качество, но замедляет.",
+    "es": "Candidatos examinados por paso. Más puede mejorar calidad, pero ralentiza.",
+    "it": "Candidati valutati per passo. Aumentarli può migliorare la qualità ma rallenta."
+  },
+  "HelpAutoLanguageMode": {
+    "de": "Einfach wechselt zwischen zwei Sprachen. Erweitert nutzt das erste passende Regelziel.",
+    "fr": "Simple alterne deux langues. Avancé utilise la première règle correspondante.",
+    "en": "Simple switches between two languages. Advanced uses the first matching rule’s target.",
+    "tr": "Basit mod iki dili karşılıklı kullanır. Gelişmiş mod, ilk eşleşen koşulun hedefini kullanır.",
+    "ru": "Простой режим чередует два языка. Расширенный использует первое совпавшее правило.",
+    "es": "Simple alterna dos idiomas. Avanzado usa la primera regla coincidente.",
+    "it": "Semplice alterna due lingue. Avanzato usa la prima regola corrispondente."
+  },
+  "HelpRuleSources": {
+    "de": "Die Bedingung passt, wenn eine Quellsprache dieses Blocks erkannt wird.",
+    "fr": "La condition correspond si une langue source du bloc est détectée.",
+    "en": "The condition matches when any source language in this block is detected.",
+    "tr": "Bu bloktaki kaynak dillerden herhangi biri algılanırsa koşul sağlanır.",
+    "ru": "Условие выполняется при определении любого исходного языка блока.",
+    "es": "Coincide si se detecta cualquiera de los idiomas de origen del bloque.",
+    "it": "La condizione vale rilevando una delle lingue sorgenti del blocco."
+  },
+  "HelpTooltipFade": {
+    "de": "Sekunden bis die Erklärung vollständig eingeblendet ist.",
+    "fr": "Secondes nécessaires pour rendre l’infobulle entièrement visible.",
+    "en": "Seconds for the explanation to fade into full visibility.",
+    "tr": "Açılan açıklamanın tamamen görünür olması için geçen saniye.",
+    "ru": "Секунды до полной видимости появляющейся подсказки.",
+    "es": "Segundos hasta que la descripción sea completamente visible.",
+    "it": "Secondi necessari per rendere completamente visibile la descrizione."
+  },
+  "HelpRemoveRule": {
+    "de": "Entfernt diesen Bedingungsblock, andere Regeln bleiben erhalten.",
+    "fr": "Retire ce bloc de conditions sans modifier les autres règles.",
+    "en": "Removes this condition block while retaining other rules.",
+    "tr": "Bu koşul bloğunu kaldırır; diğer kurallara dokunmaz.",
+    "ru": "Удаляет этот блок условий, сохраняя остальные правила.",
+    "es": "Elimina este bloque sin modificar las demás reglas.",
+    "it": "Rimuove questo blocco senza modificare le altre regole."
+  },
+  "HelpAutoPair": {
+    "de": "Eine Sprache des automatischen Paars; Ziel ist die andere, sonst die erste Sprache.",
+    "fr": "Une langue de la paire automatique ; cible opposée, sinon première langue.",
+    "en": "One language in the automatic pair; the opposite is targeted, otherwise the first language.",
+    "tr": "Otomatik çevirinin iki dilinden biri. Biri algılanınca diğerine çevrilir; eşleşmeyince birinci dil kullanılır.",
+    "ru": "Один язык автоматической пары; цель — другой, при отсутствии совпадения — первый.",
+    "es": "Un idioma del par automático; destino opuesto, o el primero si no coincide.",
+    "it": "Una lingua della coppia automatica; destinazione opposta, altrimenti la prima."
+  },
+  "HelpLocalRetries": {
+    "de": "Zusätzliche Versuche mit Ersatz-Worker nach lokalem Fehler.",
+    "fr": "Tentatives supplémentaires avec un nouveau worker après un échec local.",
+    "en": "Extra attempts with a replacement worker after local engine failure.",
+    "tr": "Yerel motor başarısız olduğunda yeni işçiyle yapılabilecek ek denemeler.",
+    "ru": "Дополнительные попытки с новым обработчиком после локальной ошибки.",
+    "es": "Intentos adicionales con un trabajador nuevo tras un fallo local.",
+    "it": "Tentativi aggiuntivi con un worker nuovo dopo un errore locale."
+  },
+  "HelpDetectorMediaPipe": {
+    "de": "Googles kleiner neuronaler Detektor, lokal ohne Textübertragung ins Internet.",
+    "fr": "Petit détecteur neuronal de Google, exécuté localement sans envoyer le texte.",
+    "en": "Google’s small neural detector, running locally without sending text online.",
+    "tr": "Google’ın küçük sinir ağı tabanlı algılayıcısı. İnternete metin göndermeden cihazda çalışır.",
+    "ru": "Небольшой нейросетевой детектор Google; работает локально без отправки текста.",
+    "es": "Pequeño detector neuronal de Google, local y sin enviar texto a Internet.",
+    "it": "Piccolo rilevatore neurale Google, locale e senza inviare testi online."
+  },
+  "HelpAddRule": {
+    "de": "Fügt eine Quelle-Ziel-Bedingung am Listenende hinzu.",
+    "fr": "Ajoute une condition source-cible à la fin de la liste.",
+    "en": "Adds a source-to-target condition at the end of the rule list.",
+    "tr": "Listenin sonuna yeni bir kaynak dil ve hedef dil koşulu ekler.",
+    "ru": "Добавляет условие исходного и целевого языка в конец списка.",
+    "es": "Añade una condición origen-destino al final de la lista.",
+    "it": "Aggiunge una condizione sorgente-destinazione in fondo all’elenco."
+  },
+  "HelpAttemptTimeout": {
+    "de": "Sekunden für einen Online-Versuch, bevor er abgebrochen und erneut behandelt wird.",
+    "fr": "Secondes allouées à une tentative en ligne avant annulation et reprise.",
+    "en": "Seconds allowed for one online attempt before cancellation and recovery.",
+    "tr": "Tek bir çevrimiçi denemeye ayrılan saniye. Süre dolarsa deneme iptal edilip kurtarma sürer.",
+    "ru": "Секунды на одну онлайн-попытку до отмены и восстановления.",
+    "es": "Segundos permitidos por intento en línea antes de cancelar y recuperar.",
+    "it": "Secondi concessi a un tentativo online prima dell’annullamento e del recupero."
+  },
+  "HelpRuleTarget": {
+    "de": "Wählt die Zielsprache bei passender Bedingung.",
+    "fr": "Choisit la langue cible quand la condition correspond.",
+    "en": "Selects the destination language when this condition matches.",
+    "tr": "Bu koşul eşleşince metnin çevrileceği dili seçer.",
+    "ru": "Выбирает целевой язык при выполнении условия.",
+    "es": "Elige el destino cuando coincide esta condición.",
+    "it": "Sceglie la lingua di destinazione quando vale la condizione."
+  },
+  "HelpSaveProfile": {
+    "de": "Speichert aktuelle Zeiten und Wiederholungen als neues eigenes Profil.",
+    "fr": "Enregistre les durées et reprises actuelles comme nouveau profil personnel.",
+    "en": "Saves current timing and retry values as a new personal preset.",
+    "tr": "Şu anki süre ve tekrar değerlerini yeni bir kişisel profil olarak kaydeder.",
+    "ru": "Сохраняет текущие времена и повторы как новый личный профиль.",
+    "es": "Guarda tiempos y reintentos actuales como perfil personal nuevo.",
+    "it": "Salva tempi e tentativi attuali come nuovo profilo personale."
+  },
+  "HelpResetSplit": {
+    "de": "Stellt gleiche Feldbreiten von jeweils fünfzig Prozent wieder her.",
+    "fr": "Rétablit deux zones de largeur égale, cinquante pour cent chacune.",
+    "en": "Restores equal editor widths, fifty percent each.",
+    "tr": "İki metin kutusunu eşit genişliğe, %50–%50 oranına döndürür.",
+    "ru": "Возвращает равную ширину полей, по пятьдесят процентов каждому.",
+    "es": "Restaura dos zonas iguales, cincuenta por ciento cada una.",
+    "it": "Ripristina due riquadri uguali, cinquanta per cento ciascuno."
+  },
+  "HelpAutoSecondLanguage": {
+    "de": "Eine Sprache des automatischen Paars; Ziel ist die andere, sonst die erste Sprache.",
+    "fr": "Une langue de la paire automatique ; cible opposée, sinon première langue.",
+    "en": "One language in the automatic pair; the opposite is targeted, otherwise the first language.",
+    "tr": "Otomatik çevirinin iki dilinden biri. Biri algılanınca diğerine çevrilir; eşleşmeyince birinci dil kullanılır.",
+    "ru": "Один язык автоматической пары; цель — другой, при отсутствии совпадения — первый.",
+    "es": "Un idioma del par automático; destino opuesto, o el primero si no coincide.",
+    "it": "Una lingua della coppia automatica; destinazione opposta, altrimenti la prima."
+  },
+  "HelpSwapTexts": {
+    "de": "Vertauscht beide Texte, ohne einen davon zu verwerfen.",
+    "fr": "Échange les deux textes sans en supprimer un.",
+    "en": "Exchanges both texts without discarding either one.",
+    "tr": "İki kutunun metinlerini karşılıklı taşır; metinler silinmez.",
+    "ru": "Меняет местами оба текста, не удаляя ни один.",
+    "es": "Intercambia ambos textos sin descartar ninguno.",
+    "it": "Scambia i due testi senza eliminarne nessuno."
+  },
+  "HelpStatusSpeed": {
+    "de": "Laufgeschwindigkeit überlanger Statusmeldungen in Pixeln pro Sekunde; das Licht bleibt fest.",
+    "fr": "Vitesse du texte d’état trop long, en pixels/seconde ; le voyant reste fixe.",
+    "en": "Scrolling speed in pixels per second for overflowing status text; the light stays fixed.",
+    "tr": "Sığmayan durum yazısının saniyede kaç piksel kayacağını belirler; durum ışığı sabit kalır.",
+    "ru": "Скорость длинного текста состояния в пикселях/секунду; индикатор неподвижен.",
+    "es": "Velocidad del estado desbordado en píxeles/segundo; la luz queda fija.",
+    "it": "Velocità del testo di stato lungo, in pixel/secondo; la spia resta ferma."
+  },
+  "HelpTooltipDelay": {
+    "de": "Wartezeit über einem Steuerelement, bevor die Erklärung erscheint, in Sekunden.",
+    "fr": "Secondes à attendre sur un contrôle avant son explication.",
+    "en": "Seconds to wait over a control before showing its explanation.",
+    "tr": "Fare bir öğenin üzerindeyken açıklama açılmadan beklenecek saniye.",
+    "ru": "Секунды ожидания над элементом перед показом пояснения.",
+    "es": "Segundos sobre un control antes de mostrar su explicación.",
+    "it": "Secondi di attesa su un controllo prima della spiegazione."
+  },
+  "HelpEnableTooltips": {
+    "de": "Aktiviert Erklärungen; Ausschalten verhindert auch wartende Tooltips.",
+    "fr": "Active les explications ; désactiver annule aussi les infobulles en attente.",
+    "en": "Enables explanations; disabling also cancels pending tooltips.",
+    "tr": "Açıklama kutularını açar veya kapatır; kapatınca bekleyen kutular da açılmaz.",
+    "ru": "Включает пояснения; отключение отменяет и ожидающие подсказки.",
+    "es": "Activa explicaciones; desactivar también cancela las pendientes.",
+    "it": "Abilita le spiegazioni; disattivando si annullano anche quelle in attesa."
+  },
+  "HelpRuleOrder": {
+    "de": "Erste passende Regel gewinnt; Pfeile ändern ihre Priorität.",
+    "fr": "Première règle correspondante retenue ; les flèches changent sa priorité.",
+    "en": "First matching rule wins; arrows change this rule’s priority.",
+    "tr": "İlk eşleşen kural kazanır; oklar bu kuralın önceliğini değiştirir.",
+    "ru": "Побеждает первое совпавшее правило; стрелки меняют его приоритет.",
+    "es": "Gana la primera regla coincidente; las flechas cambian su prioridad.",
+    "it": "Vale la prima regola corrispondente; le frecce cambiano la priorità."
+  },
+  "HelpDetectorTinyLdLight": {
+    "de": "TinyLD mit kleineren Profilen; sehr kompakt, aber mehr mögliche Kurztextfehler.",
+    "fr": "TinyLD avec profils réduits ; très compact, mais davantage d’erreurs possibles sur textes courts.",
+    "en": "TinyLD with smaller profiles; very compact, but may misidentify more short texts.",
+    "tr": "TinyLD’nin daha küçük veri kullanan sürümü. Çok az yer kaplar; kısa metinlerde daha çok hata yapabilir.",
+    "ru": "TinyLD с уменьшенными профилями; очень компактен, но чаще ошибается на коротком тексте.",
+    "es": "TinyLD con perfiles reducidos; muy compacto, con más posibles errores en textos cortos.",
+    "it": "TinyLD con profili ridotti; molto compatto, ma con più possibili errori nei testi brevi."
+  },
+  "HelpDetectorMaximumCharacters": {
+    "de": "Maximale Zeichenzahl für die Erkennung; der ganze Text wird weiterhin übersetzt.",
+    "fr": "Nombre maximal de caractères analysés ; le texte entier reste traduit.",
+    "en": "Maximum characters sampled for detection; the complete text is still translated.",
+    "tr": "Uzun metinde dil tespiti için okunacak en fazla karakter; tüm metin yine çevrilir.",
+    "ru": "Максимум символов для определения языка; переводится весь текст.",
+    "es": "Máximo de caracteres analizados; se sigue traduciendo el texto completo.",
+    "it": "Massimo di caratteri analizzati; il testo completo viene comunque tradotto."
+  },
+  "HelpSequentialRetryDelay": {
+    "de": "Anfängliche Millisekunden zwischen Wiederholungen dieser Phase; spätere Pausen können steigen.",
+    "fr": "Millisecondes initiales entre reprises de cette phase ; les suivantes peuvent augmenter.",
+    "en": "Initial milliseconds between retries in this phase; later waits may increase.",
+    "tr": "Aynı aşamadaki tekrarlar arasındaki başlangıç beklemesi, milisaniye. Sonraki beklemeler artabilir.",
+    "ru": "Начальная пауза повторов этого этапа в миллисекундах; следующие могут увеличиваться.",
+    "es": "Milisegundos iniciales entre reintentos de esta fase; las siguientes esperas pueden aumentar.",
+    "it": "Millisecondi iniziali fra tentativi della fase; le attese successive possono aumentare."
+  },
+  "HelpEditorFont": {
+    "de": "Wählt die Schrift beider Textfelder. Installierte Schriften werden erst beim Öffnen geladen.",
+    "fr": "Choisit la police des deux zones. La liste est chargée uniquement à l’ouverture.",
+    "en": "Selects the font for both editors. Installed fonts load only when opened.",
+    "tr": "İki metin kutusunun yazı tipini seçer. Liste yalnız açıldığında bilgisayardan okunur.",
+    "ru": "Выбирает шрифт обоих полей. Список загружается только при открытии.",
+    "es": "Elige la fuente de ambas zonas. La lista se carga solo al abrirla.",
+    "it": "Sceglie il carattere dei due riquadri. L’elenco si carica solo aprendolo."
+  },
+  "HelpOnlineTotalBudget": {
+    "de": "Sekunden pro Online-Durchlauf. Fehlgeschlagene Durchläufe wiederholen sich bis zum Abbruch.",
+    "fr": "Secondes par cycle de reprise en ligne. Les échecs sont répétés jusqu’à annulation.",
+    "en": "Seconds per online recovery burst. Failed bursts repeat until the request is canceled.",
+    "tr": "Bir çevrimiçi kurtarma turunun saniye sınırı. Tur bitince bekleyip tekrar dener; görev iptal edilmedikçe sürer.",
+    "ru": "Секунды одного онлайн-цикла. Неудачные циклы повторяются до отмены запроса.",
+    "es": "Segundos por ciclo de recuperación en línea. Se repite hasta cancelar la solicitud.",
+    "it": "Secondi per ciclo di recupero online. Gli errori vengono ritentati fino all’annullamento."
+  },
+  "HelpStatusPreview": {
+    "de": "Live-Vorschau der Statusgeschwindigkeit mit derselben Komponente wie die Hauptleiste.",
+    "fr": "Aperçu réel de vitesse avec le même composant que la barre principale.",
+    "en": "Live status-speed preview using the same component as the main bar.",
+    "tr": "Durum yazısı hızının gerçek önizlemesidir; ana çubuğun aynı bileşenini kullanır.",
+    "ru": "Живой предпросмотр скорости на том же компоненте, что и главная строка.",
+    "es": "Vista real de velocidad con el mismo componente que la barra principal.",
+    "it": "Anteprima reale della velocità con lo stesso componente della barra principale."
+  },
+  "HelpDefaultSourceLanguage": {
+    "de": "Wählt die Sprache dieses Feldes beim Start. — behält die letzte Auswahl.",
+    "fr": "Choisit la langue de cette zone au démarrage. — conserve le dernier choix.",
+    "en": "Selects this pane’s language at startup. — preserves the last choice.",
+    "tr": "Uygulama açılınca bu kutunun dilini seçer. — son kullanılanı korur.",
+    "ru": "Задаёт язык этого поля при запуске. — сохраняет последний выбор.",
+    "es": "Elige el idioma de esta zona al iniciar. — conserva el último.",
+    "it": "Sceglie la lingua di questo riquadro all’avvio. — conserva l’ultima scelta."
+  },
+  "HelpBergamotWorkers": {
+    "de": "Anzahl vorgehaltener Worker. Mehr parallele Aufgaben benötigen mehr RAM.",
+    "fr": "Nombre de workers conservés. Plus de travaux parallèles consomment plus de mémoire.",
+    "en": "Retained worker count. More parallel jobs use more RAM.",
+    "tr": "Hazır tutulan işçi sayısı. Daha fazla paralel iş yapılabilir fakat RAM tüketimi artar.",
+    "ru": "Число готовых обработчиков. Больше параллельных задач требует больше памяти.",
+    "es": "Número de trabajadores preparados. Más trabajos paralelos consumen más RAM.",
+    "it": "Numero di worker pronti. Più lavori paralleli richiedono più RAM."
+  },
+  "HelpConcurrentBudget": {
+    "de": "Gesamtsekunden für parallele Versuche und Wartezeiten vor der sequenziellen Phase.",
+    "fr": "Secondes totales des essais parallèles et attentes avant la phase séquentielle.",
+    "en": "Total seconds for parallel attempts and waits before the sequential phase.",
+    "tr": "Paralel denemelerin ve aralarındaki beklemelerin toplam saniye sınırı; sonra sıralı aşamaya geçilir.",
+    "ru": "Общие секунды параллельных попыток и пауз до последовательного этапа.",
+    "es": "Segundos totales para intentos paralelos y esperas antes de la fase secuencial.",
+    "it": "Secondi complessivi per tentativi paralleli e attese prima della fase sequenziale."
+  },
+  "HelpTozThreads": {
+    "de": "Rechenthreads pro Töz-Worker. Ohne geteilten Speicher wird einer verwendet.",
+    "fr": "Threads de calcul par worker Töz. Sans mémoire partagée, un seul est utilisé.",
+    "en": "Compute threads per Töz worker. Without shared-memory support, one is used.",
+    "tr": "Bir Töz işçisinin hesaplama thread sayısı. Paylaşımlı bellek desteklenmiyorsa 1 kullanılır.",
+    "ru": "Потоки вычисления одного Töz-обработчика. Без общей памяти используется один.",
+    "es": "Hilos de cálculo por trabajador Töz. Sin memoria compartida se usa uno.",
+    "it": "Thread di calcolo per worker Töz. Senza memoria condivisa se ne usa uno."
+  },
+  "HelpUseBergamot": {
+    "de": "Aktiviert Mozillas Offline-Zweig; verbindet sieben Sprachen über Englisch.",
+    "fr": "Active le moteur local Mozilla ; relie sept langues via l’anglais.",
+    "en": "Enables Mozilla’s offline racing branch; connects seven languages through English.",
+    "tr": "Mozilla’nın çevrimdışı motorunun yarış kolunu açar. Yedi dili İngilizce üzerinden birbirine bağlar.",
+    "ru": "Включает локальный мотор Mozilla; связывает семь языков через английский.",
+    "es": "Activa el motor local Mozilla; conecta siete idiomas mediante inglés.",
+    "it": "Attiva il motore locale Mozilla; collega sette lingue tramite inglese."
+  },
+  "HelpRetryDelay": {
+    "de": "Anfängliche Millisekunden zwischen Wiederholungen dieser Phase; spätere Pausen können steigen.",
+    "fr": "Millisecondes initiales entre reprises de cette phase ; les suivantes peuvent augmenter.",
+    "en": "Initial milliseconds between retries in this phase; later waits may increase.",
+    "tr": "Aynı aşamadaki tekrarlar arasındaki başlangıç beklemesi, milisaniye. Sonraki beklemeler artabilir.",
+    "ru": "Начальная пауза повторов этого этапа в миллисекундах; следующие могут увеличиваться.",
+    "es": "Milisegundos iniciales entre reintentos de esta fase; las siguientes esperas pueden aumentar.",
+    "it": "Millisecondi iniziali fra tentativi della fase; le attese successive possono aumentare."
+  },
+  "HelpDetectorCld3": {
+    "de": "Googles neuronaler Detektor der dritten Generation; in unserem Test nicht genauer.",
+    "fr": "Troisième génération neuronale Google ; son numéro plus récent n’a pas amélioré notre résultat.",
+    "en": "Google’s third-generation neural detector; its newer number did not improve our sample score.",
+    "tr": "Google’ın sinir ağı tabanlı üçüncü nesil algılayıcısı. Sürüm numarası, bizim testimizde daha yüksek doğruluk getirmedi.",
+    "ru": "Нейросетевой детектор Google третьего поколения; в нашей выборке точность не выросла.",
+    "es": "Tercera generación neuronal Google; el número más nuevo no mejoró nuestra prueba.",
+    "it": "Terza generazione neurale Google; il numero più recente non ha migliorato il nostro test."
+  },
+  "HelpOnlineEnabled": {
+    "de": "Aktiviert konkurriert der Online-Dienst mit lokalen Modulen; deaktiviert nur lokale Übersetzung.",
+    "fr": "Activé, le moteur en ligne concourt avec les moteurs locaux. Désactivé, traduction locale uniquement.",
+    "en": "When enabled, online competes with local engines. Disabled uses local translation only.",
+    "tr": "Açıkken internet motoru yerel motorlarla yarışır. Kapalıyken yalnız yerel çeviri yapılır.",
+    "ru": "Включённый онлайн-мотор соревнуется с локальными; отключённый не используется.",
+    "es": "Activado compite el motor en línea con los locales; desactivado solo traducción local.",
+    "it": "Attivo, il motore online compete con quelli locali; disattivo usa solo traduzione locale."
+  },
+  "HelpDetectorModelLoadTimeout": {
+    "de": "Millisekunden zur Vorbereitung des Detektors, dann Rückgriff auf Lingua.",
+    "fr": "Millisecondes pour préparer le détecteur avant recours à Lingua.",
+    "en": "Milliseconds to prepare the selected detector before falling back to Lingua.",
+    "tr": "Seçilen algılayıcının hazırlanması için milisaniye sınırı; başarısız olursa Lingua denenir.",
+    "ru": "Миллисекунды подготовки детектора до перехода к Lingua.",
+    "es": "Milisegundos para preparar el detector antes de recurrir a Lingua.",
+    "it": "Millisecondi per preparare il rilevatore prima di passare a Lingua."
+  },
+  "HelpAutoFirstLanguage": {
+    "de": "Eine Sprache des automatischen Paars; Ziel ist die andere, sonst die erste Sprache.",
+    "fr": "Une langue de la paire automatique ; cible opposée, sinon première langue.",
+    "en": "One language in the automatic pair; the opposite is targeted, otherwise the first language.",
+    "tr": "Otomatik çevirinin iki dilinden biri. Biri algılanınca diğerine çevrilir; eşleşmeyince birinci dil kullanılır.",
+    "ru": "Один язык автоматической пары; цель — другой, при отсутствии совпадения — первый.",
+    "es": "Un idioma del par automático; destino opuesto, o el primero si no coincide.",
+    "it": "Una lingua della coppia automatica; destinazione opposta, altrimenti la prima."
+  }
+}

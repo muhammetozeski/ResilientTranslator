@@ -1,0 +1,6 @@
+<CascadingValue Value="Description">@ChildContent</CascadingValue>
+@code {
+    [Parameter] public string Text {get;set;}="";
+    [Parameter] public RenderFragment? ChildContent {get;set;}
+    ControlDescription Description=>new(Text);
+}

@@ -14,8 +14,8 @@
         var rule = Value.Rules[index];
         <div class="language-rule-block" @key="rule">
             <div class="language-rule-order">
-                <CoreTooltip Text="@Strings.MoveUp"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => Move(index, -1)" Disabled="@(index == 0)" aria-label="@Strings.MoveUp">↑</CoreButton></CoreTooltip>
-                <CoreTooltip Text="@Strings.MoveDown"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => Move(index, 1)" Disabled="@(index == Value.Rules.Length - 1)" aria-label="@Strings.MoveDown">↓</CoreButton></CoreTooltip>
+                <CoreTooltip Text="@Strings.HelpRuleOrder"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => Move(index, -1)" Disabled="@(index == 0)" aria-label="@Strings.MoveUp">↑</CoreButton></CoreTooltip>
+                <CoreTooltip Text="@Strings.HelpRuleOrder"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => Move(index, 1)" Disabled="@(index == Value.Rules.Length - 1)" aria-label="@Strings.MoveDown">↓</CoreButton></CoreTooltip>
             </div>
             <div class="language-rule-condition">
                 <strong>@Strings.IfLanguage</strong>
@@ -25,25 +25,25 @@
                         int condition = sourceIndex;
                         if (condition > 0) { <span class="language-rule-or">@Strings.Or</span> }
                         <span class="language-rule-source">
-                            <CoreTooltip Text="@Strings.IfLanguage"><CoreSelect value="@rule.Sources[condition]" OnChange="args => SetSource(index, condition, args.Value?.ToString())" aria-label="@Strings.IfLanguage">@LanguageOptions()</CoreSelect></CoreTooltip>
+                            <CoreTooltip Text="@Strings.HelpRuleSources"><CoreSelect value="@rule.Sources[condition]" OnChange="args => SetSource(index, condition, args.Value?.ToString())" aria-label="@Strings.IfLanguage">@LanguageOptions()</CoreSelect></CoreTooltip>
                             @if (rule.Sources.Length > 1)
                             {
-                                <CoreTooltip Text="@Strings.RemoveCondition"><CoreButton Appearance="ControlAppearance.Bare" OnClick="() => RemoveSource(index, condition)" aria-label="@Strings.RemoveCondition">×</CoreButton></CoreTooltip>
+                                <CoreTooltip Text="@Strings.HelpRuleSources"><CoreButton Appearance="ControlAppearance.Bare" OnClick="() => RemoveSource(index, condition)" aria-label="@Strings.RemoveCondition">×</CoreButton></CoreTooltip>
                             }
                         </span>
                     }
-                    <CoreTooltip Text="@Strings.AddCondition"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => AddSource(index)" Disabled="@(rule.Sources.Length >= Languages.Length)" aria-label="@Strings.AddCondition">+ @Strings.Or</CoreButton></CoreTooltip>
+                    <CoreTooltip Text="@Strings.HelpRuleSources"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => AddSource(index)" Disabled="@(rule.Sources.Length >= Languages.Length)" aria-label="@Strings.AddCondition">+ @Strings.Or</CoreButton></CoreTooltip>
                 </div>
             </div>
             <div class="language-rule-destination">
                 <span>@Strings.TranslateTo</span>
-                <CoreTooltip Text="@Strings.TranslateTo"><CoreSelect value="@rule.Target" OnChange="args => SetTarget(index, args.Value?.ToString())" aria-label="@Strings.TranslateTo">@LanguageOptions()</CoreSelect></CoreTooltip>
+                <CoreTooltip Text="@Strings.HelpRuleTarget"><CoreSelect value="@rule.Target" OnChange="args => SetTarget(index, args.Value?.ToString())" aria-label="@Strings.TranslateTo">@LanguageOptions()</CoreSelect></CoreTooltip>
             </div>
-            <CoreTooltip Text="@Strings.RemoveRule"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => Remove(index)" aria-label="@Strings.RemoveRule">×</CoreButton></CoreTooltip>
+            <CoreTooltip Text="@Strings.HelpRemoveRule"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => Remove(index)" aria-label="@Strings.RemoveRule">×</CoreButton></CoreTooltip>
         </div>
     }
     <div class="language-rule-footer">
-        <CoreTooltip Text="@Strings.AddRule"><CoreButton Appearance="ControlAppearance.Compact" OnClick="Add">+ @Strings.AddRule</CoreButton></CoreTooltip>
+        <CoreTooltip Text="@Strings.HelpAddRule"><CoreButton Appearance="ControlAppearance.Compact" OnClick="Add">+ @Strings.AddRule</CoreButton></CoreTooltip>
         <span>@Strings.RoutingOtherwise</span>
     </div>
 </section>

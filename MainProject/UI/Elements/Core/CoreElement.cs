@@ -10,10 +10,13 @@ public class CoreElement:ThemeComponent,IAsyncDisposable
     [Inject] protected IJSRuntime ElementJavaScript {get;set;}=default!;
     protected ElementReference NativeElement;
     [CascadingParameter] protected CoreTooltip? ParentTooltip {get;set;}
+    [CascadingParameter] protected ControlDescription? FieldDescription {get;set;}
     protected readonly string DescriptionId="tip-"+Guid.NewGuid().ToString("N");
     protected string Description(IReadOnlyDictionary<string,object>? attributes)
     {
-        foreach(var key in new[]{"data-tooltip","title","aria-label"})if(attributes?.TryGetValue(key,out var text)==true && !string.IsNullOrWhiteSpace(text?.ToString()))return text.ToString()!;
+        if(attributes?.TryGetValue("data-tooltip",out var explicitHelp)==true)return explicitHelp?.ToString()??"";
+        if(FieldDescription is not null)return FieldDescription.Text;
+        foreach(var key in new[]{"title","aria-label"})if(attributes?.TryGetValue(key,out var text)==true && !string.IsNullOrWhiteSpace(text?.ToString()))return text.ToString()!;
         return "";
     }
     protected bool NeedsTooltip(IReadOnlyDictionary<string,object>? attributes)=>ParentTooltip is null&&Description(attributes).Length>0;
