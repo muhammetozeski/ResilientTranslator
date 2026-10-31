@@ -1,8 +1,7 @@
 <style>
 .detector-picker { display:inline-flex; position:relative; min-width:0; }
 .detector-picker > .core-btn { gap:@(AppMeasures.Space.Px12)px; justify-content:space-between; }
-.detector-picker-dismiss { position:fixed; inset:0; z-index:@(AppMeasures.ZLayer.Popover); }
-.detector-picker-options { position:absolute; inset-block-start:100%; inset-inline-end:0; min-width:@(AppMeasures.Size.Px200)px; max-height:60vh; overflow:auto; padding:@(AppMeasures.Space.Px4)px; z-index:@(AppMeasures.ZLayer.Popover); background:@AppColors.TooltipBackground.ToRgbaHex(true); border:@(AppMeasures.Border.Thin)px solid @AppColors.ControlBorder.ToRgbaHex(true); border-radius:@(AppMeasures.Radius.Small)px; box-shadow:@AppStyles.ShadowHeavy; }
+.detector-picker-options { width:max-content; min-width:@(AppMeasures.Size.Px200)px; max-height:60vh; overflow:auto; padding:@(AppMeasures.Space.Px4)px; z-index:@(AppMeasures.ZLayer.Popover); background:@AppColors.TooltipBackground.ToRgbaHex(true); border:@(AppMeasures.Border.Thin)px solid @AppColors.ControlBorder.ToRgbaHex(true); border-radius:@(AppMeasures.Radius.Small)px; box-shadow:@AppStyles.ShadowMedium; }
 .detector-picker-row { display:flex; align-items:center; border-radius:@(AppMeasures.Radius.Small)px; }
 .detector-picker-row:hover, .detector-picker-row.selected { background:@AppColors.ControlHover.ToRgbaHex(true); }
 .detector-picker-name { flex:1; padding:@(AppMeasures.Space.Px8)px; text-align:start; color:@AppColors.TextPrimary.ToRgbaHex(true); }

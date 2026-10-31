@@ -1,0 +1,20 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JavaScript
+@code {
+    [CascadingParameter] public PopupScope? Scope {get;set;}
+    IJSObjectReference? Module,Subscription;
+    DotNetObjectReference<PopupViewport>? Reference;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(!firstRender)return;
+        Module=await JavaScript.InvokeAsync<IJSObjectReference>("import","./_content/MainProject/ui/element.js");
+        Reference=DotNetObjectReference.Create(this);
+        Subscription=await Module.InvokeAsync<IJSObjectReference>("observeViewport",Reference);
+    }
+    [JSInvokable] public Task ViewportChanged()=>InvokeAsync(()=>Scope?.Resize());
+    public async ValueTask DisposeAsync()
+    {
+        try{if(Subscription is not null){await Subscription.InvokeVoidAsync("dispose");await Subscription.DisposeAsync();}if(Module is not null)await Module.DisposeAsync();}
+        finally{Reference?.Dispose();}
+    }
+}

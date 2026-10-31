@@ -1,0 +1,83 @@
+@inherits CoreElement
+<CorePopupCss />
+@if (IsVisible)
+{
+    @if (IsModal || DismissOnOutside)
+    {
+        <div class="core-popup-layer @(IsModal ? "is-modal" : "is-transient") @LayerClass" @onclick="Outside">
+            @Surface()
+        </div>
+    }
+    else { @Surface() }
+}
+@code {
+    const bool IsLogEnabled=true;
+    [CascadingParameter] public PopupScope? Scope {get;set;}
+    [CascadingParameter] public CorePopup? ParentPopup {get;set;}
+    [Parameter] public bool IsVisible {get;set;}
+    [Parameter] public bool IsModal {get;set;}
+    [Parameter] public bool DismissOnOutside {get;set;}
+    [Parameter] public ElementHandle? Anchor {get;set;}
+    [Parameter] public bool PreferAbove {get;set;}
+    [Parameter] public string LayerClass {get;set;}="";
+    [Parameter] public string SurfaceClass {get;set;}="";
+    [Parameter] public string? SurfaceStyle {get;set;}
+    [Parameter] public string Role {get;set;}="dialog";
+    [Parameter] public string? Id {get;set;}
+    [Parameter] public RenderFragment? ChildContent {get;set;}
+    [Parameter] public EventCallback OnDismiss {get;set;}
+    [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown {get;set;}
+    [Parameter] public EventCallback<PointerEventArgs> OnPointerEnter {get;set;}
+    [Parameter] public EventCallback<PointerEventArgs> OnPointerLeave {get;set;}
+    [Parameter(CaptureUnmatchedValues=true)] public IReadOnlyDictionary<string,object>? AdditionalAttributes {get;set;}
+    bool LastVisible,Positioned;
+    ElementHandle? LastAnchor;
+    object LayoutOwner=new();
+    string Position="";
+    protected override void OnInitialized(){if(Scope is not null)Scope.ViewportChanged+=ViewportChanged;}
+    protected override void OnParametersSet()
+    {
+        if(IsVisible!=LastVisible || Anchor!=LastAnchor){LayoutOwner=new();Positioned=IsModal;LastVisible=IsVisible;LastAnchor=Anchor;}
+    }
+    RenderFragment Surface()=>@<div @attributes="AdditionalAttributes" @ref="NativeElement" id="@Id" role="@Role" aria-modal="@(IsModal ? "true" : null)"
+        class="core-popup-surface @(IsModal ? "modal-surface" : "anchored-surface") @SurfaceClass" style="@SurfaceCss"
+        @onclick:stopPropagation @onpointerdown:stopPropagation @onkeydown="KeyDown" @onpointerenter="OnPointerEnter" @onpointerleave="OnPointerLeave" @onscroll="Scrolled">
+        <CascadingValue Value="this" IsFixed="true">@ChildContent</CascadingValue>
+    </div>;
+    string SurfaceCss=>WithPosition(IsModal ? SurfaceStyle??"" : $"{SurfaceStyle};{Position};visibility:{(Positioned?"visible":"hidden")};");
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(!IsVisible || IsModal || Positioned || Anchor is null)return;
+        var owner=LayoutOwner;
+        try
+        {
+            var trigger=await Anchor.GetBoundsAsync();var panel=await GetBoundsAsync();
+            if(owner!=LayoutOwner || !IsVisible)return;
+            double gap=AppMeasures.Space.Px8,inset=AppMeasures.Space.Px12;
+            double x=Math.Clamp(trigger.X+(trigger.Width-panel.Width)/2,inset,Math.Max(inset,panel.ViewportWidth-panel.Width-inset));
+            double below=trigger.Bottom+gap,above=trigger.Y-panel.Height-gap;
+            double y=PreferAbove && above>=inset ? above : below+panel.Height<=panel.ViewportHeight-inset ? below : Math.Max(inset,above);
+            Position=FormattableString.Invariant($"left:{x}px;top:{y}px");Positioned=true;Log($"Popup positioned; role={Role}; x={x}; y={y}; trigger={trigger}; panel={panel}",Run:IsLogEnabled);
+            await InvokeAsync(StateHasChanged);
+        }
+        catch(Exception error)
+        {
+            if(owner!=LayoutOwner || !IsVisible)return;
+            Log($"Popup positioning failed; role={Role}; error={error}",Run:IsLogEnabled);
+            await OnDismiss.InvokeAsync();
+        }
+    }
+    async Task Outside(MouseEventArgs args)
+    {
+        await OnDismiss.InvokeAsync();
+        if(!IsModal && ParentPopup is {IsVisible:true} parent)
+        {
+            var bounds=await parent.GetBoundsAsync();
+            if(!bounds.Contains(args.ClientX,args.ClientY))await parent.OnDismiss.InvokeAsync();
+        }
+    }
+    async Task KeyDown(KeyboardEventArgs args){if(args.Key=="Escape")await OnDismiss.InvokeAsync();await OnKeyDown.InvokeAsync(args);}
+    void Scrolled(){if(IsModal)Scope?.Resize();else if(Role!="tooltip")Scope?.DismissTooltip();}
+    void ViewportChanged(){if(IsVisible&&!IsModal)_=InvokeAsync(()=>OnDismiss.InvokeAsync());}
+    public override async ValueTask DisposeAsync(){LayoutOwner=new();if(Scope is not null)Scope.ViewportChanged-=ViewportChanged;await base.DisposeAsync();}
+}

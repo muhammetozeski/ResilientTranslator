@@ -5,7 +5,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
     {
         public static class Tooltip
         {
-            public const int TextWidth=340, TableWidth=580, MaximumHeight=420, ViewportInset=24, ColumnWidth=130;
+            public const int TextWidth=340, TableWidth=580, MaximumHeight=420, ViewportInset=24, ColumnWidth=130, OpenDelay=350, CloseDelay=120;
         }
 
         /// <summary> Corner radii in CSS px (Circular/Pill are special — see their notes). </summary>

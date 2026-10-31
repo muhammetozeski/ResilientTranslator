@@ -1,0 +1,15 @@
+@inherits CoreElement
+@if(NeedsTooltip(AdditionalAttributes))
+{
+    <CoreTooltip Text="@Description(AdditionalAttributes)" Anchor="@DomElement" Flat="true" Id="@DescriptionId" ShowOnFocus="false">@Select()</CoreTooltip>
+}
+else { @Select() }
+@code {
+    [Parameter] public string? Value {get;set;}
+    [Parameter] public EventCallback<string?> ValueChanged {get;set;}
+    [Parameter] public EventCallback<ChangeEventArgs> OnChange {get;set;}
+    [Parameter] public RenderFragment? ChildContent {get;set;}
+    [Parameter(CaptureUnmatchedValues=true)] public IReadOnlyDictionary<string,object>? AdditionalAttributes {get;set;}
+    async Task Changed(ChangeEventArgs args){Value=args.Value?.ToString();await ValueChanged.InvokeAsync(Value);await OnChange.InvokeAsync(args);}
+    RenderFragment Select()=>@<select @attributes="HtmlAttributes(AdditionalAttributes)" @ref="NativeElement" style="@NativeStyle(AdditionalAttributes)" value="@Value" @onchange="Changed">@ChildContent</select>;
+}

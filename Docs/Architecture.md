@@ -51,3 +51,13 @@ Controlled renderings of the actual Home and Settings components matched the pre
 See [preferences and layout](Preferences-and-Layout.md), [window interaction](Window-Interaction.md) and [translation recovery](Translation-Recovery.md) for their separate contracts.
 
 Renderer recovery is owned by RecoverableErrorBoundary, with independent native retry routing. See [CSharpProgram review](CSharpProgram-Audit.md) for persistence and durable shutdown changes.
+
+## Shared elements and popup composition
+
+CoreButton, CoreInput and CoreSelect derive from CoreElement. It retains the designated native element and exposes GetBoundsAsync, SetPositionAsync and FocusAsync. SetPositionAsync uses viewport coordinates by default; Absolute mode explicitly selects the CSS containing block. ElementHandle can also represent a separate trigger or panel when a component has multiple DOM elements. Existing ThemeComponent inheritance remains appropriate for components without one designated native element, including CSS companions.
+
+CorePopup owns conditional surface rendering, modal/transient layers, anchor positioning, outside dismissal and keyboard dismissal. CoreModal keeps its existing public parameters and uses CorePopup with modal semantics. InfoPopover uses it for click-to-open content, while CoreTooltip owns hover/focus timing in C#. DetectorPicker also uses the same anchored surface. No tooltip-specific JavaScript event/visibility system remains.
+
+PopupScope belongs to one MainLayout and keeps one active tooltip. Native controls receive descriptions through their shared Core wrappers. The only browser bridge is wwwroot/ui/element.js: bind an element object, read geometry, project an explicit position, and forward viewport events. A bound object reference is reused; application code does not query selectors on every call. Browser layout calculation and the initial framework reference resolution are separate costs from application reference lookup.
+
+The generic controls and layout scope are also present in MyMauiBlazorWebTemplate. A framework-only consumer compiled the actual template controls and exercised twelve reference, modal, positioning and tooltip state cases. Native bridge checks covered geometry, positioning, viewport event coalescing and listener disposal. These controlled checks are distinct from a human visual review of the installed window.

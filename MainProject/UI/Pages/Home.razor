@@ -15,9 +15,9 @@
         <Stack Direction="Stack.Directions.Row" Space="AppMeasures.Size.Px5" Align="Stack.Aligns.Center" Justify="Stack.Justifies.Start" Wrap="false" ItemPaddingTop="0" ItemPaddingRight="0" ItemPaddingBottom="0" ItemPaddingLeft="0" CustomClass="swap-actions"><IconButton Appearance="ControlAppearance.Compact" CustomClass="icon-button" title="@Strings.SwapLanguages" aria-label="@Strings.SwapLanguages" OnClick="TranslationWorkspace.SwapLanguagesAsync" Size="AppMeasures.Size.Px32"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15L7 5L11 15M4.5 12H9.5M16 7H25M20.5 4V7M18 8C19 11 21 13 25 15M24 8C23 11 21 13 17 15M4 21H23M20 18L23 21L20 24M7 18L4 21L7 24"/></g></svg></IconButton>
 <IconButton Appearance="ControlAppearance.Compact" CustomClass="icon-button" title="@Strings.SwapTexts" aria-label="@Strings.SwapTexts" OnClick="TranslationWorkspace.SwapTexts" Size="AppMeasures.Size.Px32"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4H11M3 8H9M3 12H10M17 4H25M17 8H23M17 12H24M4 21H23M20 18L23 21L20 24M7 18L4 21L7 24"/></g></svg></IconButton></Stack>
         <div class="language-pair" data-window-background>
-            <select data-tooltip="@FeatureText.Get("SourceTooltip")" aria-label="@Strings.SourceLanguage" value="@TranslationWorkspace.SourceLanguage" @onchange="SourceChanged">@LanguageOptions()</select>
+            <CoreSelect data-tooltip="@FeatureText.Get("SourceTooltip")" aria-label="@Strings.SourceLanguage" value="@TranslationWorkspace.SourceLanguage" OnChange="SourceChanged">@LanguageOptions()</CoreSelect>
             <CoreButton Appearance="ControlAppearance.Bare" CustomClass="send" title="@Strings.TranslateNow" aria-label="@Strings.TranslateNow" data-native-command="translate" OnClick="TranslateNow">→</CoreButton>
-            <select data-tooltip="@FeatureText.Get("TargetTooltip")" aria-label="@Strings.TargetLanguage" value="@TranslationWorkspace.TargetLanguage" @onchange="TargetChanged">@LanguageOptions()</select>
+            <CoreSelect data-tooltip="@FeatureText.Get("TargetTooltip")" aria-label="@Strings.TargetLanguage" value="@TranslationWorkspace.TargetLanguage" OnChange="TargetChanged">@LanguageOptions()</CoreSelect>
         </div>
         <StatusTicker Text="@TranslationWorkspace.Status" State="@LightState" OnToggle="TranslationWorkspace.ToggleOnlineAsync" LightTooltip="@ModeTooltip" Speed="@Preferences.StatusSpeed" />
         <CoreButton Appearance="ControlAppearance.Bare" CustomClass="hide" title="@Strings.Hide" aria-label="@Strings.Hide" data-native-command="hide" OnClick="Hide">−</CoreButton>
@@ -27,12 +27,16 @@
         <EditorSplitter />
         <CoreInput Multiline="true" IsGrouped="false" id="output" data-tooltip="@FeatureText.Get("OutputTooltip")" aria-label="@Strings.OutputLabel" spellcheck="false" Value="@TranslationWorkspace.Output" OnInput="OutputChanged" />
     </div>
-    <div class="resize-grip" data-tooltip="@FeatureText.Get("ResizeTooltip")" data-window-resize aria-hidden="true"></div>
+    <CoreTooltip Text="@FeatureText.Get("ResizeTooltip")" Anchor="@ResizeHandle" Flat="true"><div @ref="ResizeElement" class="resize-grip" data-tooltip="@FeatureText.Get("ResizeTooltip")" data-window-resize aria-hidden="true"></div></CoreTooltip>
     @if (SettingsOpen) { <SettingsPanel OnClose="CloseSettings" /> }
 </section>
 @code {
     CoreInput? InputElement;
     bool SettingsOpen;
+    [CascadingParameter] public PopupScope? PopupContext {get;set;}
+    ElementReference ResizeElement;
+    ElementHandle? ResizeBinding;
+    ElementHandle ResizeHandle=>ResizeBinding??=new(JavaScript,()=>ResizeElement);
     readonly CancellationTokenSource Warmup=new();
     string LightState=>!Settings.OnlineEnabled.Value ? "offline" : TranslationWorkspace.HasError?"error":TranslationWorkspace.IsBusy?"busy":"ready";
     string ModeTooltip=>FeatureText.Get(LightState=="offline"?"OfflineTooltip":"OnlineTooltip");
@@ -73,7 +77,7 @@
     /// <summary>Closes settings without discarding already persisted edits.</summary>
     void CloseSettings() => SettingsOpen = false;
     /// <summary>Discards only the open dialog when outside-window dismissal hides the retained surface.</summary>
-    void DismissSettings() => _ = ExceptionBoundary.RunSafelyAsync(async token => await InvokeAsync(() => { SettingsOpen = false; StateHasChanged(); }).WaitAsync(token),operationName:"DismissSettings");
+    void DismissSettings() => _ = ExceptionBoundary.RunSafelyAsync(async token => await InvokeAsync(() => { SettingsOpen = false; PopupContext?.Resize(); StateHasChanged(); }).WaitAsync(token),operationName:"DismissSettings");
     /// <summary>Uses the same immediate hide action when a native browser bridge is unavailable.</summary>
     void Hide() => TranslationWorkspace.HideWindow?.Invoke();
     /// <summary>Starts a fresh forward translation without debounce or cache reuse.</summary>
@@ -106,6 +110,7 @@
         Preferences.Changed -= Refresh;
         TranslationWorkspace.WindowHidden -= DismissSettings;
         if (TranslationWorkspace.FocusInput == FocusInputAsync) TranslationWorkspace.FocusInput = null;
+        if(ResizeBinding is not null)_=ExceptionBoundary.RunSafelyAsync(async _=>await ResizeBinding.DisposeAsync(),operationName:"DisposeResizeElement");
         base.Dispose();
     }
 }

@@ -2,12 +2,18 @@
 @inject NavigationManager NavManager
 @implements IDisposable
 <CascadingValue Value="ThemeManager.Current">
+<CascadingValue Value="PopupContext" IsFixed="true">
+<PopupViewport />
     <MainLayoutCss />
     <ResilientTranslator.MainProject.UI.Layout.Architecture.PageBaseCss />
-    <div class="app-page"><main><article class="content">@Body</article></main></div>
+    <div class="app-page" @onpointerdown="PointerDown" @onkeydown="Keyboard" @onscroll="PopupContext.DismissTooltip"><main><article class="content">@Body</article></main></div>
     @if (UiConstants.Navigation.ShowBottomNavigation) { <AppBottomNav /> }
 </CascadingValue>
+</CascadingValue>
 @code {
+    readonly PopupScope PopupContext=new();
+    void PointerDown(){PopupContext.KeyboardNavigation=false;PopupContext.DismissTooltip();}
+    void Keyboard(KeyboardEventArgs args){PopupContext.KeyboardNavigation=args.Key=="Tab";PopupContext.DismissTooltip();}
     /// <summary>Connects the template's root redraw path without replacing page instances.</summary>
     protected override void OnInitialized()
     {

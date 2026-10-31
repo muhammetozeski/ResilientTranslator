@@ -4,13 +4,13 @@
 @using ResilientTranslator.MainProject.Infrastructure.Localization
 <DetectorPickerCss />
 <div class="detector-picker" @onkeydown="KeyDown">
-    <CoreButton Appearance="ControlAppearance.Compact" OnClick="Toggle" aria-haspopup="listbox" aria-expanded="@Open" aria-label="@T("DetectorLabel")">
+    <CoreButton @ref="TriggerButton" Appearance="ControlAppearance.Compact" OnClick="Toggle" aria-haspopup="listbox" aria-expanded="@Open" aria-label="@T("DetectorLabel")">
         <span>@Selected.Name</span><span aria-hidden="true">⌄</span>
     </CoreButton>
     @if (Open)
     {
-        <div class="detector-picker-dismiss" @onclick="Close"></div>
-        <div class="detector-picker-options" role="listbox" aria-label="@T("DetectorLabel")">
+
+        <CorePopup IsVisible="true" Anchor="@(TriggerButton?.DomElement)" DismissOnOutside="true" OnDismiss="Close" SurfaceClass="detector-picker-options" Role="listbox" aria-label="@T("DetectorLabel")">
             @foreach (var detector in DetectorRegistry.Available)
             {
                 <div class="detector-picker-row @(detector.Kind == Value ? "selected" : "")" role="option" aria-selected="@(detector.Kind == Value)">
@@ -30,7 +30,7 @@
                     </CoreTooltip>
                 </div>
             }
-        </div>
+        </CorePopup>
     }
 </div>
 @code {
@@ -38,6 +38,7 @@
     [Parameter] public DetectorKind Value { get; set; }
     [Parameter] public EventCallback<DetectorKind> ValueChanged { get; set; }
     bool Open;
+    CoreButton? TriggerButton;
     DetectorDescriptor Selected => DetectorRegistry.Available.FirstOrDefault(item => item.Kind == Value) ?? DetectorRegistry.Available[0];
     static string T(string key) => FeatureText.Get(key);
     static string Size(long bytes) => bytes < 1_000_000 ? $"{bytes / 1000d:0.#} KB" : $"{bytes / 1_000_000d:0.##} MB";

@@ -1,43 +1,59 @@
 @implements IAsyncDisposable
-@inject IJSRuntime JS
-@using ResilientTranslator.MainProject.Infrastructure
+@inject IJSRuntime JavaScript
 <CoreTooltipCss />
-<span class="core-tooltip-anchor @CustomClass" data-rich-tooltip="true" @ref="Anchor" aria-describedby="@TooltipId">
-    @ChildContent
-    <span id="@TooltipId" class="core-tooltip-panel @PanelClass" role="tooltip" popover="manual" @ref="Panel">
-        @if (Content is not null) { @Content }
-        else { @Text }
-    </span>
+<span class="core-tooltip-anchor @(Flat ? "core-tooltip-flat" : "") @CustomClass"
+    @onpointerenter="Enter" @onpointerleave="Leave" @onfocusin="Focused" @onfocusout="Leave" @onkeydown="KeyDown"
+    aria-describedby="@(Open?TooltipId:null)" style="@AnchorStyle" @ref="Trigger">
+    <CascadingValue Value="this" IsFixed="true">@ChildContent</CascadingValue>
 </span>
+<CorePopup IsVisible="@Open" Anchor="@Target" Role="tooltip" Id="@TooltipId" SurfaceClass="@($"core-tooltip-panel {PanelClass}")"
+    OnDismiss="Hide" OnPointerEnter="Retain" OnPointerLeave="Leave">
+    @if(Content is not null){@Content}else{@Text}
+</CorePopup>
 @code {
-    const bool IsLogEnabled = true;
-    [Parameter] public RenderFragment? ChildContent { get; set; }
-    [Parameter] public RenderFragment? Content { get; set; }
-    [Parameter] public string Text { get; set; } = "";
-    [Parameter] public string CustomClass { get; set; } = "";
-    [Parameter] public string PanelClass { get; set; } = "";
-    readonly string TooltipId = "tooltip-" + Guid.NewGuid().ToString("N");
-    ElementReference Anchor, Panel;
-    IJSObjectReference? Module;
-    bool Disposed;
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    const bool IsLogEnabled=true;
+    [CascadingParameter] public PopupScope? Scope {get;set;}
+    [Parameter] public RenderFragment? ChildContent {get;set;}
+    [Parameter] public RenderFragment? Content {get;set;}
+    [Parameter] public string Text {get;set;}="";
+    [Parameter] public string CustomClass {get;set;}="";
+    [Parameter] public string PanelClass {get;set;}="";
+    [Parameter] public ElementHandle? Anchor {get;set;}
+    [Parameter] public bool Flat {get;set;}
+    [Parameter] public bool ShowOnFocus {get;set;}=true;
+    [Parameter] public string? AnchorStyle {get;set;}
+    [Parameter] public string Id {get;set;}="tooltip-"+Guid.NewGuid().ToString("N");
+    string TooltipId=>Id;
+    readonly PopupScope LocalScope=new();
+    PopupScope Context=>Scope??LocalScope;
+    ElementReference Trigger;
+    ElementHandle? TriggerHandle;
+    ElementHandle Target=>Anchor??(TriggerHandle??=new(JavaScript,()=>Trigger));
+    CancellationTokenSource? Delay;
+    bool Open,Disposed;
+    async Task Enter()
     {
-        if (!firstRender) return;
-        await ExceptionBoundary.RunSafelyAsync(async token => {
-            var module = await JS.InvokeAsync<IJSObjectReference>("import", token, "./_content/MainProject/UI/Elements/Core/CoreTooltip.razor.js");
-            if (Disposed) { await module.DisposeAsync(); return; }
-            Module = module;
-            await module.InvokeVoidAsync("attach", token, Anchor, Panel);
-        }, operationName: "AttachRichTooltip");
+        if(Disposed || (Content is null&&string.IsNullOrWhiteSpace(Text)))return;
+        CancelDelay();if(Open)return;
+        CancelDelay();var delay=Delay=new();long version=Context.InteractionVersion;
+        try
+        {
+            await Task.Delay(AppMeasures.Tooltip.OpenDelay,delay.Token);
+            if(Disposed||delay.IsCancellationRequested||version!=Context.InteractionVersion)return;
+            Context.ActivateTooltip(this,Hide);Open=true;Log($"Tooltip opened; id={TooltipId}; rich={Content is not null}",Run:IsLogEnabled);await InvokeAsync(StateHasChanged);
+        }
+        catch(OperationCanceledException)when(delay.IsCancellationRequested){}
     }
-    public async ValueTask DisposeAsync()
+    async Task Leave()
     {
-        Disposed = true;
-        if (Module is not { } module) return;
-        Module = null;
-        await ExceptionBoundary.RunSafelyAsync(async token => {
-            try { await module.InvokeVoidAsync("detach", token, Anchor); }
-            finally { await module.DisposeAsync(); }
-        }, operationName: "DisposeRichTooltip");
+        CancelDelay();var delay=Delay=new();
+        try{await Task.Delay(AppMeasures.Tooltip.CloseDelay,delay.Token);if(!Disposed)Hide();}
+        catch(OperationCanceledException)when(delay.IsCancellationRequested){}
     }
+    void Focused(){if(ShowOnFocus&&Context.KeyboardNavigation)_=InvokeAsync(Enter);}
+    void Retain()=>CancelDelay();
+    void KeyDown(KeyboardEventArgs args){if(args.Key=="Escape")Hide();}
+    void CancelDelay(){Delay?.Cancel();Delay?.Dispose();Delay=null;}
+    void Hide(){CancelDelay();Open=false;Context.ReleaseTooltip(this);if(!Disposed)_=InvokeAsync(StateHasChanged);}
+    public async ValueTask DisposeAsync(){Disposed=true;CancelDelay();Context.ReleaseTooltip(this);if(TriggerHandle is not null)await TriggerHandle.DisposeAsync();}
 }

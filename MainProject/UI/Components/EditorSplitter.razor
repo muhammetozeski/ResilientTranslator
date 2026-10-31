@@ -1,12 +1,13 @@
+@inherits CoreElement
 @using Microsoft.JSInterop
 @using ResilientTranslator.MainProject.Infrastructure
 @using ResilientTranslator.MainProject.Infrastructure.Localization
 @inject IJSRuntime JavaScript
 @implements IAsyncDisposable
 <EditorSplitterCss />
-<div class="editor-splitter" @ref="Element" role="separator" aria-orientation="vertical" aria-label="@Strings.EditorSplit" data-tooltip="@FeatureText.Get("SplitterTooltip")" aria-valuemin="10" aria-valuemax="90" aria-valuenow="@Preferences.InputShare" tabindex="0"></div>
+<CoreTooltip Text="@FeatureText.Get("SplitterTooltip")" Flat="true" Anchor="@DomElement"><div class="editor-splitter" @ref="NativeElement" role="separator" aria-orientation="vertical" aria-label="@Strings.EditorSplit" data-tooltip="@FeatureText.Get("SplitterTooltip")" aria-valuemin="10" aria-valuemax="90" aria-valuenow="@Preferences.InputShare" tabindex="0"></div></CoreTooltip>
 @code {
-    ElementReference Element;
+
     IJSObjectReference? Module;
     DotNetObjectReference<EditorSplitter>? Reference;
 
@@ -19,7 +20,7 @@
         {
             Reference ??= DotNetObjectReference.Create(this);
             Module ??= await JavaScript.InvokeAsync<IJSObjectReference>("import", token, "./_content/MainProject/UI/Components/EditorSplitter.razor.js");
-            await Module.InvokeVoidAsync("attach", token, Element, Reference, Preferences.InputShare, Preferences.CenterSnapRange);
+            await Module.InvokeVoidAsync("attach", token, NativeElement, Reference, Preferences.InputShare, Preferences.CenterSnapRange);
         }, operationName: "AttachEditorSplitter");
     }
 
@@ -32,14 +33,15 @@
 
     /// <summary>Releases pointer listeners and the callback reference with its owning component.</summary>
     /// <returns>Completion of observer/animation cleanup for this retired component.</returns>
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         if (Module is not null)
             await ExceptionBoundary.RunSafelyAsync(async token =>
             {
-                await Module.InvokeVoidAsync("dispose", token, Element);
+                await Module.InvokeVoidAsync("dispose", token, NativeElement);
                 await Module.DisposeAsync();
             }, operationName: "DisposeEditorSplitter");
         Reference?.Dispose();
+        await base.DisposeAsync();
     }
 }
