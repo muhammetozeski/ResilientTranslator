@@ -1,5 +1,6 @@
 <style>
 .core-tooltip-anchor { display:inline-flex; min-width:0; align-items:center; }
+.core-tooltip-flat{display:contents}
 .core-tooltip-panel {
     position:fixed; inset:auto; margin:0; padding:@(AppMeasures.Space.Px12)px;
     width:max-content; max-width:min(@(AppMeasures.Tooltip.TextWidth)px, calc(100vw - @(AppMeasures.Tooltip.ViewportInset)px));
@@ -10,9 +11,9 @@
     font:@(AppMeasures.Font.Small)px/1.5 @AppMeasures.Font.SystemStack;
     white-space:normal; overflow-wrap:break-word; text-align:start; user-select:text;
 }
-.core-tooltip-panel:popover-open { display:block; }
-.core-tooltip-panel::backdrop { background:transparent; pointer-events:none; }
-.core-tooltip-panel:not(:popover-open) { display:none; }
+
+
+
 .core-tooltip-panel strong { display:block; margin:0 0 @(AppMeasures.Space.Px8)px; font-size:@(AppMeasures.Font.Normal)px; font-weight:@AppMeasures.Weight.Medium; }
 .core-tooltip-panel p { margin:@(AppMeasures.Space.Px8)px 0 0; }
 .core-tooltip-panel.detector-benchmark-tooltip { max-width:min(@(AppMeasures.Tooltip.TableWidth)px, calc(100vw - @(AppMeasures.Tooltip.ViewportInset)px)); padding:@(AppMeasures.Space.Px12)px; }

@@ -1,3 +1,4 @@
+@inherits CoreElement
 @if (IsGrouped && !Multiline)
 {
     <div class="core-input-group" style="@GroupStyle">
@@ -22,14 +23,18 @@ else { @NativeInput() }
     [Parameter] public EventCallback<ChangeEventArgs> OnChange { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter(CaptureUnmatchedValues=true)] public IReadOnlyDictionary<string,object>? AdditionalAttributes { get; set; }
-    ElementReference Element;
+
     string InputClass => $"{(IsGrouped && !Multiline ? "core-input-element" : "core-input-standalone")} {CustomClass}";
     string GroupStyle => $"background-color:{AppColors.Background.ToRgbaHex(true)};border-radius:{AppMeasures.Radius.Medium}px;";
     /// <summary>Renders the existing input contract as either one native input or one native multiline editor.</summary>
     /// <returns>Exactly one grouped input or standalone native input/textarea fragment.</returns>
-    RenderFragment NativeInput() => @<text>
-        @if (Multiline) { <textarea @attributes="AdditionalAttributes" @ref="Element" class="@InputClass" placeholder="@Placeholder" required="@IsRequired" value="@Value" @oninput="HandleInput" @onchange="OnChange"></textarea> }
-        else { <input @attributes="AdditionalAttributes" @ref="Element" type="@Type" class="@InputClass" placeholder="@Placeholder" required="@IsRequired" value="@Value" @oninput="HandleInput" @onchange="OnChange" /> }
+    RenderFragment NativeInput()=>@<text>
+        @if(NeedsTooltip(AdditionalAttributes)) { <CoreTooltip Text="@Description(AdditionalAttributes)" Flat="true" Anchor="@DomElement" Id="@DescriptionId" ShowOnFocus="false">@NativeControl()</CoreTooltip> }
+        else { @NativeControl() }
+    </text>;
+    RenderFragment NativeControl() => @<text>
+        @if (Multiline) { <textarea @attributes="HtmlAttributes(AdditionalAttributes)" @ref="NativeElement" style="@NativeStyle(AdditionalAttributes)" class="@InputClass" placeholder="@Placeholder" required="@IsRequired" value="@Value" @oninput="HandleInput" @onchange="OnChange"></textarea> }
+        else { <input @attributes="HtmlAttributes(AdditionalAttributes)" @ref="NativeElement" style="@NativeStyle(AdditionalAttributes)" type="@Type" class="@InputClass" placeholder="@Placeholder" required="@IsRequired" value="@Value" @oninput="HandleInput" @onchange="OnChange" /> }
     </text>;
     /// <summary>Publishes current text before awaiting the consumer's operation, preserving rapid input ordering.</summary>
     /// <param name="args">The current typed browser input, selection or keyboard event.</param>
@@ -40,8 +45,4 @@ else { @NativeInput() }
         if (Value != next) { Value = next; await ValueChanged.InvokeAsync(next); }
         if (OnInput.HasDelegate) await OnInput.InvokeAsync(args);
     }
-    /// <summary>Moves browser focus into the actual input/textarea element.</summary>
-    /// <param name="preventScroll">Preserves the current scroll position while moving keyboard focus.</param>
-    /// <returns>Completion of native browser focus transfer without rebuilding the element.</returns>
-    public ValueTask FocusAsync(bool preventScroll=true) => Element.FocusAsync(preventScroll);
 }

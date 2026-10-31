@@ -1,11 +1,9 @@
-@if (IsVisible)
-{
-    <div class="@(Appearance == ControlAppearance.Standard ? "core-modal-backdrop" : "core-modal-overlay") @BackdropClass" @onclick="HandleBackdropClick">
-        <div @attributes="AdditionalAttributes" class="@(Appearance == ControlAppearance.Standard ? "core-modal-content" : "core-modal-body") @ContentClass @(IsWobbling ? "wobbling-animation" : "")" style="@ComputedStyle" role="dialog" aria-modal="true" @onkeydown="OnKeyDown" @onclick:stopPropagation>
-            @ChildContent
-        </div>
-    </div>
-}
+<CorePopup IsVisible="@IsVisible" IsModal="true" OnDismiss="HandleBackdropClick" OnKeyDown="OnKeyDown"
+    LayerClass="@($"{(Appearance==ControlAppearance.Standard?"core-modal-backdrop":"core-modal-overlay")} {BackdropClass}")"
+    SurfaceClass="@($"{(Appearance==ControlAppearance.Standard?"core-modal-content":"core-modal-body")} {ContentClass} {(IsWobbling?"wobbling-animation":"")}")"
+    SurfaceStyle="@ComputedStyle" AdditionalAttributes="@AdditionalAttributes">
+    @ChildContent
+</CorePopup>
 <CoreModalCss />
 @code {
     const bool IsLogEnabled = true;
@@ -29,6 +27,6 @@
     /// <returns>Completion of the caller's existing dialog-close callback.</returns>
     async Task HandleBackdropClick()
     {
-        Log("CoreModal backdrop tapped, closing modal",Run:IsLogEnabled);
+        Log("CoreModal close requested",Run:IsLogEnabled);
         await OnBackdropClick.InvokeAsync();
     }}
