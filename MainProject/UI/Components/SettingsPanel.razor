@@ -2,38 +2,64 @@
 @using System.Globalization
 @using ResilientTranslator.MainProject.Infrastructure
 @using ResilientTranslator.MainProject.Infrastructure.Localization
+@using ResilientTranslator.MainProject.Infrastructure.Detection
+@using ResilientTranslator.MainProject.Services
 <SettingsPanelCss />
 <CoreModal IsVisible="true" Appearance="ControlAppearance.Bare" BackdropClass="settings-backdrop" ContentClass="settings-panel" OnBackdropClick="OnClose" OnKeyDown="KeyDown" aria-label="@Strings.SettingsTitle">
-        <header><h2>@Strings.SettingsTitle</h2><CoreButton Appearance="ControlAppearance.Compact" @ref="CloseButton" OnClick="OnClose" aria-label="@Strings.Close">×</CoreButton></header>
-        <div class="settings-fields">
-            <label><span>@Strings.ApplicationLanguage</span><select value="@Settings.Language.Value" @onchange="args => Change(Settings.Language,args)"><option value="@LocManager.SystemLanguage">@Strings.Automatic</option>@foreach (var language in UiLanguages) { <option value="@language.Code">@language.Name</option> }</select></label>
-            <label class="speed-row"><span>@Label(Settings.StatusSpeed)</span><CoreInput IsGrouped="false" type="range" min="5" max="150" step="1" Value="@Invariant(Speed)" OnInput="PreviewSpeed" OnChange="SaveSpeed" /><output>@Invariant(Speed) px/s</output></label>
-            <StatusTicker Text="@Strings.StatusPreview" Speed="@Speed" />
-            @foreach (var setting in new[] { Settings.DefaultSourceLanguage, Settings.DefaultTargetLanguage })
+    <header><h2>@Strings.SettingsTitle</h2><CoreButton Appearance="ControlAppearance.Compact" @ref="CloseButton" OnClick="OnClose" aria-label="@Strings.Close" data-tooltip="@Strings.Close">×</CoreButton></header>
+    <div class="settings-fields">
+        <label data-tooltip="@(Settings.OnlineEnabled.Value ? Strings.OnlineTooltip : Strings.OfflineTooltip)"><span>@Strings.OnlineEnabled</span><CoreInput IsGrouped="false" type="checkbox" checked="@Settings.OnlineEnabled.Value" OnChange="args => Change(Settings.OnlineEnabled,args)" aria-label="@Strings.OnlineEnabled" /></label>
+        <label class="feature-setting" data-tooltip="@FeatureText.Get("DetectorBenchmarkNote")"><span>@FeatureText.Get("DetectorLabel")</span><DetectorPicker Value="@SelectedDetector" ValueChanged="SelectDetector" /></label>
+        <fieldset class="settings-feature">
+            <legend>@Strings.TwoWayAutomatic</legend>
+            <label data-tooltip="@Strings.AutoRoutingHelp"><span>@Strings.TwoWayAutomatic</span><CoreInput IsGrouped="false" type="checkbox" checked="@Settings.TwoWayAutomatic.Value" OnChange="args => Change(Settings.TwoWayAutomatic,args)" aria-label="@Strings.TwoWayAutomatic" /></label>
+            @if (Settings.TwoWayAutomatic.Value)
             {
-                <label><span>@Label(setting)</span><select value="@setting.Value" @onchange="args => Change(setting,args)"><option value="">—</option>@foreach (var language in LanguageCatalog.All) { <option value="@language.Code">@language.Name</option> }</select></label>
+                <label class="feature-setting" data-tooltip="@Strings.AutoRoutingHelp"><span>@Strings.AutoLanguageMode</span><select value="@Settings.AutoLanguageMode.Value" @onchange="args => Change(Settings.AutoLanguageMode,args)" aria-label="@Strings.AutoLanguageMode"><option value="@AutoLanguageMode.Simple">@Strings.SimpleMode</option><option value="@AutoLanguageMode.Advanced">@Strings.AdvancedMode</option></select></label>
+                @foreach (var setting in new[] { Settings.AutoFirstLanguage, Settings.AutoSecondLanguage })
+                {
+                    <label class="feature-setting" data-tooltip="@Help(setting)"><span>@Label(setting)</span><select value="@setting.Value" @onchange="args => Change(setting,args)" aria-label="@Label(setting)">@ConcreteLanguages()</select></label>
+                }
+                @if (TranslationProfiles.Routing.Mode == AutoLanguageMode.Advanced)
+                {
+                    <LanguageRulesEditor Value="@TranslationProfiles.Routing.Rules" ValueChanged="SaveRules" />
+                }
             }
-            <div class="font-picker">
-                <label><span>@Label(Settings.EditorFont)</span><CoreButton Appearance="ControlAppearance.Compact" OnClick="LoadFonts" aria-expanded="@FontPickerOpen">@Settings.EditorFont.Value</CoreButton></label>
-                @if (Fonts is not null)
-                {
-                    <select size="7" aria-label="@Label(Settings.EditorFont)" value="@Settings.EditorFont.Value" @onchange="SelectFont">@foreach (string font in Fonts) { <option value="@font">@font</option> }</select>
-                }
-            </div>
-            <label><span>@Label(Settings.EditorFontSize)</span><div class="number-stepper"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => StepFont(-1)" aria-label="@Strings.Decrease">−</CoreButton><CoreInput IsGrouped="false" type="number" min="1" max="300" step="any" Value="@Invariant(Settings.EditorFontSize.Value)" OnChange="args => Change(Settings.EditorFontSize,args)" aria-label="@Label(Settings.EditorFontSize)" /><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => StepFont(1)" aria-label="@Strings.Increase">+</CoreButton></div></label>
-            <label><span>@Label(Settings.EditorColor)</span><div class="color-controls"><CoreInput IsGrouped="false" type="color" Value="@Settings.EditorColor.Value" OnChange="args => Change(Settings.EditorColor,args)" aria-label="@Label(Settings.EditorColor)" /><CoreButton Appearance="ControlAppearance.Compact" OnClick='() => Set(Settings.EditorColor,"#ffffff")'>@Strings.White</CoreButton></div></label>
-            <label><span>@Strings.EditorSplit</span><CoreButton Appearance="ControlAppearance.Compact" OnClick='() => Set(Settings.InputShare,"50")'>@Strings.ResetSplit</CoreButton></label>
-            <details><summary>@Strings.TechnicalSettings</summary><div class="technical-settings">
-                @foreach (var entry in Preferences.Entries.Where(item => item.Editor.Technical))
-                {
-                    <label><span>@entry.Label</span>
-                    @if (entry.Setting.ValueType == typeof(bool)) { <CoreInput IsGrouped="false" type="checkbox" checked="@((bool)entry.Setting.Value!)" OnChange="args => Change(entry.Setting,args)" /> }
-                    else { <CoreInput IsGrouped="false" type="number" min="@Invariant(entry.Editor.Minimum)" max="@Invariant(entry.Editor.Maximum)" step="@(entry.Setting.ValueType==typeof(int) ? "1" : "any")" Value="@Convert.ToString(entry.Setting.Value,CultureInfo.InvariantCulture)" OnChange="args => Change(entry.Setting,args)" /> }
-                    </label>
-                }
-            </div></details>
-            @if (Error.Length > 0 || Preferences.SaveError.Length > 0) { <p class="settings-error" role="alert">@(Error.Length > 0 ? Error : Preferences.SaveError)</p> }
+        </fieldset>
+        <fieldset class="settings-feature">
+            <legend>@Strings.RecoveryProfile</legend>
+            <label class="feature-setting" data-tooltip="@Strings.ProfileHelp"><span>@Strings.RecoveryProfile</span><select value="@Settings.ActiveRecoveryProfile.Value" @onchange="ApplyProfile" aria-label="@Strings.RecoveryProfile"><option value="custom" disabled>@Strings.ProfileCustom</option>@foreach (var profile in TranslationProfiles.All) { <option value="@profile.Id">@profile.Label</option> }</select></label>
+            <label class="profile-name-row" data-tooltip="@Strings.ProfileHelp"><span>@Strings.ProfileName</span><CoreInput IsGrouped="false" type="text" Value="@ProfileName" OnInput="args => ProfileName = args.Value?.ToString() ?? string.Empty" aria-label="@Strings.ProfileName" /></label>
+            <div class="profile-actions"><CoreButton Appearance="ControlAppearance.Compact" OnClick="SaveProfile" Disabled="@string.IsNullOrWhiteSpace(ProfileName)" data-tooltip="@Strings.ProfileHelp">@Strings.SaveProfile</CoreButton><CoreButton Appearance="ControlAppearance.Compact" OnClick="DeleteProfile" Disabled="@(!CanDeleteProfile)" data-tooltip="@Strings.DeleteProfile">@Strings.DeleteProfile</CoreButton></div>
+        </fieldset>
+        <label class="feature-setting" data-tooltip="@Help(Settings.Language)"><span>@Strings.ApplicationLanguage</span><select value="@Settings.Language.Value" @onchange="args => Change(Settings.Language,args)" aria-label="@Strings.ApplicationLanguage"><option value="@LocManager.SystemLanguage">@Strings.Automatic</option>@foreach (var language in UiLanguages) { <option value="@language.Code">@language.Name</option> }</select></label>
+        <label class="speed-row" data-tooltip="@Help(Settings.StatusSpeed)"><span>@Label(Settings.StatusSpeed)</span><CoreInput IsGrouped="false" type="range" min="5" max="150" step="1" Value="@Invariant(Speed)" OnInput="PreviewSpeed" OnChange="SaveSpeed" aria-label="@Label(Settings.StatusSpeed)" /><output>@Invariant(Speed) px/s</output></label>
+        <StatusTicker Text="@Strings.StatusPreview" Speed="@Speed" />
+        @foreach (var setting in new[] { Settings.DefaultSourceLanguage, Settings.DefaultTargetLanguage })
+        {
+            <label class="feature-setting" data-tooltip="@Help(setting)"><span>@Label(setting)</span><select value="@setting.Value" @onchange="args => Change(setting,args)" aria-label="@Label(setting)"><option value="">—</option>@foreach (var language in LanguageCatalog.All) { <option value="@language.Code">@language.Name</option> }</select></label>
+        }
+        <div class="font-picker">
+            <label data-tooltip="@Help(Settings.EditorFont)"><span>@Label(Settings.EditorFont)</span><CoreButton Appearance="ControlAppearance.Compact" OnClick="LoadFonts" aria-expanded="@FontPickerOpen">@Settings.EditorFont.Value</CoreButton></label>
+            @if (Fonts is not null)
+            {
+                <select size="7" aria-label="@Label(Settings.EditorFont)" data-tooltip="@Help(Settings.EditorFont)" value="@Settings.EditorFont.Value" @onchange="SelectFont">@foreach (string font in Fonts) { <option value="@font">@font</option> }</select>
+            }
         </div>
+        <label data-tooltip="@Help(Settings.EditorFontSize)"><span>@Label(Settings.EditorFontSize)</span><div class="number-stepper"><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => StepFont(-1)" aria-label="@Strings.Decrease" data-tooltip="@Strings.Decrease">−</CoreButton><CoreInput IsGrouped="false" type="number" min="1" max="300" step="any" Value="@Invariant(Settings.EditorFontSize.Value)" OnChange="args => Change(Settings.EditorFontSize,args)" aria-label="@Label(Settings.EditorFontSize)" /><CoreButton Appearance="ControlAppearance.Compact" OnClick="() => StepFont(1)" aria-label="@Strings.Increase" data-tooltip="@Strings.Increase">+</CoreButton></div></label>
+        <label data-tooltip="@Help(Settings.EditorColor)"><span>@Label(Settings.EditorColor)</span><div class="color-controls"><CoreInput IsGrouped="false" type="color" Value="@Settings.EditorColor.Value" OnChange="args => Change(Settings.EditorColor,args)" aria-label="@Label(Settings.EditorColor)" /><CoreButton Appearance="ControlAppearance.Compact" OnClick='() => Set(Settings.EditorColor,"#ffffff")' data-tooltip="@Strings.White">@Strings.White</CoreButton></div></label>
+        <label data-tooltip="@Strings.SplitterTooltip"><span>@Strings.EditorSplit</span><CoreButton Appearance="ControlAppearance.Compact" OnClick='() => Set(Settings.InputShare,"50")'>@Strings.ResetSplit</CoreButton></label>
+        <details><summary data-tooltip="@Strings.TechnicalSettings">@Strings.TechnicalSettings</summary><div class="technical-settings">
+            @foreach (var entry in Preferences.Entries.Where(item => item.Editor.Technical))
+            {
+                <label data-tooltip="@Help(entry.Setting)"><span>@entry.Label</span>
+                    @if (entry.Setting.ValueType == typeof(bool)) { <CoreInput IsGrouped="false" type="checkbox" checked="@((bool)entry.Setting.Value!)" OnChange="args => Change(entry.Setting,args)" aria-label="@entry.Label" /> }
+                    else { <CoreInput IsGrouped="false" type="number" min="@Invariant(entry.Editor.Minimum)" max="@Invariant(entry.Editor.Maximum)" step="@(entry.Setting.ValueType==typeof(int) ? "1" : "any")" Value="@Convert.ToString(entry.Setting.Value,CultureInfo.InvariantCulture)" OnChange="args => Change(entry.Setting,args)" aria-label="@entry.Label" /> }
+                </label>
+            }
+        </div></details>
+        @if (Error.Length > 0 || Preferences.SaveError.Length > 0) { <p class="settings-error" role="alert">@(Error.Length > 0 ? Error : Preferences.SaveError)</p> }
+    </div>
 </CoreModal>
 @code {
     [Parameter] public EventCallback OnClose { get; set; }
@@ -42,8 +68,23 @@
     RequestContext FontRequest = new();
     bool FontPickerOpen, Disposed;
     (string Code, string Name)[] UiLanguages = LanguageCatalog.All.Where(item => item.Code != "auto").Select(item => (item.Code, item.Name)).ToArray();
-    string Error = "";
+    string Error = "", ProfileName = "";
+    object SettingsAction = new();
     double Speed = Preferences.StatusSpeed;
+    static readonly HashSet<ISetting> RecoverySettings = [Settings.AttemptTimeout,
+        Settings.ConcurrentRetries, Settings.ConcurrentBudget, Settings.SequentialRetries, Settings.SequentialBudget,
+        Settings.OnlineTotalBudget, Settings.OnlineRecoveryRounds, Settings.OnlineRetryPause];
+    static readonly HashSet<ISetting> BehaviorSettings = [.. RecoverySettings, Settings.OnlineEnabled,
+        Settings.DetectorChoice, Settings.TwoWayAutomatic, Settings.AutoLanguageMode, Settings.AutoFirstLanguage,
+        Settings.AutoSecondLanguage, Settings.AutoLanguageRules, Settings.UseBergamot, Settings.UseToz,
+        Settings.BergamotWorkers, Settings.TozWorkers, Settings.TozThreads, Settings.BergamotBeam, Settings.TozBeam,
+        Settings.ModelLoadTimeout, Settings.LocalTranslationTimeout, Settings.LocalRetries, Settings.LocalRetryDelay,
+        Settings.DetectorModelLoadTimeout, Settings.DetectorTimeout, Settings.DetectorMaximumCharacters,
+        Settings.ConcurrentRetryDelay, Settings.SequentialRetryDelay, Settings.ChunkByteLimit, Settings.TypingDelay,
+        Settings.DetectorLoadBudget, Settings.DetectorGateBudget, Settings.MaximumCacheEntries, Settings.MaximumCachedCharacters];
+    DetectorKind SelectedDetector => Enum.TryParse<DetectorKind>(Settings.DetectorChoice.Value, out var selected) ? selected : DetectorKind.Lingua;
+    bool CanDeleteProfile => TranslationProfiles.All.Any(profile => profile.Id == Settings.ActiveRecoveryProfile.Value)
+        && !TranslationProfiles.BuiltIn.Any(profile => profile.Id == Settings.ActiveRecoveryProfile.Value);
 
     /// <summary>Discovers user-added UI resources off the dispatcher whenever settings opens.</summary>
     /// <returns>Completion of the current dialog's language-list discovery.</returns>
@@ -60,36 +101,138 @@
     {
         if (firstRender) await ExceptionBoundary.RunSafelyAsync(async token => await (CloseButton ?? throw new InvalidOperationException("The close button is unavailable.")).FocusAsync().AsTask().WaitAsync(token), operationName: "FocusSettings");
     }
-    /// <summary>Looks up bilingual metadata by the registered setting's object identity.</summary>
+
+    /// <summary>Looks up translated metadata by the registered setting's object identity.</summary>
     /// <param name="setting">The registered preference object edited by this control.</param>
     /// <returns>The current UI-language label for the registered setting object.</returns>
     static string Label(ISetting setting) => Preferences.Entries.Single(entry => entry.Setting == setting).Label;
+
+    /// <summary>Shows a translated setting label and its declared default in the shared rich tooltip.</summary>
+    /// <param name="setting">The actual registered setting object.</param>
+    /// <returns>The localized explanation used by the tooltip listener.</returns>
+    static string Help(ISetting setting)
+    {
+        string defaultValue = setting.DefaultValue switch
+        {
+            bool enabled => enabled ? Strings.BooleanOn : Strings.BooleanOff,
+            null or "" => "—",
+            _ when setting == Settings.Language => Strings.Automatic,
+            _ => Convert.ToString(setting.DefaultValue, CultureInfo.CurrentCulture) ?? "—"
+        };
+        return string.Format(CultureInfo.CurrentCulture, Strings.SettingHelp, Label(setting), defaultValue);
+    }
+
     /// <summary>Uses HTML number syntax independently of the display language.</summary>
     /// <param name="number">The numeric value formatted for invariant HTML input syntax.</param>
     /// <returns>The exact round-trippable number accepted by HTML controls.</returns>
     static string Invariant(double number) => number.ToString("G", CultureInfo.InvariantCulture);
-    /// <summary>Applies an HTML input value through the common validator and writer.</summary>
-    /// <param name="setting">The registered preference object edited by this control.</param>
-    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
-    /// <returns>Completion of validation and durable persistence for the current input event.</returns>
+
+    /// <summary>Renders only the concrete languages accepted by the simple routing pair.</summary>
+    /// <returns>The concrete subset of the shared language catalog.</returns>
+    static RenderFragment ConcreteLanguages() => @<text>@foreach (var language in LanguageCatalog.All.Where(item => item.Code != "auto")) { <option value="@language.Code">@language.Name</option> }</text>;
+
+    /// <summary>Applies an HTML input through the common validator and durable settings writer.</summary>
+    /// <param name="setting">The actual registered preference object.</param>
+    /// <param name="args">The current input event and its editor value.</param>
+    /// <returns>Completion of persistence and any required worker reconfiguration.</returns>
     Task Change(ISetting setting, ChangeEventArgs args) => Set(setting, Convert.ToString(args.Value, CultureInfo.InvariantCulture) ?? "");
-    /// <summary>Preserves the previous value when a UI edit is invalid and reports persistence failures.</summary>
-    /// <param name="setting">The registered preference object edited by this control.</param>
-    /// <param name="text">The complete raw editor value to validate and persist.</param>
-    /// <returns>Completion of the accepted preference edit and its recorded failure handling.</returns>
-    async Task Set(ISetting setting, string text) => Error = await Preferences.SetAsync(setting, text) ? "" : Preferences.SaveError.Length > 0 ? Preferences.SaveError : Strings.InvalidSetting;
+
+    /// <summary>Applies accepted runtime settings immediately while preserving appearance-only edit behavior.</summary>
+    /// <param name="setting">The registered preference object selected by the control.</param>
+    /// <param name="text">The complete raw editor value parsed by the preference registry.</param>
+    /// <returns>Completion of validation, persistence and current-request-safe reconfiguration.</returns>
+    async Task Set(ISetting setting, string text)
+    {
+        object owner = SettingsAction = new();
+        var result = await ExceptionBoundary.RunSafelyAsync(async token =>
+        {
+            object? before = setting.Value;
+            string previousProfile = Settings.ActiveRecoveryProfile.Value;
+            if (RecoverySettings.Contains(setting)) Settings.ActiveRecoveryProfile.Value = "custom";
+            Task<bool> saving = Preferences.SetAsync(setting, text);
+            bool changed = !Equals(before, setting.Value);
+            RequestContext? request = null;
+            if (changed && BehaviorSettings.Contains(setting)) { TranslationWorkspace.CancelPending(); request = TranslationWorkspace.CurrentRequest; }
+            bool saved = await saving.WaitAsync(token);
+            if (!changed && !saved && RecoverySettings.Contains(setting)) Settings.ActiveRecoveryProfile.Value = previousProfile;
+            if (request is not null) await ReconfigureAsync(request, token);
+            return saved;
+        }, operationName: "ApplyPreference");
+        if (owner == SettingsAction && !Disposed)
+            Error = result.Succeeded && result.Value ? "" : Preferences.SaveError.Length > 0 ? Preferences.SaveError : Strings.InvalidSetting;
+    }
+
+    /// <summary>Reconfigures retained workers and restarts only the request retired by this settings action.</summary>
+    /// <param name="request">The owner installed when this action canceled previous work.</param>
+    /// <param name="token">The enclosing user-action cancellation token.</param>
+    /// <returns>Completion of configuration and, if still current, normalized translation restart.</returns>
+    static async Task ReconfigureAsync(RequestContext request, CancellationToken token)
+    {
+        await TranslationRuntime.ConfigureAsync(token);
+        if (request == TranslationWorkspace.CurrentRequest)
+            await TranslationWorkspace.SetLanguagesAsync(TranslationWorkspace.SourceLanguage, TranslationWorkspace.TargetLanguage).WaitAsync(token);
+    }
+
+    /// <summary>Persists the strongly typed detector selection through the common setting handler.</summary>
+    /// <param name="kind">The detector object selected in the custom picker.</param>
+    /// <returns>Completion of persistence and detector reconfiguration.</returns>
+    Task SelectDetector(DetectorKind kind) => Set(Settings.DetectorChoice, kind.ToString());
+
+    /// <summary>Stores a complete ordered routing snapshot through the common setting handler.</summary>
+    /// <param name="rules">The validated rules selected by the visual editor.</param>
+    /// <returns>Completion of persistence and any automatic-direction restart.</returns>
+    Task SaveRules(LanguageRuleSet rules) => Set(Settings.AutoLanguageRules, rules.Serialize());
+
+    /// <summary>Applies a named preset as one user action and refreshes any pending translation.</summary>
+    /// <param name="args">The selected profile's stable persisted identifier.</param>
+    /// <returns>Completion of profile persistence, worker configuration and safe restart.</returns>
+    async Task ApplyProfile(ChangeEventArgs args)
+    {
+        object owner = SettingsAction = new();
+        TranslationWorkspace.CancelPending();
+        var request = TranslationWorkspace.CurrentRequest;
+        var result = await ExceptionBoundary.RunSafelyAsync(async token =>
+        {
+            await TranslationProfiles.ApplyAsync(args.Value?.ToString() ?? "").WaitAsync(token);
+            await ReconfigureAsync(request, token);
+        }, operationName: "ApplyTranslationProfile");
+        if (owner == SettingsAction && !Disposed) Error = result.Succeeded ? Preferences.SaveError : Strings.InvalidSetting;
+    }
+
+    /// <summary>Saves current recovery values as a named profile without interrupting translation.</summary>
+    /// <returns>Completion of the profile snapshot's durable save.</returns>
+    async Task SaveProfile()
+    {
+        object owner = SettingsAction = new();
+        var result = await ExceptionBoundary.RunSafelyAsync(token => TranslationProfiles.AddAsync(ProfileName).WaitAsync(token), operationName: "SaveTranslationProfile");
+        if (owner == SettingsAction && !Disposed) { Error = result.Succeeded ? Preferences.SaveError : Strings.InvalidSetting; if (result.Succeeded && Preferences.SaveError.Length == 0) ProfileName = ""; }
+    }
+
+    /// <summary>Deletes only a user-created preset without changing current recovery values.</summary>
+    /// <returns>Completion of the selected custom profile's durable deletion.</returns>
+    async Task DeleteProfile()
+    {
+        if (!CanDeleteProfile) return;
+        object owner = SettingsAction = new();
+        var result = await ExceptionBoundary.RunSafelyAsync(token => TranslationProfiles.DeleteAsync(Settings.ActiveRecoveryProfile.Value).WaitAsync(token), operationName: "DeleteTranslationProfile");
+        if (owner == SettingsAction && !Disposed) Error = result.Succeeded ? Preferences.SaveError : Strings.InvalidSetting;
+    }
+
     /// <summary>Updates the real ticker component locally while the user moves the speed slider.</summary>
-    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
+    /// <param name="args">The current slider value.</param>
     void PreviewSpeed(ChangeEventArgs args) { if (double.TryParse(args.Value?.ToString(), CultureInfo.InvariantCulture, out double value)) Speed = value; }
-    /// <summary>Persists speed on release, avoiding file writes for every slider movement.</summary>
-    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
-    /// <returns>Completion of persistence after the slider interaction ends.</returns>
+
+    /// <summary>Persists speed on release rather than writing a file for every slider movement.</summary>
+    /// <param name="args">The completed slider value.</param>
+    /// <returns>Completion of speed persistence.</returns>
     Task SaveSpeed(ChangeEventArgs args) => Change(Settings.StatusSpeed, args);
-    /// <summary>Changes fractional font size with one-pixel steps without truncating its fraction.</summary>
-    /// <param name="direction">One-pixel increment or decrement applied without dropping the existing fraction.</param>
-    /// <returns>Completion of the exact fractional-size increment or decrement.</returns>
+
+    /// <summary>Changes fractional font size without truncating its fractional part.</summary>
+    /// <param name="direction">The one-pixel increment or decrement.</param>
+    /// <returns>Completion of font-size persistence.</returns>
     Task StepFont(int direction) => Set(Settings.EditorFontSize, Invariant(Math.Clamp(Settings.EditorFontSize.Value + direction, 1, 300)));
-    /// <summary>Enumerates installed font families only on demand; closing the list releases its RAM reference.</summary>
+
+    /// <summary>Enumerates fonts only on demand and releases the RAM list when the picker closes.</summary>
     /// <returns>Completion of the current picker's private font enumeration.</returns>
     async Task LoadFonts()
     {
@@ -106,13 +249,18 @@
         if (Disposed || owner != FontRequest || !FontPickerOpen) return;
         if (result.Succeeded) Fonts = result.Value;
         else if (result.Status != OperationStatus.Canceled) Error = Strings.FontsUnavailable;
-    }    /// <summary>Saves the selected family name and releases the enumerated list.</summary>
-    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
-    /// <returns>Completion of selected-family persistence and list release.</returns>
+    }
+
+    /// <summary>Saves the selected family and releases its RAM-only enumeration.</summary>
+    /// <param name="args">The selected font name.</param>
+    /// <returns>Completion of font persistence.</returns>
     async Task SelectFont(ChangeEventArgs args) { await Change(Settings.EditorFont, args); FontPickerOpen = false; Fonts = null; }
-    /// <summary>Supports closing the dialog without reaching for the mouse.</summary>
-    /// <param name="args">The current typed browser input, selection or keyboard event.</param>
-    /// <returns>Completion of Escape dismissal or immediate completion for other keys.</returns>
+
+    /// <summary>Allows Escape to close the dialog through its existing modal owner.</summary>
+    /// <param name="args">The key received by the dialog.</param>
+    /// <returns>Completion of Escape dismissal or an already completed task.</returns>
     Task KeyDown(KeyboardEventArgs args) => args.Key == "Escape" ? OnClose.InvokeAsync() : Task.CompletedTask;
-    /// <summary>Stops the open picker's private work and releases its RAM-only font list.</summary>
-    public void Dispose() { Disposed = true; FontPickerOpen = false; Fonts = null; FontRequest.Cancel(); }}
+
+    /// <summary>Stops private font enumeration without discarding already accepted preference changes.</summary>
+    public void Dispose() { Disposed = true; FontPickerOpen = false; Fonts = null; FontRequest.Cancel(); }
+}
