@@ -13,8 +13,8 @@ public enum AutoLanguageMode { Simple, Advanced }
 /// <param name="LastTarget">The last concrete right-side language.</param>
 public sealed record LanguageSelection(string Source, string Target, string LastSource, string LastTarget);
 
-/// <summary>Contains the concrete source and destination of a single translation.</summary>
-/// <param name="Source">The detected or explicitly chosen source language.</param>
+/// <summary>Contains one translation direction, retaining automatic source detection when the language is unknown.</summary>
+/// <param name="Source">The detected or explicitly chosen source language, or automatic for provider-side detection.</param>
 /// <param name="Target">The explicit or automatically routed destination language.</param>
 public sealed record LanguageDirection(string Source, string Target);
 
@@ -165,16 +165,16 @@ public static class TranslationLanguageRules
         string? lastDetectedInputCode, AutoRoutingOptions options) =>
         ApplyRules(new(Stage.Edit, selection, selection, options, fromInput, hasText, inputHasText, lastDetectedInputCode));
 
-    /// <summary>Resolves a detected source into the final concrete translation direction without mutating editor selectors.</summary>
+    /// <summary>Resolves a detected translation direction without guessing an unknown source language or mutating selectors.</summary>
     /// <param name="source">The request's source selector, including automatic.</param>
     /// <param name="target">The request's destination selector, including automatic.</param>
     /// <param name="detectedCode">The result of local language detection, if available.</param>
     /// <param name="options">The preferences captured for this request.</param>
-    /// <returns>The concrete source and destination to submit to a translation engine.</returns>
+    /// <returns>The resolved direction; an unknown automatic source remains automatic for provider-side detection.</returns>
     public static LanguageDirection ResolveRequest(string source, string target, string? detectedCode, AutoRoutingOptions options)
     {
         bool routeDestination = options.Enabled && source == Automatic && target == Automatic;
-        return new(source == Automatic ? IsConcrete(detectedCode) ? detectedCode! : FallbackLanguage : source,
+        return new(source == Automatic ? IsConcrete(detectedCode) ? detectedCode! : Automatic : source,
             routeDestination ? ResolveAutomaticTarget(detectedCode, options) : target == Automatic ? FallbackLanguage : target);
     }
 
