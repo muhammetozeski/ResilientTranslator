@@ -9,7 +9,7 @@
     <header><h2>@Strings.SettingsTitle</h2><CoreButton Appearance="ControlAppearance.Compact" @ref="CloseButton" OnClick="OnClose" aria-label="@Strings.Close" data-tooltip="@Strings.Close">×</CoreButton></header>
     <div class="settings-fields">
         <label data-tooltip="@(Settings.OnlineEnabled.Value ? Strings.OnlineTooltip : Strings.OfflineTooltip)"><span>@Strings.OnlineEnabled</span><CoreInput IsGrouped="false" type="checkbox" checked="@Settings.OnlineEnabled.Value" OnChange="args => Change(Settings.OnlineEnabled,args)" aria-label="@Strings.OnlineEnabled" /></label>
-        <label class="feature-setting" data-tooltip="@FeatureText.Get("DetectorBenchmarkNote")"><span>@FeatureText.Get("DetectorLabel")</span><DetectorPicker Value="@SelectedDetector" ValueChanged="SelectDetector" /></label>
+        <div class="settings-picker-row" data-tooltip="@FeatureText.Get("DetectorBenchmarkNote")"><span>@FeatureText.Get("DetectorLabel")</span><DetectorPicker Value="@SelectedDetector" ValueChanged="SelectDetector" /></div>
         <fieldset class="settings-feature">
             <legend>@Strings.TwoWayAutomatic</legend>
             <label data-tooltip="@Strings.AutoRoutingHelp"><span>@Strings.TwoWayAutomatic</span><CoreInput IsGrouped="false" type="checkbox" checked="@Settings.TwoWayAutomatic.Value" OnChange="args => Change(Settings.TwoWayAutomatic,args)" aria-label="@Strings.TwoWayAutomatic" /></label>
