@@ -31,7 +31,7 @@ else { @Button() }
     {
         get
         {
-            string classes = $"core-btn core-btn--{Appearance.ToString().ToLowerInvariant()}{(IsFullWidth ? " core-btn--full" : "")} {CustomClass}";
+            string classes = $"{CoreButtonClasses.Base} {CoreButtonClasses.Appearance(Appearance)}{(IsFullWidth ? " "+CoreButtonClasses.Full : "")} {CustomClass}";
             Log($"CoreButton class built (IsFullWidth={IsFullWidth}, CustomClass='{CustomClass}', Appearance={Appearance})",Run:IsLogEnabled);
             return classes;
         }

@@ -1,11 +1,12 @@
 <style>
-    .core-btn{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;cursor:pointer;text-align:center}
-    .core-btn--standard{transition:transform @(AppMeasures.Duration.Fast)s,box-shadow @(AppMeasures.Duration.Fast)s,opacity @(AppMeasures.Duration.Fast)s;gap:@(AppMeasures.Space.Px8)px}
-    .core-btn--compact{font:inherit;border:@(AppMeasures.Border.Thin)px solid @AppColors.ControlBorder.ToRgbaHex(true);border-radius:@(AppMeasures.Radius.Px6)px;background:@AppColors.Control.ToRgbaHex(true);color:@AppColors.TextPrimary.ToRgbaHex(true)}
-    .core-btn--compact:hover{background:@AppColors.ControlHover.ToRgbaHex(true)}
-    .core-btn--bare{font:inherit}
-    .core-btn--bare,.core-btn--compact{display:inline-block}
-    .core-btn--full{display:flex;width:@(AppMeasures.Percent.Full)%}
-    .core-btn--standard:active:not(:disabled){transform:scale(0.98)}
-    .core-btn:disabled{cursor:default;opacity:@AppMeasures.Opacity.Disabled}
+    :where(.@(CoreButtonClasses.Base)){display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;cursor:pointer;text-align:center}
+    .@(CoreButtonClasses.Standard){transition:transform @(AppMeasures.Duration.Fast)s,box-shadow @(AppMeasures.Duration.Fast)s,opacity @(AppMeasures.Duration.Fast)s;gap:@(AppMeasures.Space.Px8)px}
+    .@(CoreButtonClasses.Compact){font:inherit;border:@(AppMeasures.Border.Thin)px solid @AppColors.ControlBorder.ToRgbaHex(true);border-radius:@(AppMeasures.Radius.Px6)px;background:@AppColors.Control.ToRgbaHex(true);color:@AppColors.TextPrimary.ToRgbaHex(true)}
+    .@(CoreButtonClasses.Compact):hover{background:@AppColors.ControlHover.ToRgbaHex(true)}
+    :where(.@(CoreButtonClasses.Bare)){font:inherit}
+    :where(.@(CoreButtonClasses.Bare),.@(CoreButtonClasses.Compact)){display:inline-block}
+    .@(CoreButtonClasses.Full){display:flex;width:@(AppMeasures.Percent.Full)%}
+    .@(CoreButtonClasses.Standard):active:not(:disabled){transform:scale(0.98)}
+    .@(CoreButtonClasses.Base):disabled{cursor:default;opacity:@AppMeasures.Opacity.Disabled}
+:where(.@(CoreButtonClasses.Bare)){background:transparent;border:0;color:inherit;padding:0}
 </style>
