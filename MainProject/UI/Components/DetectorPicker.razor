@@ -1,0 +1,55 @@
+@using System.Globalization
+@using ResilientTranslator.MainProject.Infrastructure
+@using ResilientTranslator.MainProject.Infrastructure.Detection
+@using ResilientTranslator.MainProject.Infrastructure.Localization
+<DetectorPickerCss />
+<div class="detector-picker" @onkeydown="KeyDown">
+    <CoreButton Appearance="ControlAppearance.Compact" OnClick="Toggle" aria-haspopup="listbox" aria-expanded="@Open" aria-label="@T("DetectorLabel")">
+        <span>@Selected.Name</span><span aria-hidden="true">⌄</span>
+    </CoreButton>
+    @if (Open)
+    {
+        <div class="detector-picker-dismiss" @onclick="Close"></div>
+        <div class="detector-picker-options" role="listbox" aria-label="@T("DetectorLabel")">
+            @foreach (var detector in DetectorRegistry.Available)
+            {
+                <div class="detector-picker-row @(detector.Kind == Value ? "selected" : "")" role="option" aria-selected="@(detector.Kind == Value)">
+                    <CoreButton Appearance="ControlAppearance.Bare" CustomClass="detector-picker-name" OnClick="() => SelectAsync(detector.Kind)">@detector.Name</CoreButton>
+                    <CoreTooltip PanelClass="detector-benchmark-tooltip">
+                        <ChildContent><CoreButton Appearance="ControlAppearance.Bare" CustomClass="detector-picker-info" aria-label="@($"{T("DetectorInfo")}: {detector.Name}")"><span aria-hidden="true">i</span></CoreButton></ChildContent>
+                        <Content>
+                            <strong>@detector.Name</strong>
+                            <table class="detector-benchmark">
+                                <thead><tr><th>@T("DetectorLabel")</th><th>@T("DetectorSize")</th><th>@T("DetectorTime")</th><th>@T("DetectorTurkishEnglish")</th><th>@T("DetectorOtherLanguages")</th></tr></thead>
+                                <tbody>@foreach (var row in DetectorRegistry.Available) {
+                                    <tr class="@(row.Kind == detector.Kind ? "highlight" : "")"><td>@row.Name</td><td>@Size(row.BenchmarkBytes)</td><td>@row.MedianMs.ToString("0.000", CultureInfo.CurrentCulture) ms</td><td>@row.TurkishEnglishCorrect/130</td><td>@row.OtherCorrect/20</td></tr>
+                                }</tbody>
+                            </table>
+                            <p class="detector-benchmark-note">@T("DetectorBenchmarkNote")</p>
+                        </Content>
+                    </CoreTooltip>
+                </div>
+            }
+        </div>
+    }
+</div>
+@code {
+    const bool IsLogEnabled = true;
+    [Parameter] public DetectorKind Value { get; set; }
+    [Parameter] public EventCallback<DetectorKind> ValueChanged { get; set; }
+    bool Open;
+    DetectorDescriptor Selected => DetectorRegistry.Available.FirstOrDefault(item => item.Kind == Value) ?? DetectorRegistry.Available[0];
+    static string T(string key) => FeatureText.Get(key);
+    static string Size(long bytes) => bytes < 1_000_000 ? $"{bytes / 1000d:0.#} KB" : $"{bytes / 1_000_000d:0.##} MB";
+    void Toggle() => Open = !Open;
+    void Close() => Open = false;
+    async Task SelectAsync(DetectorKind kind)
+    {
+        Close();
+        await ExceptionBoundary.RunSafelyAsync(async _ => {
+            await ValueChanged.InvokeAsync(kind);
+            ExceptionBoundary.LogSafely($"Offline detector selection accepted; detector={kind}", IsLogEnabled);
+        }, operationName: "SelectLanguageDetector");
+    }
+    void KeyDown(KeyboardEventArgs args) { if (args.Key == "Escape") Close(); else if (args.Key == "ArrowDown" && !Open) Open = true; }
+}

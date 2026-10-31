@@ -1,0 +1,14 @@
+<style>
+.detector-picker { display:inline-flex; position:relative; min-width:0; }
+.detector-picker > .core-btn { gap:@(AppMeasures.Space.Px12)px; justify-content:space-between; }
+.detector-picker-dismiss { position:fixed; inset:0; z-index:@(AppMeasures.ZLayer.Popover); }
+.detector-picker-options { position:absolute; inset-block-start:100%; inset-inline-end:0; min-width:@(AppMeasures.Size.Px200)px; max-height:60vh; overflow:auto; padding:@(AppMeasures.Space.Px4)px; z-index:@(AppMeasures.ZLayer.Popover); background:@AppColors.TooltipBackground.ToRgbaHex(true); border:@(AppMeasures.Border.Thin)px solid @AppColors.ControlBorder.ToRgbaHex(true); border-radius:@(AppMeasures.Radius.Small)px; box-shadow:@AppStyles.ShadowHeavy; }
+.detector-picker-row { display:flex; align-items:center; border-radius:@(AppMeasures.Radius.Small)px; }
+.detector-picker-row:hover, .detector-picker-row.selected { background:@AppColors.ControlHover.ToRgbaHex(true); }
+.detector-picker-name { flex:1; padding:@(AppMeasures.Space.Px8)px; text-align:start; color:@AppColors.TextPrimary.ToRgbaHex(true); }
+.detector-picker-info { width:@(AppMeasures.Size.Px24)px; height:@(AppMeasures.Size.Px24)px; margin-inline-end:@(AppMeasures.Space.Px4)px; border:@(AppMeasures.Border.Thin)px solid @AppColors.ControlBorder.ToRgbaHex(true); border-radius:50%; color:@AppColors.TextSecondary.ToRgbaHex(true); font-style:italic; font-family:serif; }
+.detector-benchmark { border-collapse:collapse; margin-block:@(AppMeasures.Space.Px8)px; font-size:@(AppMeasures.Font.Small)px; }
+.detector-benchmark th, .detector-benchmark td { text-align:start; padding:@(AppMeasures.Space.Px6)px; border-bottom:@(AppMeasures.Border.Thin)px solid @AppColors.ControlBorder.ToRgbaHex(true); white-space:nowrap; }
+.detector-benchmark tr.highlight { background:@AppColors.ControlHover.ToRgbaHex(true); color:@AppColors.IconText.ToRgbaHex(true); font-weight:@AppMeasures.Weight.Bold; }
+.detector-benchmark-note { margin:0; max-width:@(AppMeasures.Size.Px680)px; color:@AppColors.TextSecondary.ToRgbaHex(true); }
+</style>

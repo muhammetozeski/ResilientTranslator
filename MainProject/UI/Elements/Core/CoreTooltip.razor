@@ -1,0 +1,43 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+@using ResilientTranslator.MainProject.Infrastructure
+<CoreTooltipCss />
+<span class="core-tooltip-anchor @CustomClass" data-rich-tooltip="true" @ref="Anchor" aria-describedby="@TooltipId">
+    @ChildContent
+    <span id="@TooltipId" class="core-tooltip-panel @PanelClass" role="tooltip" popover="manual" @ref="Panel">
+        @if (Content is not null) { @Content }
+        else { @Text }
+    </span>
+</span>
+@code {
+    const bool IsLogEnabled = true;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? Content { get; set; }
+    [Parameter] public string Text { get; set; } = "";
+    [Parameter] public string CustomClass { get; set; } = "";
+    [Parameter] public string PanelClass { get; set; } = "";
+    readonly string TooltipId = "tooltip-" + Guid.NewGuid().ToString("N");
+    ElementReference Anchor, Panel;
+    IJSObjectReference? Module;
+    bool Disposed;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await ExceptionBoundary.RunSafelyAsync(async token => {
+            var module = await JS.InvokeAsync<IJSObjectReference>("import", token, "./_content/MainProject/detection/tooltip.mjs");
+            if (Disposed) { await module.DisposeAsync(); return; }
+            Module = module;
+            await module.InvokeVoidAsync("attach", token, Anchor, Panel);
+        }, operationName: "AttachRichTooltip");
+    }
+    public async ValueTask DisposeAsync()
+    {
+        Disposed = true;
+        if (Module is not { } module) return;
+        Module = null;
+        await ExceptionBoundary.RunSafelyAsync(async token => {
+            try { await module.InvokeVoidAsync("detach", token, Anchor); }
+            finally { await module.DisposeAsync(); }
+        }, operationName: "DisposeRichTooltip");
+    }
+}

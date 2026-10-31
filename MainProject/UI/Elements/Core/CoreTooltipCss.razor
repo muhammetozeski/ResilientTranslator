@@ -1,0 +1,16 @@
+<style>
+.core-tooltip-anchor { display:inline-flex; min-width:0; align-items:center; }
+.core-tooltip-panel {
+    position:fixed; inset:auto; margin:0; padding:@(AppMeasures.Space.Px12)px;
+    max-width:min(@(AppMeasures.Size.Px680)px, calc(100vw - @(AppMeasures.Space.Px16)px));
+    max-height:calc(100vh - @(AppMeasures.Space.Px16)px); overflow:auto;
+    border:@(AppMeasures.Border.Thin)px solid @AppColors.ControlBorder.ToRgbaHex(true);
+    border-radius:@(AppMeasures.Radius.Medium)px; background:@AppColors.TooltipBackground.ToRgbaHex(true);
+    color:@AppColors.TextPrimary.ToRgbaHex(true); box-shadow:@AppStyles.ShadowHeavy;
+    font-size:@(AppMeasures.Font.Small)px; line-height:@AppMeasures.LineHeight.Snug;
+    white-space:normal; text-align:start; user-select:text;
+}
+.core-tooltip-panel::backdrop { background:transparent; pointer-events:none; }
+.core-tooltip-global { width:max-content; }
+.core-tooltip-panel:not(:popover-open) { display:none; }
+</style>
