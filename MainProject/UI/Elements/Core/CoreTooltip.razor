@@ -24,7 +24,7 @@
     {
         if (!firstRender) return;
         await ExceptionBoundary.RunSafelyAsync(async token => {
-            var module = await JS.InvokeAsync<IJSObjectReference>("import", token, "./_content/MainProject/detection/tooltip.mjs");
+            var module = await JS.InvokeAsync<IJSObjectReference>("import", token, "./_content/MainProject/UI/Elements/Core/CoreTooltip.razor.js");
             if (Disposed) { await module.DisposeAsync(); return; }
             Module = module;
             await module.InvokeVoidAsync("attach", token, Anchor, Panel);
