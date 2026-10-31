@@ -8,6 +8,7 @@
 <CoreModal IsVisible="true" Appearance="ControlAppearance.Bare" BackdropClass="settings-backdrop" ContentClass="settings-panel" OnBackdropClick="OnClose" OnKeyDown="KeyDown" aria-label="@Strings.SettingsTitle">
     <header><h2>@Strings.SettingsTitle</h2><CoreButton Appearance="ControlAppearance.Compact" @ref="CloseButton" OnClick="OnClose" aria-label="@Strings.Close" data-tooltip="@Strings.Close">×</CoreButton></header>
     <div class="settings-fields">
+        <label data-tooltip="@Strings.EnableTooltips"><span>@Strings.EnableTooltips</span><CoreInput IsGrouped="false" type="checkbox" checked="@Settings.EnableTooltips.Value" OnChange="args=>Change(Settings.EnableTooltips,args)" aria-label="@Strings.EnableTooltips" /></label>
         <label data-tooltip="@(Settings.OnlineEnabled.Value ? Strings.OnlineTooltip : Strings.OfflineTooltip)"><span>@Strings.OnlineEnabled</span><CoreInput IsGrouped="false" type="checkbox" checked="@Settings.OnlineEnabled.Value" OnChange="args => Change(Settings.OnlineEnabled,args)" aria-label="@Strings.OnlineEnabled" /></label>
         <div class="settings-picker-row" data-tooltip="@FeatureText.Get("DetectorBenchmarkNote")"><span>@FeatureText.Get("DetectorLabel")</span><DetectorPicker Value="@SelectedDetector" ValueChanged="SelectDetector" /></div>
         <fieldset class="settings-feature">

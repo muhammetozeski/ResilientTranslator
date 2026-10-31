@@ -10,6 +10,8 @@ public sealed record ElementBounds(double X,double Y,double Width,double Height,
     public bool Contains(double x,double y)=>x>=X&&x<=Right&&y>=Y&&y<=Bottom;
 }
 public enum ElementPositionMode { Absolute, Fixed }
+/// <summary>A viewport-relative point, usable by cursor tooltips and context menus.</summary>
+public sealed record PopupPoint(double X,double Y);
 
 /// <summary>Retains a direct browser-object handle after binding, without repeated selector searches in application code.</summary>
 public sealed class ElementHandle(IJSRuntime javascript,Func<ElementReference> currentElement):IAsyncDisposable

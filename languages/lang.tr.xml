@@ -136,4 +136,7 @@
   <s name="UseBergamot">Bergamot motorunu kullan</s>
   <s name="UseToz">Töz motorunu kullan</s>
   <s name="BergamotCachedDirections">Bergamot: bellekte tutulan yön sayısı</s>
+  <s name="EnableTooltips">Tooltip açıklamalarını göster</s>
+  <s name="TooltipDelay">Tooltip açılış beklemesi (sn)</s>
+  <s name="TooltipFade">Tooltip belirme süresi (sn)</s>
 </strings>

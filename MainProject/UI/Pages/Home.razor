@@ -45,6 +45,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        ApplyTooltipSettings();
         TranslationWorkspace.Changed += Refresh;
         Preferences.Changed += Refresh;
         TranslationWorkspace.WindowHidden += DismissSettings;
@@ -71,7 +72,8 @@
         },operationName:"InitializeLocalEngines");
     }
     /// <summary>Renders shared-state notifications on the owning dispatcher.</summary>
-    void Refresh() => _ = ExceptionBoundary.RunSafelyAsync(async token => await InvokeAsync(StateHasChanged).WaitAsync(token),operationName:"RefreshHome");
+    void ApplyTooltipSettings()=>PopupContext?.ConfigureTooltips(Settings.EnableTooltips.Value,(int)Math.Round(Settings.TooltipDelay.Value*1000),(int)Math.Round(Settings.TooltipFade.Value*1000));
+    void Refresh() => _ = ExceptionBoundary.RunSafelyAsync(async token => await InvokeAsync(()=>{ApplyTooltipSettings();StateHasChanged();}).WaitAsync(token),operationName:"RefreshHome");
     /// <summary>Opens the preferences dialog from the product icon or title.</summary>
     void OpenSettings() => SettingsOpen = true;
     /// <summary>Closes settings without discarding already persisted edits.</summary>

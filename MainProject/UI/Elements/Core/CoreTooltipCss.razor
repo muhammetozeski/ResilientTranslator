@@ -2,9 +2,9 @@
 .core-tooltip-anchor { display:inline-flex; min-width:0; align-items:center; }
 .core-tooltip-flat{display:contents}
 .core-tooltip-panel {
-    position:fixed; inset:auto; margin:0; padding:@(AppMeasures.Space.Px12)px;
+    position:fixed; inset:auto; margin:0; padding:@(AppMeasures.Space.Px8)px;
     width:max-content; max-width:min(@(AppMeasures.Tooltip.TextWidth)px, calc(100vw - @(AppMeasures.Tooltip.ViewportInset)px));
-    max-height:min(@(AppMeasures.Tooltip.MaximumHeight)px, calc(100vh - @(AppMeasures.Tooltip.ViewportInset)px)); overflow:auto; box-sizing:border-box;
+    max-height:min(@(AppMeasures.Tooltip.TextHeight)px, calc(100vh - @(AppMeasures.Tooltip.ViewportInset)px)); overflow:auto; box-sizing:border-box;
     border:@(AppMeasures.Border.Thin)px solid @AppColors.ControlBorder.ToRgbaHex(true);
     border-radius:@(AppMeasures.Radius.Small)px; background:@AppColors.TooltipBackground.ToRgbaHex(true);
     color:@AppColors.TextPrimary.ToRgbaHex(true); box-shadow:@AppStyles.ShadowMedium;
@@ -16,5 +16,7 @@
 
 .core-tooltip-panel strong { display:block; margin:0 0 @(AppMeasures.Space.Px8)px; font-size:@(AppMeasures.Font.Normal)px; font-weight:@AppMeasures.Weight.Medium; }
 .core-tooltip-panel p { margin:@(AppMeasures.Space.Px8)px 0 0; }
-.core-tooltip-panel.detector-benchmark-tooltip { max-width:min(@(AppMeasures.Tooltip.TableWidth)px, calc(100vw - @(AppMeasures.Tooltip.ViewportInset)px)); padding:@(AppMeasures.Space.Px12)px; }
+.core-tooltip-panel.detector-benchmark-tooltip { max-width:min(@(AppMeasures.Tooltip.TableWidth)px, calc(100vw - @(AppMeasures.Tooltip.ViewportInset)px)); max-height:min(@(AppMeasures.Tooltip.MaximumHeight)px,calc(100vh - @(AppMeasures.Tooltip.ViewportInset)px));padding:@(AppMeasures.Space.Px8)px; }
+.core-tooltip-panel.is-positioned{animation-name:core-tooltip-appear;animation-timing-function:ease-in-out;animation-fill-mode:both}
+@@keyframes core-tooltip-appear{from{opacity:0}to{opacity:1}}
 </style>

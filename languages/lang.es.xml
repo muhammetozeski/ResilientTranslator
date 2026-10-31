@@ -136,4 +136,7 @@
   <s name="UseBergamot">Usar Bergamot</s>
   <s name="UseToz">Usar Töz</s>
   <s name="BergamotCachedDirections">Bergamot: direcciones conservadas en memoria</s>
+  <s name="EnableTooltips">Mostrar información al pasar el cursor</s>
+  <s name="TooltipDelay">Espera de las descripciones (s)</s>
+  <s name="TooltipFade">Duración de aparición (s)</s>
 </strings>

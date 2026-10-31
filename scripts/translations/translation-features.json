@@ -466,5 +466,32 @@
     "de": "Bergamot: gespeicherte Modellrichtungen",
     "en": "Bergamot: retained model directions",
     "tr": "Bergamot: bellekte tutulan yön sayısı"
+  },
+  "EnableTooltips": {
+    "tr": "Tooltip açıklamalarını göster",
+    "en": "Show tooltips",
+    "de": "Tooltips anzeigen",
+    "fr": "Afficher les infobulles",
+    "es": "Mostrar información al pasar el cursor",
+    "it": "Mostra descrizioni",
+    "ru": "Показывать подсказки"
+  },
+  "TooltipDelay": {
+    "tr": "Tooltip açılış beklemesi (sn)",
+    "en": "Tooltip opening delay (s)",
+    "de": "Tooltip-Wartezeit (s)",
+    "fr": "Délai des infobulles (s)",
+    "es": "Espera de las descripciones (s)",
+    "it": "Attesa delle descrizioni (s)",
+    "ru": "Задержка подсказок (с)"
+  },
+  "TooltipFade": {
+    "tr": "Tooltip belirme süresi (sn)",
+    "en": "Tooltip fade-in duration (s)",
+    "de": "Tooltip-Einblenddauer (s)",
+    "fr": "Durée d'apparition des infobulles (s)",
+    "es": "Duración de aparición (s)",
+    "it": "Durata della comparsa (s)",
+    "ru": "Длительность появления подсказок (с)"
   }
 }

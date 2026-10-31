@@ -26,6 +26,7 @@ public static partial class Strings
     public static string DetectorTimeout = "Dil algılama süre sınırı (ms)";
     public static string DetectorTurkishEnglish = "Türkçe / İngilizce";
     public static string DetectorUnavailable = "Seçilen dil algılayıcısı kullanılamadı; alternatif deneniyor.";
+    public static string EnableTooltips = "Tooltip açıklamalarını göster";
     public static string EngineStarted = "{0} çeviriye başladı.";
     public static string EngineUnavailable = "{0} motoru kullanılamıyor.";
     public static string FirstLanguage = "Birinci dil";
@@ -69,6 +70,8 @@ public static partial class Strings
     public static string SourceTooltip = "Sol metin kutusunun dili. Otomatik seçildiğinde metnin dili algılanır; iki yönlü otomatik seçim açıksa karşı dil de kurallara göre seçilir.";
     public static string SplitterTooltip = "Metin kutularının genişlik oranını değiştirmek için sürükle. Pencerenin boyutu değişince oran korunur; ayarlardan yüzde 50’ye dönebilirsin.";
     public static string TargetTooltip = "Sağ metin kutusunun dili. Bu kutudaki metni düzenlemek ters yönde çeviri başlatır. İki yönlü otomatik seçim açıksa iki kutu da Otomatik olabilir.";
+    public static string TooltipDelay = "Tooltip açılış beklemesi (sn)";
+    public static string TooltipFade = "Tooltip belirme süresi (sn)";
     public static string TozBeam = "Töz: değerlendirilen çeviri adayı";
     public static string TozThreads = "Töz: işlem başına iş parçacığı";
     public static string TozWorkers = "Töz: paralel çalışan sayısı";

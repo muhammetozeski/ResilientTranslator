@@ -136,4 +136,7 @@
   <s name="UseBergamot">Use Bergamot</s>
   <s name="UseToz">Use Töz</s>
   <s name="BergamotCachedDirections">Bergamot: retained model directions</s>
+  <s name="EnableTooltips">Show tooltips</s>
+  <s name="TooltipDelay">Tooltip opening delay (s)</s>
+  <s name="TooltipFade">Tooltip fade-in duration (s)</s>
 </strings>

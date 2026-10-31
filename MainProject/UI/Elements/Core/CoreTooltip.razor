@@ -1,12 +1,13 @@
 @implements IAsyncDisposable
+@implements IHandleEvent
 @inject IJSRuntime JavaScript
 <CoreTooltipCss />
 <span class="core-tooltip-anchor @(Flat ? "core-tooltip-flat" : "") @CustomClass"
-    @onpointerenter="Enter" @onpointerleave="Leave" @onfocusin="Focused" @onfocusout="Leave" @onkeydown="KeyDown"
+    @onpointerenter="PointerEntered" @onpointermove="PointerMoved" @onpointerleave="Leave" @onfocusin="Focused" @onfocusout="Leave" @onkeydown="KeyDown"
     aria-describedby="@(Open?TooltipId:null)" style="@AnchorStyle" @ref="Trigger">
     <CascadingValue Value="this" IsFixed="true">@ChildContent</CascadingValue>
 </span>
-<CorePopup IsVisible="@Open" Anchor="@Target" Role="tooltip" Id="@TooltipId" SurfaceClass="@($"core-tooltip-panel {PanelClass}")"
+<CorePopup IsVisible="@Open" Anchor="@Target" Point="@OpeningPoint" Role="tooltip" SurfaceStyle="@($"animation-duration:{Context.TooltipFade}ms")" Id="@TooltipId" SurfaceClass="@($"core-tooltip-panel {PanelClass}")"
     OnDismiss="Hide" OnPointerEnter="Retain" OnPointerLeave="Leave">
     @if(Content is not null){@Content}else{@Text}
 </CorePopup>
@@ -31,16 +32,21 @@
     ElementHandle Target=>Anchor??(TriggerHandle??=new(JavaScript,()=>Trigger));
     CancellationTokenSource? Delay;
     bool Open,Disposed;
+    // Pointer movement updates the next opening point without rendering on every mouse event.
+    Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback,object? args)=>callback.InvokeAsync(args);
+    PopupPoint? PointerPoint,OpeningPoint;
+    Task PointerEntered(PointerEventArgs args){PointerPoint=new(args.ClientX,args.ClientY);return Enter();}
+    void PointerMoved(PointerEventArgs args){if(!Open)PointerPoint=new(args.ClientX,args.ClientY);}
     async Task Enter()
     {
-        if(Disposed || (Content is null&&string.IsNullOrWhiteSpace(Text)))return;
+        if(!Context.TooltipsEnabled || Disposed || (Content is null&&string.IsNullOrWhiteSpace(Text)))return;
         CancelDelay();if(Open)return;
         CancelDelay();var delay=Delay=new();long version=Context.InteractionVersion;
         try
         {
-            await Task.Delay(AppMeasures.Tooltip.OpenDelay,delay.Token);
-            if(Disposed||delay.IsCancellationRequested||version!=Context.InteractionVersion)return;
-            Context.ActivateTooltip(this,Hide);Open=true;Log($"Tooltip opened; id={TooltipId}; rich={Content is not null}",Run:IsLogEnabled);await InvokeAsync(StateHasChanged);
+            await Task.Delay(Context.TooltipDelay,delay.Token);
+            if(Disposed||delay.IsCancellationRequested||version!=Context.InteractionVersion||!Context.TooltipsEnabled)return;
+            OpeningPoint=PointerPoint;Context.ActivateTooltip(this,Hide);Open=true;Log($"Tooltip opened; id={TooltipId}; rich={Content is not null}",Run:IsLogEnabled);await InvokeAsync(StateHasChanged);
         }
         catch(OperationCanceledException)when(delay.IsCancellationRequested){}
     }
@@ -50,7 +56,7 @@
         try{await Task.Delay(AppMeasures.Tooltip.CloseDelay,delay.Token);if(!Disposed)Hide();}
         catch(OperationCanceledException)when(delay.IsCancellationRequested){}
     }
-    void Focused(){if(ShowOnFocus&&Context.KeyboardNavigation)_=InvokeAsync(Enter);}
+    void Focused(){if(ShowOnFocus&&Context.KeyboardNavigation){PointerPoint=null;_=InvokeAsync(Enter);}}
     void Retain()=>CancelDelay();
     void KeyDown(KeyboardEventArgs args){if(args.Key=="Escape")Hide();}
     void CancelDelay(){Delay?.Cancel();Delay?.Dispose();Delay=null;}

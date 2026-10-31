@@ -136,4 +136,7 @@
   <s name="UseBergamot">Utiliser Bergamot</s>
   <s name="UseToz">Utiliser Töz</s>
   <s name="BergamotCachedDirections">Bergamot : directions conservées en mémoire</s>
+  <s name="EnableTooltips">Afficher les infobulles</s>
+  <s name="TooltipDelay">Délai des infobulles (s)</s>
+  <s name="TooltipFade">Durée d'apparition des infobulles (s)</s>
 </strings>

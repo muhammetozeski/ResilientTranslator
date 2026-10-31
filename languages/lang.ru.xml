@@ -136,4 +136,7 @@
   <s name="UseBergamot">Использовать Bergamot</s>
   <s name="UseToz">Использовать Töz</s>
   <s name="BergamotCachedDirections">Bergamot: направления моделей в памяти</s>
+  <s name="EnableTooltips">Показывать подсказки</s>
+  <s name="TooltipDelay">Задержка подсказок (с)</s>
+  <s name="TooltipFade">Длительность появления подсказок (с)</s>
 </strings>
