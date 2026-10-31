@@ -1,0 +1,55 @@
+{
+  "firefox": "https://github.com/mozilla-firefox/firefox/blob/main/toolkit/components/translations/LanguageDetector.sys.mjs",
+  "cld2": "https://github.com/CLD2Owners/cld2",
+  "cld3": "https://github.com/google/cld3",
+  "lingua": "https://github.com/searchpioneer/lingua-dotnet",
+  "tinyld": "https://github.com/komodojp/tinyld",
+  "franc": "https://github.com/wooorm/franc",
+  "additional": [
+    {
+      "name": "Google MediaPipe Language Detector",
+      "modelBytesPublished": 315000,
+      "publishedLatencyMs": 0.31,
+      "device": "Pixel 6 CPU",
+      "localTest": false,
+      "url": "https://developers.google.com/edge/mediapipe/solutions/text/language_detector"
+    },
+    {
+      "name": "Meta fastText lid.176.ftz",
+      "modelBytesPublishedApprox": 917000,
+      "localTest": false,
+      "url": "https://fasttext.cc/docs/en/language-identification.html"
+    }
+  ],
+  "translationFindings": [
+    {
+      "name": "CLD2 / CLD3",
+      "purpose": "Language identification, not translation"
+    },
+    {
+      "name": "Google ML Kit on-device translation",
+      "platforms": [
+        "Android",
+        "iOS"
+      ],
+      "turkishEnglish": true,
+      "modelSizePublishedApprox": "30 MB per language model",
+      "url": "https://developers.google.com/ml-kit/language/translation"
+    },
+    {
+      "name": "Google TranslateGemma",
+      "parametersBillions": [
+        4,
+        12,
+        27
+      ],
+      "url": "https://huggingface.co/google/translategemma-4b-it",
+      "note": "Translation models; previously researched larger candidate, not a new small-model discovery."
+    },
+    {
+      "name": "Lingua, TinyLD, franc maintainers",
+      "result": "No ready Turkish-English translation model found in the inspected project documentation and maintainer profiles."
+    }
+  ],
+  "latestCld": "CLD3 was the latest numbered public Google CLD project found; its repository is archived. No public Google CLD4 or CLD5 project found."
+}
