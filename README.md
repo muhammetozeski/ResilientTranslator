@@ -1,6 +1,6 @@
 # Resilient Translator
 
-![Version](https://img.shields.io/badge/version-1.0.1-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
+![Version](https://img.shields.io/badge/version-1.1.0-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
 
 A portable, borderless MAUI Blazor translator with a warm hidden window and two editable text panes.
 
@@ -8,12 +8,15 @@ A portable, borderless MAUI Blazor translator with a warm hidden window and two 
 - Typing in either pane translates toward the other pane after one second without edits.
 - Failed service passes retry through fresh sessions and then a sequential alternative. Large input is split without losing Unicode text or separators. Only confirmed successful output is reused from memory.
 - A new command cancels the previous request; only the current request object may publish its result.
+- Bergamot, applicable Töz translation chains and online services start immediately. The first result appears immediately; higher-priority results replace it and cancel lower-priority computation. Online recovery continues until success or cancellation.
+- Click the status light for gray mode: local translation only, without online requests. The package includes models for all seven supported languages, using English as a bridge where necessary.
 - Single left click on the tray icon toggles the window. Middle click exits.
 - A compact toolbar swaps languages or texts; its arrow starts a fresh translation immediately.
 - Click the icon or title for persistent appearance, startup-language and technical settings. The application UI supports Turkish, English, German, French, Spanish, Italian and Russian.
 - Drag the divider to resize text panes proportionally; its center snap and 50 percent reset are configurable.
 - Drag blank background with the left button or anywhere with the middle button. The HTML corner grip resizes the borderless window.
-- Both language selectors offer Automatic. Offline Lingua detection reuses one preloaded seven-language detector. Selecting Automatic on the other side restores the first side to its last concrete language.
+- Both language selectors offer Automatic. Optional two-way automatic selection supports a simple language pair or ordered visual rules. With this option disabled, selecting Automatic on the other side restores the first side to its last concrete language.
+- Choose among eight offline language detectors, with a measured comparison table. Configurable tooltips explain controls and settings in all seven UI languages; their default delay is one second with a 0.6-second fade.
 - Opening focuses the input editor; clicking outside dismisses the window. Choosing the other pane's concrete language exchanges the two language roles.
 - The window stays above other windows. Its rendered WebView is retained while hidden.
 
@@ -37,7 +40,7 @@ Run `pwsh -File .\Publish.ps1` to produce the signed Windows package under `publ
 
 
 
-When an Automatic selection is used as the output destination, it becomes English. For reverse translation into an Automatic input, a nonempty input uses its last detected language; an empty input or missing detection falls back to English.
+With two-way automatic selection disabled, an Automatic output destination becomes English. For reverse translation into an Automatic input, a nonempty input uses its last detected language; an empty input or missing detection falls back to English.
 
 
 
