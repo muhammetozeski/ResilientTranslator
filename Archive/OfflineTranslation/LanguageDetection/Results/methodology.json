@@ -13,5 +13,20 @@
   "runtimes": "Firefox exact CLD2 generated JavaScript and .mem assets run in a Node VM with asynchronous local XMLHttpRequest emulation. CLD3 through cld3-asm 4.0.0 WebAssembly. TinyLD 1.3.4 and franc-min 6.2.0 JavaScript. Application Lingua .NET 2.0.0 assembly, .NET 10 Release. Node v26.13.0 is a test runner only. Browser/worker message transport excluded.",
   "constraints": "Lingua restricted to application seven languages. TinyLD and franc tested with built-in seven-language allowlists and open-language defaults. CLD2 and CLD3 use their full language inventories, so these configurations have different candidate counts. CLD3 input limits 0..1000 bytes; all corpus examples fit. franc minLength=0 permits single-word predictions.",
   "sizes": "Uncompressed inference code and model assets, decimal units. Shared .NET/Node/browser runtimes, packaging metadata, licenses, duplicate browser builds and source maps excluded. CLD3 counts loaded CommonJS dependency files including its embedded WASM. Lingua low retains the full model set. A separate low-trimmed experiment keeps only seven trigram files; its lower accuracy is reported separately. The application package remains unchanged.",
-  "limitations": "A small application-focused sample, not a population accuracy estimate. Single-word expectations reflect the intended language; ambiguous words can be shared. Performance compares these actual implementations, not only the abstract algorithms."
+  "limitations": "A small application-focused sample, not a population accuracy estimate. Single-word expectations reflect the intended language; ambiguous words can be shared. Performance compares these actual implementations, not only the abstract algorithms.",
+  "additionalEngines": {
+    "mediapipe": {
+      "package": "@mediapipe/tasks-text 1.2.0",
+      "model": "Google language_detector/float32/1, 315294 bytes",
+      "source": "Extracted the default model from the scanned Panlingo.LanguageIdentification.MediaPipe 0.8.2 managed package. The source generator embeds the original Google model without transformation. Direct Google Storage downloads returned a location access error.",
+      "runtime": "Official SIMD WebAssembly runtime. Node local-file importScripts shim, preloaded wasmBinary, CPU XNNPACK delegate.",
+      "constraints": "Both unrestricted and built-in seven-language categoryAllowlist; maxResults=1, scoreThreshold=0."
+    },
+    "fasttext": {
+      "package": "@echogarden/fasttext-wasm 0.1.0",
+      "models": "Official Meta lid.176.ftz and lid.176.bin files; no model conversion.",
+      "runtime": "Unmodified precompiled fastText WebAssembly package. Its downloaded WASM received scanner exit code 0 before execution. Global fetch disabled for local filesystem loading in modern Node.",
+      "constraints": "Unrestricted top-1 and seven-language selection from all 176 ranked predictions. The latter is output filtering, not retraining. Line breaks replaced with spaces because fastText expects a single line. Returned native prediction vectors deleted after every call."
+    }
+  }
 }

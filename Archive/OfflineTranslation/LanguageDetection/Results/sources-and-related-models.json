@@ -11,14 +11,28 @@
       "modelBytesPublished": 315000,
       "publishedLatencyMs": 0.31,
       "device": "Pixel 6 CPU",
-      "localTest": false,
-      "url": "https://developers.google.com/edge/mediapipe/solutions/text/language_detector"
+      "localTest": true,
+      "url": "https://developers.google.com/edge/mediapipe/solutions/text/language_detector",
+      "modelBytesMeasured": 315294,
+      "localResultFiles": [
+        "mediapipe.json",
+        "mediapipe-7.json"
+      ],
+      "modelExtractionSource": "https://api.nuget.org/v3-flatcontainer/panlingo.languageidentification.mediapipe/0.8.2/panlingo.languageidentification.mediapipe.0.8.2.nupkg",
+      "extractionSourceCode": "https://github.com/gluschenko/panlingo/blob/master/src/LanguageIdentification.MediaPipe.SourceGenerator/MediaPipeGenerator.cs"
     },
     {
       "name": "Meta fastText lid.176.ftz",
       "modelBytesPublishedApprox": 917000,
-      "localTest": false,
-      "url": "https://fasttext.cc/docs/en/language-identification.html"
+      "localTest": true,
+      "url": "https://fasttext.cc/docs/en/language-identification.html",
+      "modelBytesMeasured": 938013,
+      "localResultFiles": [
+        "fasttext.json",
+        "fasttext-7.json",
+        "fasttext-full.json",
+        "fasttext-full-7.json"
+      ]
     }
   ],
   "translationFindings": [

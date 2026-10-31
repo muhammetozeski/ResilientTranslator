@@ -1,0 +1,18 @@
+[
+  {
+    "Path": "C:\\E\\KodlamaProjeleri\\CSharp\\ResilientTranslator\\Archive\\OfflineTranslation\\LanguageDetection\\Sources\\MediaPipe\\language_detector.tflite",
+    "Hash": "7DB4F23DFE1AD8966B050B419A865DA451143FD43EB6B606A256AADEEB1E5417"
+  },
+  {
+    "Path": "C:\\E\\KodlamaProjeleri\\CSharp\\ResilientTranslator\\Archive\\OfflineTranslation\\LanguageDetection\\Sources\\MediaPipe\\panlingo.mediapipe.nupkg",
+    "Hash": "53D881D7F4DE41A68CF2C5515BF361021D8F3E5F1213D29F7874E2BD6A7E968D"
+  },
+  {
+    "Path": "C:\\E\\KodlamaProjeleri\\CSharp\\ResilientTranslator\\Archive\\OfflineTranslation\\LanguageDetection\\Sources\\FastText\\lid.176.bin",
+    "Hash": "7E69EC5451BC261CC7844E49E4792A85D7F09C06789EC800FC4A44AEC362764E"
+  },
+  {
+    "Path": "C:\\E\\KodlamaProjeleri\\CSharp\\ResilientTranslator\\Archive\\OfflineTranslation\\LanguageDetection\\Sources\\FastText\\lid.176.ftz",
+    "Hash": "8F3472CFE8738A7B6099E8E999C3CBFAE0DCD15696AAC7D7738A8039DB603E83"
+  }
+]

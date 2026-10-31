@@ -372,5 +372,209 @@
       "correct": 71,
       "total": 92
     }
+  },
+  {
+    "mode": "mediapipe",
+    "codeAndModelBytes": 7691631,
+    "loadMs": 125.0106,
+    "medianMs": 0.09050000000002001,
+    "total": {
+      "correct": 143,
+      "total": 150
+    },
+    "tr": {
+      "correct": 61,
+      "total": 66
+    },
+    "en": {
+      "correct": 64,
+      "total": 64
+    },
+    "trEn": {
+      "correct": 125,
+      "total": 130
+    },
+    "other": {
+      "correct": 18,
+      "total": 20
+    },
+    "word": {
+      "correct": 52,
+      "total": 58
+    },
+    "text": {
+      "correct": 91,
+      "total": 92
+    }
+  },
+  {
+    "mode": "mediapipe-7",
+    "codeAndModelBytes": 7691631,
+    "loadMs": 123.90729999999999,
+    "medianMs": 0.06759999999997035,
+    "total": {
+      "correct": 149,
+      "total": 150
+    },
+    "tr": {
+      "correct": 65,
+      "total": 66
+    },
+    "en": {
+      "correct": 64,
+      "total": 64
+    },
+    "trEn": {
+      "correct": 129,
+      "total": 130
+    },
+    "other": {
+      "correct": 20,
+      "total": 20
+    },
+    "word": {
+      "correct": 57,
+      "total": 58
+    },
+    "text": {
+      "correct": 92,
+      "total": 92
+    }
+  },
+  {
+    "mode": "fasttext",
+    "codeAndModelBytes": 2201527,
+    "loadMs": 491.2872,
+    "medianMs": 0.19110000000000582,
+    "total": {
+      "correct": 147,
+      "total": 150
+    },
+    "tr": {
+      "correct": 64,
+      "total": 66
+    },
+    "en": {
+      "correct": 63,
+      "total": 64
+    },
+    "trEn": {
+      "correct": 127,
+      "total": 130
+    },
+    "other": {
+      "correct": 20,
+      "total": 20
+    },
+    "word": {
+      "correct": 55,
+      "total": 58
+    },
+    "text": {
+      "correct": 92,
+      "total": 92
+    }
+  },
+  {
+    "mode": "fasttext-7",
+    "codeAndModelBytes": 2201527,
+    "loadMs": 501.1231,
+    "medianMs": 0.3865000000000691,
+    "total": {
+      "correct": 148,
+      "total": 150
+    },
+    "tr": {
+      "correct": 65,
+      "total": 66
+    },
+    "en": {
+      "correct": 63,
+      "total": 64
+    },
+    "trEn": {
+      "correct": 128,
+      "total": 130
+    },
+    "other": {
+      "correct": 20,
+      "total": 20
+    },
+    "word": {
+      "correct": 56,
+      "total": 58
+    },
+    "text": {
+      "correct": 92,
+      "total": 92
+    }
+  },
+  {
+    "mode": "fasttext-full",
+    "codeAndModelBytes": 132529712,
+    "loadMs": 6267.193,
+    "medianMs": 0.1926999999996042,
+    "total": {
+      "correct": 147,
+      "total": 150
+    },
+    "tr": {
+      "correct": 65,
+      "total": 66
+    },
+    "en": {
+      "correct": 62,
+      "total": 64
+    },
+    "trEn": {
+      "correct": 127,
+      "total": 130
+    },
+    "other": {
+      "correct": 20,
+      "total": 20
+    },
+    "word": {
+      "correct": 55,
+      "total": 58
+    },
+    "text": {
+      "correct": 92,
+      "total": 92
+    }
+  },
+  {
+    "mode": "fasttext-full-7",
+    "codeAndModelBytes": 132529712,
+    "loadMs": 6830.1278999999995,
+    "medianMs": 0.33589999999912834,
+    "total": {
+      "correct": 148,
+      "total": 150
+    },
+    "tr": {
+      "correct": 65,
+      "total": 66
+    },
+    "en": {
+      "correct": 63,
+      "total": 64
+    },
+    "trEn": {
+      "correct": 128,
+      "total": 130
+    },
+    "other": {
+      "correct": 20,
+      "total": 20
+    },
+    "word": {
+      "correct": 56,
+      "total": 58
+    },
+    "text": {
+      "correct": 92,
+      "total": 92
+    }
   }
 ]

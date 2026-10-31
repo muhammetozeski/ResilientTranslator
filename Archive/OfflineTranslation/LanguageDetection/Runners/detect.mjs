@@ -10,7 +10,7 @@ const allowed=['en','tr','de','fr','es','it','ru'];
 const iso={eng:'en',tur:'tr',deu:'de',fra:'fr',spa:'es',ita:'it',rus:'ru',und:'und'};
 const mode=process.argv[2];
 const start=performance.now();
-let detect;
+let detect; let close=()=>{};
 if(mode==='cld2'){
  const folder=path.join(root,'Sources/Firefox');
  let last; let signalReady; const ready=new Promise(resolve=>signalReady=resolve);
@@ -26,6 +26,26 @@ if(mode==='cld2'){
  const factory=await loadModule();
  const detector=factory.create(0,1000);
  detect=text=>detector.findLanguage(text).language;
+}else if(mode.startsWith('fasttext')){
+ globalThis.fetch=undefined;
+ const ft=require('@echogarden/fasttext-wasm');
+ await new Promise(resolve=>ft.addOnPostRun(resolve));
+ const model=await new ft.FastText().loadModel(path.join(root,'Sources/FastText',mode.includes('full')?'lid.176.bin':'lid.176.ftz'));
+ detect=text=>{
+  const results=model.predict(text.replace(/[\r\n]+/g,' '),mode.endsWith('-7')?176:1,0);
+  try {for(let i=0;i<results.size();i++){const language=results.get(i)[1].replace('__label__','');if(!mode.endsWith('-7')||allowed.includes(language))return language;}return 'und';}
+  finally {results.delete();}
+ };
+}else if(mode.startsWith('mediapipe')){
+ globalThis.self=globalThis;globalThis.require=require;
+ const wasmRoot=path.join(root,'node_modules/@mediapipe/tasks-text/wasm');
+ globalThis.__dirname=wasmRoot;
+ globalThis.importScripts=file=>vm.runInThisContext(fs.readFileSync(file,'utf8'),{filename:file});
+ const {LanguageDetector}=require('@mediapipe/tasks-text');
+ self.Module={wasmBinary:fs.readFileSync(path.join(wasmRoot,'text_wasm_internal.wasm'))};
+ const detector=await LanguageDetector.createFromOptions({wasmLoaderPath:path.join(wasmRoot,'text_wasm_internal.js'),wasmBinaryPath:path.join(wasmRoot,'text_wasm_internal.wasm')},{baseOptions:{modelAssetBuffer:fs.readFileSync(path.join(root,'Sources/MediaPipe/language_detector.tflite'))},maxResults:1,scoreThreshold:0,...(mode.endsWith('-7')?{categoryAllowlist:allowed}:{})});
+ detect=text=>detector.detect(text).languages[0]?.languageCode??'und';
+ close=()=>{detector.close();self.Module?.PThread?.terminateAllThreads?.();};
 }else if(mode.startsWith('tinyld')){
  const mod=require(mode.includes('light')?'tinyld/light':'tinyld');
  detect=mode.endsWith('-7')?text=>mod.detect(text,{only:allowed}):text=>mod.detect(text);
@@ -44,3 +64,4 @@ const dependencyFiles=Object.keys(require.cache).filter(x=>x.startsWith(path.joi
 const result={mode,loadMs,dependencyFiles,loadedCommonJsBytes:dependencyFiles.reduce((sum,x)=>sum+fs.statSync(x).size,0),rows};
 fs.writeFileSync(path.join(root,`Results/${mode}.json`),JSON.stringify(result,null,2));
 console.log(JSON.stringify({mode,correct:rows.filter(x=>x.correct).length,total:rows.length,medianMs:rows.map(x=>x.ms).sort((a,b)=>a-b)[Math.floor(rows.length/2)]}));
+close();
