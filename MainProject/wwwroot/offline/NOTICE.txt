@@ -1,0 +1,24 @@
+Offline inference components
+
+Bergamot Translator 0.4.9, MPL-2.0.
+Source and unmodified supplied worker: https://github.com/browsermt/bergamot-translator
+Package: https://registry.npmjs.org/@browsermt/bergamot-translator/-/bergamot-translator-0.4.9.tgz
+License: vendor/bergamot/LICENSE
+
+Mozilla English-centric models: twelve directional bundles from Firefox Remote Settings.
+The exact file URLs, SHA-256 values and sizes are in models.json.
+Source: https://github.com/mozilla/firefox-translations-models
+
+Töz-Çevir-1, Toz AI, Apache-2.0.
+Original int8 ONNX weights and tokenizer, used without model conversion.
+Source and supplied generation flow: https://github.com/Toz-AI/toz-cevir
+Model: https://huggingface.co/TozAI/Toz-Cevir-1
+
+Microsoft ONNX Runtime Web 1.31.1, MIT.
+Source: https://github.com/microsoft/onnxruntime
+Licenses: vendor/toz/ONNX-LICENSE and vendor/toz/ONNX-THIRD-PARTY-NOTICES
+
+sentencepiece-js 1.1.0, Apache-2.0.
+Source: https://github.com/JanKaul/sentencepiece
+The original CommonJS distribution is loaded with local-file reader and URL adapters.
+License: vendor/toz/SENTENCEPIECE-LICENSE
