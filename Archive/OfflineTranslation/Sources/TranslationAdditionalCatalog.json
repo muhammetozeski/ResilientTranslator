@@ -1,0 +1,97 @@
+[
+  {
+    "files": [
+      {
+        "file": "onnx/decoder_model_merged.onnx",
+        "bytes": 321741340
+      },
+      {
+        "file": "onnx/encoder_model.onnx",
+        "bytes": 287317499
+      },
+      {
+        "file": "sentencepiece.bpe.model",
+        "bytes": 2423393
+      },
+      {
+        "file": "tokenizer.json",
+        "bytes": 5807639
+      }
+    ],
+    "license": "mit",
+    "sha": "5c2c73ac70bee9c58f5a7ac5e84a36bee25db8ee",
+    "repo": "casawolice/small100-onnx"
+  },
+  {
+    "files": [
+      {
+        "file": "model.safetensors",
+        "bytes": 1208165520
+      },
+      {
+        "file": "onnx/model_quantized.onnx",
+        "bytes": 759861441
+      },
+      {
+        "file": "tokenizer.json",
+        "bytes": 2454032
+      }
+    ],
+    "license": "apache-2.0",
+    "sha": "6467bc3fca558b2dae07f857b6412858c9ec3236",
+    "repo": "TozAI/Toz-1.5"
+  },
+  {
+    "files": [
+      {
+        "file": "Hy-MT2-1.8B-2Bit.gguf",
+        "bytes": 600534880
+      }
+    ],
+    "license": "apache-2.0",
+    "sha": "b630487d19ab7f336664a15b07c638d0d1071471",
+    "repo": "tencent/Hy-MT2-1.8B-2bit-GGUF"
+  },
+  {
+    "files": [
+      {
+        "file": "Hy-MT2-1.8B-1.25Bit.gguf",
+        "bytes": 461860800
+      }
+    ],
+    "license": "apache-2.0",
+    "sha": "9df5c824a00a744fb0512a29c640466f4d97dfb0",
+    "repo": "tencent/Hy-MT2-1.8B-1.25bit-GGUF"
+  },
+  {
+    "files": [
+      {
+        "file": "model-q2k.gguf",
+        "bytes": 965486240
+      },
+      {
+        "file": "model-q3k.gguf",
+        "bytes": 1264101024
+      },
+      {
+        "file": "model-q4k.gguf",
+        "bytes": 1654597280
+      },
+      {
+        "file": "model.safetensors",
+        "bytes": 11761587872
+      },
+      {
+        "file": "spiece.model",
+        "bytes": 4427844
+      },
+      {
+        "file": "tokenizer.json",
+        "bytes": 16629031
+      }
+    ],
+    "license": "apache-2.0",
+    "sha": "fa184c675da0b5c9e1c8694fccd4e12e2d422094",
+    "repo": "google/madlad400-3b-mt"
+  }
+]

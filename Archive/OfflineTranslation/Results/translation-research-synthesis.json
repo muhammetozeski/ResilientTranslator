@@ -1,0 +1,302 @@
+{
+  "Date": "2026-10-31",
+  "Scope": "Comprehensive offline Turkish-English research synthesis. Existing 32-sentence translation experiments reused; no new translation benchmark performed during this synthesis. Language-identification tests are a separate 150-example task.",
+  "SizeDefinition": "Decimal disk bytes, not RAM. Selected files supporting both directions; runtime excluded. ONNX totals below include encoder, merged decoder, fast tokenizer JSON and SentencePiece file. These tokenizer formats are alternative consumption paths, so a deployment can omit the unused one. Small configuration files add negligible space. No all-variant repository totals.",
+  "ExistingEvidence": {
+    "date": "2026-10-30",
+    "scope": "Offline Turkish-English translation in both directions; research and isolated experiments only",
+    "recommendation": "Toz-Cevir-1 q8 for the smallest tested balance of usable translation quality and package size; Mozilla Bergamot tiny for minimum storage and latency",
+    "method": {
+      "processor": "Intel Core i5-8300H",
+      "platform": "Windows x64",
+      "corpus": "../Corpus/translation-cases.json",
+      "casesPerModel": 32,
+      "directions": "16 Turkish-to-English and 16 English-to-Turkish",
+      "testedModels": 6,
+      "successfulModelConfigurations": 7,
+      "rawRows": 224,
+      "sizeUnits": "Decimal MB and GB; model files, not process memory or the complete application",
+      "inference": "Local files only; llama.cpp offline mode with a loopback endpoint, local Bergamot WebAssembly and local ONNX Runtime",
+      "parameters": "Bergamot beam=1 and beam=4, single WebAssembly worker; Toz beam=4 with official sentence splitting, four CPU threads; language models greedy decoding, four CPU threads, 2048-token context, reasoning disabled",
+      "lmtPrompt": "Official source-language/target-language labels and translation instruction from the model card",
+      "assessment": "Direct bilingual review of the actual outputs, not a large public benchmark or a percentage accuracy estimate"
+    },
+    "candidates": [
+      {
+        "name": "Mozilla Bergamot tiny en-tr + tr-en",
+        "modelBytes": 43815825,
+        "status": "Tested, both directions, beam=1 and beam=4",
+        "medianMs": {
+          "beam1": 31.5,
+          "beam4": 55
+        },
+        "assessment": "Smallest tested package and lowest latency. Useful ordinary translations, with awkward grammar and errors in idioms, nested meaning and negation. Beam=4 fixed the unavailable-network polarity error observed with beam=1.",
+        "sources": [
+          "https://storage.googleapis.com/moz-fx-translations-data--303e-prod-translations-data/db/models.json",
+          "https://firefox.settings.services.mozilla.com/v1/buckets/main/collections/translations-models/records",
+          "https://github.com/mozilla/firefox-translations-models/blob/main/evaluation/comet-results.md"
+        ],
+        "result": "Raw/Mozilla-beam4.json"
+      },
+      {
+        "name": "TozAI/Toz-Cevir-1 q8",
+        "modelBytes": 109337160,
+        "status": "Tested, both directions",
+        "medianMs": 274,
+        "peakProcessRssBytes": 315379712,
+        "assessment": "Best tested small candidate on this corpus. Mostly usable ordinary and technical sentences. Failed the Turkish double negation and flea/camel idiom, and partially mistranslated the English call-it-a-day idiom.",
+        "sources": [
+          "https://huggingface.co/TozAI/Toz-Cevir-1",
+          "https://huggingface.co/TozAI/Toz-Cevir-1/tree/main/onnx",
+          "https://github.com/Toz-AI/toz-cevir"
+        ],
+        "result": "Raw/Toz.json"
+      },
+      {
+        "name": "Argos Translate English-Turkish 1.5 pair",
+        "approximateCompressedDownloadMB": 245,
+        "status": "Researched; not locally tested",
+        "assessment": "Two directional packages. Existing published Mozilla comparisons place these Argos versions below Bergamot on the reported Turkish-English datasets.",
+        "sources": [
+          "https://data.argosopentech.com/argospm/v1/",
+          "https://github.com/mozilla/firefox-translations-models/blob/main/evaluation/comet-results.md"
+        ]
+      },
+      {
+        "name": "Gemma 3 270M instruction tuned, Q4_K_M",
+        "modelBytes": 253115424,
+        "status": "Tested, both directions",
+        "medianMs": 280.5,
+        "assessment": "Unsuitable in this experiment: six empty outputs, frequent source copying or an acknowledgement instead of translation, poor Turkish output.",
+        "sources": [
+          "https://huggingface.co/google/gemma-3-270m-it",
+          "https://huggingface.co/unsloth/gemma-3-270m-it-GGUF/tree/main"
+        ],
+        "result": "Raw/Gemma.json"
+      },
+      {
+        "name": "Qwen3 0.6B Q4_K_M",
+        "modelBytes": 396705472,
+        "status": "Tested, both directions",
+        "assessment": "Frequent omitted content, untranslated input, repetition and incorrect Turkish. Not selected.",
+        "sources": [
+          "https://huggingface.co/unsloth/Qwen3-0.6B-GGUF/tree/main"
+        ],
+        "result": "Raw/Qwen06.json"
+      },
+      {
+        "name": "Hy-MT2 1.8B 1.25-bit v2",
+        "modelBytes": 461860800,
+        "status": "Downloaded and hash verified; local loading failed before any translation",
+        "assessment": "Promising specialized translation model with Turkish support. This file requires the specialized sparse ternary implementation; the tested stock llama.cpp b11960 rejected tensor offsets. Translation quality was not graded.",
+        "error": "tensor 'blk.0.attn_k_norm.weight' has offset 203154464, expected 203572256",
+        "sources": [
+          "https://huggingface.co/AngelSlim/Hy-MT2-1.8B-1.25Bit-GGUF",
+          "https://huggingface.co/tencent/Hy-MT2-1.8B",
+          "https://github.com/ggml-org/llama.cpp/pull/22836"
+        ],
+        "result": "Raw/HyMt.json"
+      },
+      {
+        "name": "NiuTrans LMT-60 0.6B Q4_K_M",
+        "modelBytes": 484220000,
+        "status": "Tested, both directions, official labelled prompt",
+        "medianMs": 640.5,
+        "assessment": "Useful technical and ordinary translations, but many meaning and fluency errors, especially English-to-Turkish. Worse than Toz on this corpus despite the larger package. Generic prompts performed worse; those exploratory outputs are retained separately.",
+        "sources": [
+          "https://huggingface.co/NiuTrans/LMT-60-0.6B",
+          "https://huggingface.co/mradermacher/LMT-60-0.6B-GGUF/tree/main"
+        ],
+        "result": "Raw/Lmt.json"
+      },
+      {
+        "name": "Qwen3.5 0.8B IQ4_XS",
+        "modelBytes": 492605696,
+        "status": "Tested, both directions",
+        "medianMs": 915.5,
+        "assessment": "Frequent meaning errors. For example, English bus became Turkish refrigerator; November became April. Not selected.",
+        "sources": [
+          "https://huggingface.co/Qwen/Qwen3.5-0.8B",
+          "https://huggingface.co/unsloth/Qwen3.5-0.8B-GGUF/tree/main"
+        ],
+        "result": "Raw/Qwen.json"
+      },
+      {
+        "name": "OPUS-MT tr-en base + en-tr tc-big, selected quantized ONNX files",
+        "selectedFilesBytes": 656875753,
+        "status": "Researched; not locally tested",
+        "assessment": "Ready ONNX packaging is larger than the preferred limit. Other CTranslate2 packaging/quantization can reduce disk size, but no smaller package was produced in this experiment.",
+        "sources": [
+          "https://huggingface.co/Xenova/opus-mt-tr-en/tree/main/onnx",
+          "https://huggingface.co/onnx-community/opus-mt-tc-big-en-tr/tree/main/onnx",
+          "https://opennmt.net/CTranslate2/quantization.html"
+        ]
+      },
+      {
+        "name": "QuickMT English-Turkish directional pair",
+        "approximateReadyModelMB": 808,
+        "status": "Researched; not locally tested",
+        "assessment": "Published English-to-Turkish and Turkish-to-English benchmark results are promising. Ready weights are float16; an approximately 400 MB int8 pair is a conversion estimate, not a verified package.",
+        "sources": [
+          "https://huggingface.co/quickmt/quickmt-en-tr",
+          "https://huggingface.co/quickmt/quickmt-tr-en",
+          "https://opennmt.net/CTranslate2/quantization.html"
+        ]
+      },
+      {
+        "name": "Hy-MT2 1.8B standard Q4_K_M",
+        "modelBytes": 1133080448,
+        "status": "Researched; not locally tested",
+        "assessment": "Standard four-bit alternative to the specialized low-bit file, above the preferred size limit.",
+        "sources": [
+          "https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF/tree/main"
+        ]
+      },
+      {
+        "name": "TranslateGemma 4B Q4_K_M",
+        "approximateModelGB": 2.49,
+        "status": "Researched; not locally tested",
+        "assessment": "Dedicated translation model in the larger fallback tier, within the hard limit but well above the preferred size.",
+        "sources": [
+          "https://huggingface.co/google/translategemma-4b-it",
+          "https://huggingface.co/mradermacher/translategemma-4b-it-GGUF/tree/main",
+          "https://blog.google/innovation-and-ai/technology/developers-tools/translategemma/"
+        ]
+      },
+      {
+        "name": "Google ML Kit on-device translation",
+        "approximateMBPerLanguageFromDocumentation": 30,
+        "status": "Researched; Android option, not tested on a phone",
+        "assessment": "English and Turkish are supported. Official mobile API; not a directly supported Windows plugin. The exact Turkish-English installed size was not measured.",
+        "sources": [
+          "https://developers.google.com/ml-kit/language/translation",
+          "https://developers.google.com/ml-kit/language/translation/android",
+          "https://developers.google.com/ml-kit/language/translation/translation-language-support"
+        ]
+      }
+    ]
+  },
+  "AdditionalCandidates": [
+    {
+      "Assessment": "Ready community ONNX export with English and Turkish, direct many-to-many translation. Original model is distilled from M2M-100. No local Turkish-English quality score.",
+      "Name": "SMaLL-100 int8 ONNX",
+      "Source": "https://huggingface.co/casawolice/small100-onnx",
+      "Languages": 100,
+      "Format": "ONNX",
+      "License": "MIT",
+      "SelectedFilesBytes": 617289871,
+      "LocalTest": false
+    },
+    {
+      "Assessment": "Ready multilingual package. QuickMT published comparisons place this model below QuickMT in both Turkish-English directions.",
+      "SelectedFilesBytes": 642396468,
+      "LocalTest": false,
+      "Source": "https://huggingface.co/Xenova/m2m100_418M",
+      "Name": "M2M100 418M int8 ONNX"
+    },
+    {
+      "License": "CC-BY-NC-4.0",
+      "LocalTest": false,
+      "Name": "NLLB 200 distilled 600M int8 ONNX",
+      "Source": "https://huggingface.co/Xenova/nllb-200-distilled-600M",
+      "Assessment": "Ready multilingual package. QuickMT published comparison gives QuickMT a higher score in both directions on its Flores200 evaluation.",
+      "SelectedFilesBytes": 916809532
+    },
+    {
+      "License": "Apache-2.0",
+      "LocalTest": false,
+      "Name": "MADLAD-400 3B",
+      "Variants": {
+        "Q4_K": 1654597280,
+        "Q2_K": 965486240,
+        "Q3_K": 1264101024
+      },
+      "Source": "https://huggingface.co/google/madlad400-3b-mt",
+      "Assessment": "Dedicated multilingual translation model. GGUF files are present in the official Google repository; Turkish-English quality not locally measured."
+    },
+    {
+      "License": "Apache-2.0",
+      "LocalTest": "Only the special 1.25-bit file was attempted; it failed to load. No local quality assessment.",
+      "Name": "Hy-MT2 1.8B",
+      "Variants": {
+        "Special2Bit": 600534880,
+        "Special1_25Bit": 461860800,
+        "StandardQ6_K": 1474785120,
+        "StandardQ8_0": 1908528192,
+        "StandardQ4_K_M": 1133080448
+      },
+      "Source": "https://huggingface.co/tencent/Hy-MT2-1.8B",
+      "Runtime": "Model cards require STQ kernels for 1.25-bit and 2-bit variants, PR 22836 and PR 19357 respectively. Standard four-bit variant is offered separately."
+    },
+    {
+      "License": "Gemma",
+      "LocalTest": false,
+      "Name": "TranslateGemma 4B",
+      "Variants": {
+        "Q4_K_M": 2489909760,
+        "Q6_K": 3190755840,
+        "Q3_K_M": 2098475520,
+        "Q5_K_M": 2829713920,
+        "Q8_0": 4130417920,
+        "Q2_K": 1729180160
+      },
+      "Source": "https://huggingface.co/mradermacher/translategemma-4b-it-GGUF",
+      "Assessment": "Dedicated Google translation model with Turkish support. The GGUF text model is sufficient for text translation; image projection weights are for image input."
+    },
+    {
+      "LocalTest": false,
+      "Assessment": "604M Turkish chat model, separate from Toz-Cevir-1. Translation quality unmeasured. The model card describes Turkish-focused training and weak other-language capability.",
+      "Source": "https://huggingface.co/TozAI/Toz-1.5",
+      "Name": "Toz-1.5",
+      "SelectedWeightAndTokenizerBytes": 762315473
+    }
+  ],
+  "VerifiedArgosDownloadBytes": {
+    "EnglishToTurkish": 124742526,
+    "TurkishToEnglish": 120561223,
+    "Version": "1.5",
+    "Total": 245303749,
+    "Source": "https://raw.githubusercontent.com/argosopentech/argospm-index/main/index.json",
+    "UnpackedBytes": "Not measured"
+  },
+  "QuickMT": {
+    "Int8Status": "Conversion estimate only; no such package was produced or verified.",
+    "ScoreMeaning": "COMET22 estimates translation quality; these scores are not percentages of correct sentences. Results are publisher-reported head-to-head evaluations.",
+    "Sources": [
+      "https://huggingface.co/quickmt/quickmt-en-tr",
+      "https://huggingface.co/quickmt/quickmt-tr-en"
+    ],
+    "Format": "CTranslate2",
+    "PublishedFlores200": {
+      "TurkishToEnglish": {
+        "OpusBaseComet22": 87.03,
+        "Nllb600MComet22": 88.28,
+        "QuickMTComet22": 89.0,
+        "M2M418MComet22": 84.59
+      },
+      "EnglishToTurkish": {
+        "M2M418MComet22": 84.47,
+        "Nllb600MComet22": 87.91,
+        "QuickMTComet22": 89.42
+      }
+    },
+    "EstimatedInt8PairMB": 400,
+    "MeasuredCPUms": null,
+    "KnownModelAndSentencePieceBytesBothDirections": 805781036,
+    "ApproximateCompleteMB": 808,
+    "LocalTest": false
+  },
+  "Integration": {
+    "ONNX": "Official Microsoft.ML.OnnxRuntime C# package, plus tokenizer and generation code supplied by each model project.",
+    "CTranslate2": "Ready native inference library; the examined QuickMT examples use Python. No ready .NET integration was verified during this research.",
+    "GGUF": "Native llama.cpp engine; a .NET wrapper such as LLamaSharp can expose it to C#. Model-format support remains specific to the chosen model and runtime.",
+    "MLKit": "Official on-device Android/iOS translation; models around 30 MB per language model. Turkish/English supported. Phone pair footprint and local quality not measured; no official Windows target.",
+    "Bergamot": "Reuse supplied JavaScript/WebAssembly in existing BlazorWebView with a small separate JavaScript module and C# interop; no separate Node runtime. Agreed implementation approach, not yet integrated."
+  },
+  "Clarifications": {
+    "Tests": "150 examples (58 words and 92 phrases/sentences) were language identification. Translation experiments used a separate 32-sentence corpus, 16 per direction.",
+    "UserPriority": "The user clarified that small differences in download size are curiosity rather than the main integration criterion.",
+    "DetectorMaintainers": "No Turkish-English translation model found in the inspected Lingua, TinyLD and franc projects/maintainer profiles. No unfinished translation model was found either."
+  },
+  "EvidenceLimits": "Published quality comparisons and local output reviews are labeled separately. Unmeasured latency is omitted. Larger general-purpose models were not exhaustively enumerated; dedicated translation families and previously tested small models are the focus."
+}

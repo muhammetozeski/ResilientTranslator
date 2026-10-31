@@ -1,0 +1,291 @@
+[
+  {
+    "files": [
+      {
+        "hash": "37140b1cd9110a5a5f836d3c6cd2f31d424b5ac726bd043f965e511c67070406",
+        "file": "translategemma-4b-it.Q2_K.gguf",
+        "bytes": 1729180160
+      },
+      {
+        "hash": "dd4340ae77cb401b6d01c49a898d76bbc61cf7d414696bf16fba9a09696c09b8",
+        "file": "translategemma-4b-it.Q3_K_M.gguf",
+        "bytes": 2098475520
+      },
+      {
+        "hash": "81200d03e843d2ec1ece6eeafe7d13cb6e5211e1fcd336ade55790b683a08330",
+        "file": "translategemma-4b-it.Q4_K_M.gguf",
+        "bytes": 2489909760
+      },
+      {
+        "hash": "99427db6ae562d52f63d9d4e87b038692dc2821087088d0fc5c9c4151432f3d1",
+        "file": "translategemma-4b-it.Q5_K_M.gguf",
+        "bytes": 2829713920
+      },
+      {
+        "hash": "9848d1c4c61020511d278e1a82d460f198d3214e19d74344ef09446cdc3cb544",
+        "file": "translategemma-4b-it.Q6_K.gguf",
+        "bytes": 3190755840
+      },
+      {
+        "hash": "f5006ddf207becaace1668113a61b31cf8b2e03f0f0baa0d1ca37eb8371d4bc1",
+        "file": "translategemma-4b-it.Q8_0.gguf",
+        "bytes": 4130417920
+      },
+      {
+        "hash": "482f68be8823dfdfb3561c22cdd1c0f617d0d5e6efe9c323cc6428a4331dba01",
+        "file": "translategemma-4b-it.mmproj-Q8_0.gguf",
+        "bytes": 591377600
+      }
+    ],
+    "repo": "mradermacher/translategemma-4b-it-GGUF",
+    "license": "gemma",
+    "sha": "d37868f759d2f817a43d28dd80cf9f982ffa62fd"
+  },
+  {
+    "files": [
+      {
+        "hash": "dc5f44fcf1fa496ee7ad725982c0c8c553a4de00259b53af84c4b89fb0c06699",
+        "file": "Hy-MT2-1.8B-Q4_K_M.gguf",
+        "bytes": 1133080448
+      },
+      {
+        "hash": "d98fe604dec1f28f58f80d7d560f7177e584d3b8e5835862687660e5ff97cb40",
+        "file": "Hy-MT2-1.8B-Q6_K.gguf",
+        "bytes": 1474785120
+      },
+      {
+        "hash": "5c3fe0b1408a5ceb0143184ef247b11b579c525f4b02b060e6c851bb76fef1a4",
+        "file": "Hy-MT2-1.8B-Q8_0.gguf",
+        "bytes": 1908528192
+      }
+    ],
+    "repo": "tencent/Hy-MT2-1.8B-GGUF",
+    "license": "apache-2.0",
+    "sha": "a0c709d9fac510f2c807aa3af52872340dc37a4a"
+  },
+  {
+    "files": [
+      {
+        "hash": null,
+        "file": "config.json",
+        "bytes": 223
+      },
+      {
+        "hash": null,
+        "file": "eole-model/config.json",
+        "bytes": 3050
+      },
+      {
+        "hash": "5c4b6f8bf657c61b0219015022eba70ae06f19c7ae4ac9bd7dbacdb9bafa2ea4",
+        "file": "eole-model/en.spm.model",
+        "bytes": 586127
+      },
+      {
+        "hash": "453f064230753d99aecab739b8de017e91836692acd2566812de6f96ffa83f26",
+        "file": "eole-model/tr.spm.model",
+        "bytes": 604393
+      },
+      {
+        "hash": "79394af8333ac9a41cda7813cd7e00c3c324e228aac34dcb7d03afce146ef5d2",
+        "file": "model.bin",
+        "bytes": 401699775
+      },
+      {
+        "hash": "5c4b6f8bf657c61b0219015022eba70ae06f19c7ae4ac9bd7dbacdb9bafa2ea4",
+        "file": "src.spm.model",
+        "bytes": 586127
+      },
+      {
+        "hash": "453f064230753d99aecab739b8de017e91836692acd2566812de6f96ffa83f26",
+        "file": "tgt.spm.model",
+        "bytes": 604393
+      }
+    ],
+    "repo": "quickmt/quickmt-en-tr",
+    "license": "cc-by-4.0",
+    "sha": "32ae64a2a1373c6057dac8d641cba8e10d0549c6"
+  },
+  {
+    "files": [
+      {
+        "hash": null,
+        "file": "config.json",
+        "bytes": 223
+      },
+      {
+        "hash": null,
+        "file": "eole-model/config.json",
+        "bytes": 3050
+      },
+      {
+        "hash": "5c4b6f8bf657c61b0219015022eba70ae06f19c7ae4ac9bd7dbacdb9bafa2ea4",
+        "file": "eole-model/en.spm.model",
+        "bytes": 586127
+      },
+      {
+        "hash": "453f064230753d99aecab739b8de017e91836692acd2566812de6f96ffa83f26",
+        "file": "eole-model/tr.spm.model",
+        "bytes": 604393
+      },
+      {
+        "hash": "7151fa84b90fe90dc99dae1f7bba3c0b416d3d70cc3ce0ae80f60c543c625745",
+        "file": "model.bin",
+        "bytes": 401699775
+      },
+      {
+        "hash": "453f064230753d99aecab739b8de017e91836692acd2566812de6f96ffa83f26",
+        "file": "src.spm.model",
+        "bytes": 604393
+      },
+      {
+        "hash": "5c4b6f8bf657c61b0219015022eba70ae06f19c7ae4ac9bd7dbacdb9bafa2ea4",
+        "file": "tgt.spm.model",
+        "bytes": 586127
+      }
+    ],
+    "repo": "quickmt/quickmt-tr-en",
+    "license": "cc-by-4.0",
+    "sha": "b6635b1f14ca99098802711078e2f0966ee741d2"
+  },
+  {
+    "files": [
+      {
+        "hash": null,
+        "file": "config.json",
+        "bytes": 873
+      },
+      {
+        "hash": null,
+        "file": "generation_config.json",
+        "bytes": 189
+      },
+      {
+        "hash": "dd66608c2a4194e78f95548fa0e64f24302303698c5b09fa8e1f9e16ec00676b",
+        "file": "onnx/decoder_model_merged_quantized.onnx",
+        "bytes": 475505771
+      },
+      {
+        "hash": "ddea619b640379609719becf91a488c5e6ce4c4b2052efbb5388edaed465a552",
+        "file": "onnx/decoder_model_quantized.onnx",
+        "bytes": 470533055
+      },
+      {
+        "hash": "374293cb4bb59cd29810851a7cfbc568accb8efdc1a953ac04722e30adaf2d0b",
+        "file": "onnx/decoder_with_past_model_quantized.onnx",
+        "bytes": 445006987
+      },
+      {
+        "hash": "5cde664eacba07a62f198857ec6c06e09572b1ebb77c8137f1fa99ac604a3a28",
+        "file": "onnx/encoder_model_quantized.onnx",
+        "bytes": 419120483
+      },
+      {
+        "hash": null,
+        "file": "quantize_config.json",
+        "bytes": 3258
+      },
+      {
+        "hash": "14bb8dfb35c0ffdea7bc01e56cea38b9e3d5efcdcb9c251d6b40538e1aab555a",
+        "file": "sentencepiece.bpe.model",
+        "bytes": 4852054
+      },
+      {
+        "hash": "8ac789ad7dabea44d41537822d48c516ba358374c51813e2cba78c006e150c94",
+        "file": "tokenizer.json",
+        "bytes": 17331224
+      },
+      {
+        "hash": null,
+        "file": "tokenizer_config.json",
+        "bytes": 544
+      }
+    ],
+    "repo": "Xenova/nllb-200-distilled-600M",
+    "license": "cc-by-nc-4.0",
+    "sha": "261c31d1a5732c67cdd16d80e8d6088507c7ccea"
+  },
+  {
+    "files": [
+      {
+        "hash": null,
+        "file": "config.json",
+        "bytes": 908
+      },
+      {
+        "hash": null,
+        "file": "generation_config.json",
+        "bytes": 233
+      },
+      {
+        "hash": "007654bcabb6cea6fd3bde34ce933137b431330b3755781145d7b6906270b45a",
+        "file": "onnx/decoder_model_merged_quantized.onnx",
+        "bytes": 344128178
+      },
+      {
+        "hash": "6015e31c8976659aedb06058c4dadf0f400d087a3f9830f838e68f220d79bcb6",
+        "file": "onnx/decoder_model_quantized.onnx",
+        "bytes": 339181945
+      },
+      {
+        "hash": "780982a10d1a966978d74c210558a1d733959625c718ca7f72ddfd4ba56a23a5",
+        "file": "onnx/decoder_with_past_model_quantized.onnx",
+        "bytes": 313662487
+      },
+      {
+        "hash": "13a94e354a9140764eb81102d77d3ec6952d796e6f113c651eeb3c3443da0386",
+        "file": "onnx/encoder_model_quantized.onnx",
+        "bytes": 287856370
+      },
+      {
+        "hash": null,
+        "file": "quantize_config.json",
+        "bytes": 3370
+      },
+      {
+        "hash": "d8f7c76ed2a5e0822be39f0a4f95a55eb19c78f4593ce609e2edbc2aea4d380a",
+        "file": "sentencepiece.bpe.model",
+        "bytes": 2423393
+      },
+      {
+        "hash": null,
+        "file": "tokenizer.json",
+        "bytes": 7988527
+      },
+      {
+        "hash": null,
+        "file": "tokenizer_config.json",
+        "bytes": 1813
+      }
+    ],
+    "repo": "Xenova/m2m100_418M",
+    "license": null,
+    "sha": "9c374f0b7aca709787cea97b047bfbbd1559d177"
+  },
+  {
+    "files": [
+      {
+        "hash": null,
+        "file": "config.json",
+        "bytes": 890
+      },
+      {
+        "hash": "681bc87ca4e49c3cda5a853d1d530805e2bf4b340657d87fd4925d6622f063a6",
+        "file": "pytorch_model.bin",
+        "bytes": 1331029275
+      },
+      {
+        "hash": "d8f7c76ed2a5e0822be39f0a4f95a55eb19c78f4593ce609e2edbc2aea4d380a",
+        "file": "sentencepiece.bpe.model",
+        "bytes": 2423393
+      },
+      {
+        "hash": null,
+        "file": "tokenizer_config.json",
+        "bytes": 1867
+      }
+    ],
+    "repo": "alirezamsh/small100",
+    "license": "mit",
+    "sha": "8ab680e26a596d2e3d2d2d17ae0f68df1037328c"
+  }
+]
