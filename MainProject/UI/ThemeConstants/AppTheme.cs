@@ -62,6 +62,8 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
 
         /// <summary> Subdued text — captions, helper lines under inputs, secondary chip labels, "X minutes ago" timestamps. </summary>
         public required Color TextSecondary { get; init; }
+        /// <summary>Marks an intentionally offline translation policy.</summary>
+        public Color OfflineStatus {get;init;}=Color.FromArgb("#8b9198");
 
         /// <summary> Lowest-emphasis text — placeholders inside empty inputs, disabled labels, ghost copy that should barely register. </summary>
         public required Color TextMuted { get; init; }

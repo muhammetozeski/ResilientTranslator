@@ -3,6 +3,11 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
     /// <summary>Defines shared dimensions, typography and timing values consumed by Razor styles.</summary>
     public static class AppMeasures
     {
+        public static class Tooltip
+        {
+            public const int TextWidth=340, TableWidth=580, MaximumHeight=420, ViewportInset=24, ColumnWidth=130;
+        }
+
         /// <summary> Corner radii in CSS px (Circular/Pill are special — see their notes). </summary>
         public static class Radius
         {

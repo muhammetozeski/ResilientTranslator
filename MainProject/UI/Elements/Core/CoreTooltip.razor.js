@@ -1,45 +1,52 @@
 const bindings = new WeakMap();
-let installed = false;
-let globalPanel;
-let globalAnchor;
-function show(panel, anchor) {
-    if (!panel || !anchor || !anchor.isConnected) return;
-    if (!panel.matches(':popover-open')) panel.showPopover();
-    const rect = anchor.getBoundingClientRect();
-    const gap = 8;
-    const width = panel.getBoundingClientRect().width;
-    const height = panel.getBoundingClientRect().height;
-    const left = Math.min(Math.max(gap, rect.left), Math.max(gap, innerWidth - width - gap));
-    const below = rect.bottom + gap;
-    const top = below + height <= innerHeight - gap ? below : Math.max(gap, rect.top - height - gap);
-    panel.style.left = `${left}px`;
-    panel.style.top = `${top}px`;
+let installed = false, globalPanel, globalAnchor, activePanel, openTimer, closeTimer;
+const OPEN_DELAY = 350, CLOSE_DELAY = 120, GAP = 10;
+function clearTimers() { clearTimeout(openTimer); clearTimeout(closeTimer); }
+function hide(panel = activePanel) {
+    if (panel?.matches(':popover-open')) panel.hidePopover();
+    if (activePanel === panel) activePanel = null;
 }
-function hide(panel) { if (panel?.matches(':popover-open')) panel.hidePopover(); }
+function dismiss() { clearTimers(); hide(); globalAnchor = null; }
+function show(panel, anchor) {
+    if (!anchor?.isConnected) return;
+    if (activePanel !== panel) hide();
+    panel.style.left = '0px'; panel.style.top = '0px';
+    if (!panel.matches(':popover-open')) panel.showPopover();
+    activePanel = panel;
+    const rect = anchor.getBoundingClientRect(), bounds = panel.getBoundingClientRect();
+    const left = Math.max(GAP, Math.min(rect.left + (rect.width - bounds.width) / 2, innerWidth - bounds.width - GAP));
+    const below = rect.bottom + GAP, above = rect.top - bounds.height - GAP;
+    panel.style.left = `${left}px`;
+    panel.style.top = `${below + bounds.height <= innerHeight - GAP ? below : Math.max(GAP, above)}px`;
+}
+function schedule(panel, anchor, immediate = false) {
+    clearTimers();
+    if (activePanel === panel && panel.matches(':popover-open')) return;
+    hide();
+    openTimer = setTimeout(() => show(panel, anchor), immediate ? 0 : OPEN_DELAY);
+}
+function leave(panel, anchor, related) {
+    if (related instanceof Node && (anchor.contains(related) || panel.contains(related))) return;
+    clearTimeout(openTimer); clearTimeout(closeTimer);
+    closeTimer = setTimeout(() => hide(panel), CLOSE_DELAY);
+}
 export function attach(anchor, panel) {
-    install();
-    detach(anchor);
-    const enter = () => { hide(globalPanel); show(panel, anchor); };
-    const leave = event => { if (!anchor.contains(event.relatedTarget) && !panel.contains(event.relatedTarget)) hide(panel); };
-    const escape = event => { if (event.key === 'Escape') hide(panel); };
+    install(); detach(anchor);
+    const enter = () => schedule(panel, anchor);
+    const focus = event => { if (event.target.matches(':focus-visible') && !event.target.matches('input,textarea,select')) schedule(panel, anchor); };
+    const exit = event => leave(panel, anchor, event.relatedTarget);
+    const retain = () => clearTimeout(closeTimer);
     const focusTarget = anchor.querySelector('button,input,select,textarea,a,[tabindex]') ?? anchor;
     const descriptions = new Set((focusTarget.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean));
-    descriptions.add(panel.id);
-    focusTarget.setAttribute('aria-describedby', [...descriptions].join(' '));
-    anchor.addEventListener('pointerenter', enter);
-    anchor.addEventListener('focusin', enter);
-    anchor.addEventListener('pointerleave', leave);
-    anchor.addEventListener('focusout', leave);
-    anchor.addEventListener('keydown', escape);
-    panel.addEventListener('pointerleave', leave);
+    descriptions.add(panel.id); focusTarget.setAttribute('aria-describedby', [...descriptions].join(' '));
+    anchor.addEventListener('pointerenter', enter); anchor.addEventListener('focusin', focus);
+    anchor.addEventListener('pointerleave', exit); anchor.addEventListener('focusout', exit);
+    panel.addEventListener('pointerenter', retain); panel.addEventListener('pointerleave', exit);
     bindings.set(anchor, () => {
-        hide(panel);
-        anchor.removeEventListener('pointerenter', enter);
-        anchor.removeEventListener('focusin', enter);
-        anchor.removeEventListener('pointerleave', leave);
-        anchor.removeEventListener('focusout', leave);
-        anchor.removeEventListener('keydown', escape);
-        panel.removeEventListener('pointerleave', leave);
+        clearTimers(); hide(panel);
+        anchor.removeEventListener('pointerenter', enter); anchor.removeEventListener('focusin', focus);
+        anchor.removeEventListener('pointerleave', exit); anchor.removeEventListener('focusout', exit);
+        panel.removeEventListener('pointerenter', retain); panel.removeEventListener('pointerleave', exit);
         const remaining = (focusTarget.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(id => id && id !== panel.id);
         if (remaining.length) focusTarget.setAttribute('aria-describedby', remaining.join(' ')); else focusTarget.removeAttribute('aria-describedby');
     });
@@ -48,40 +55,28 @@ export function detach(anchor) { bindings.get(anchor)?.(); bindings.delete(ancho
 export function install() {
     if (installed) return;
     installed = true;
-    globalPanel = document.createElement('div');
-    globalPanel.className = 'core-tooltip-panel core-tooltip-global';
-    globalPanel.setAttribute('popover', 'manual');
-    globalPanel.setAttribute('role', 'tooltip');
-    document.body.appendChild(globalPanel);
+    globalPanel = document.createElement('div'); globalPanel.className = 'core-tooltip-panel core-tooltip-global';
+    globalPanel.setAttribute('popover', 'manual'); globalPanel.setAttribute('role', 'tooltip'); document.body.appendChild(globalPanel);
     const find = target => target instanceof Element ? target.closest('[data-tooltip],[title],[aria-label],button,input,select,textarea,summary') : null;
     const open = event => {
         const anchor = find(event.target);
-        if (!anchor || anchor.closest('[data-rich-tooltip]')) return;
+        if (!anchor || anchor.closest('[data-rich-tooltip]') || globalPanel.contains(anchor)) return;
+        if (anchor.matches('input,textarea,select') && document.activeElement === anchor) return;
         const original = anchor.getAttribute('title');
         if (original) { anchor.dataset.tooltip = original; anchor.removeAttribute('title'); }
         const label = anchor.closest('label');
-        const text = anchor.dataset.tooltip || anchor.getAttribute('aria-label') || label?.querySelector(':scope > span')?.textContent?.trim();
-        if (!text) return;
-        globalAnchor = anchor;
-        globalPanel.textContent = text;
-        show(globalPanel, anchor);
+        const text = anchor.dataset.tooltip || label?.dataset.tooltip || anchor.getAttribute('aria-label') || label?.querySelector(':scope > span')?.textContent?.trim();
+        if (!text || (anchor === globalAnchor && (openTimer || activePanel === globalPanel))) return;
+        globalAnchor = anchor; globalPanel.textContent = text; schedule(globalPanel, anchor);
     };
     document.addEventListener('pointerover', open);
-    document.addEventListener('focusin', open);
-    document.addEventListener('pointerout', event => {
-        if (globalAnchor && !globalAnchor.contains(event.relatedTarget) && !globalPanel.contains(event.relatedTarget)) hide(globalPanel);
-    });
-    document.addEventListener('focusout', event => {
-        if (globalAnchor && !globalAnchor.contains(event.relatedTarget)) hide(globalPanel);
-    });
-    document.addEventListener('keydown', event => { if (event.key === 'Escape') hide(globalPanel); });
-    const hideAll = event => {
-        for (const panel of document.querySelectorAll('.core-tooltip-panel:popover-open')) {
-            if (!event?.target || !panel.contains(event.target)) hide(panel);
-        }
-    };
-    document.addEventListener('scroll', hideAll, true);
-    window.addEventListener('resize', hideAll);
-    window.addEventListener('blur', hideAll);
-    globalPanel.addEventListener('pointerleave', () => hide(globalPanel));
+    document.addEventListener('pointerout', event => { if (globalAnchor) { leave(globalPanel, globalAnchor, event.relatedTarget); if (!(event.relatedTarget instanceof Node) || !globalAnchor.contains(event.relatedTarget)) globalAnchor = null; } });
+    document.addEventListener('focusin', event => { if (event.target.matches?.(':focus-visible') && !event.target.matches('input,textarea,select')) open(event); });
+    globalPanel.addEventListener('pointerenter', () => clearTimeout(closeTimer));
+    globalPanel.addEventListener('pointerleave', () => { closeTimer = setTimeout(() => hide(globalPanel), CLOSE_DELAY); });
+    document.addEventListener('pointerdown', dismiss, true);
+    document.addEventListener('keydown', dismiss, true);
+    document.addEventListener('input', dismiss, true);
+    document.addEventListener('scroll', dismiss, true);
+    window.addEventListener('resize', dismiss); window.addEventListener('blur', dismiss);
 }

@@ -4,4 +4,5 @@ namespace ResilientTranslator.MainProject.Infrastructure;
 /// <param name="SourceLanguage">The source ISO language code captured with this text.</param>
 /// <param name="TargetLanguage">The destination ISO language code captured with this text.</param>
 /// <param name="ForceNetwork">Skips confirmed-result reuse for this explicit user translation command.</param>
-internal sealed record TranslationInput(string Text,string SourceLanguage,string TargetLanguage,bool ForceNetwork=false);
+internal sealed record TranslationInput(string Text,string SourceLanguage,string TargetLanguage,bool ForceNetwork=false,
+    AutoRoutingOptions? Routing=null,Detection.DetectorKind Detector=Detection.DetectorKind.Lingua);

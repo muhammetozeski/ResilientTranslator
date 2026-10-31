@@ -10,7 +10,7 @@ The Language setting controls the application UI and defaults to system. It is i
 
 Seven complete XML files in the repository-root languages directory are embedded in MainProject: tr, en, de, fr, es, it and ru. The main package also contains their plain copies in AppData/languages. The settings picker discovers UserData language files on a worker whenever it opens, applies UI languages through a serialized language gate, updates tray labels and saves the successful selection. A complete lang.<culture-code>.xml with a valid .NET culture code can add another UI language. Custom files are retained and validated before applying; shipped-resource refresh only manages the seven shipped cultures. Earlier tests switched all seven UI languages and verified that translation selections were unchanged.
 
-LocManager installs shipped resources into portable UserData. A different executable version or missing string key refreshes the resource, preserving the previous user file as .previous. Checking keys also handles a newer local build with the same version. All seven files are checked before normal startup and share the same 61 nonempty string keys, including technical-setting labels.
+LocManager installs shipped resources into portable UserData. A different executable version or missing string key refreshes the resource, preserving the previous user file as .previous. Checking keys also handles a newer local build with the same version. All seven files are checked before normal startup and share the same complete nonempty string keys, including technical-setting labels.
 
 ## Status, manual translation and styles
 
@@ -25,3 +25,13 @@ UI styles use explicitly rendered Css.razor companions backed by AppColors, AppM
 InputShare stores the left pane percentage, with 50 as the initial value. The grid uses two fractional tracks separated by an eight-pixel handle, so resizing the native window preserves the ratio. Pointer moves update CSS locally; only gesture completion persists the share. Keyboard arrow keys adjust one point and Home centers it. Settings provides a reset to 50 percent.
 
 CenterSnapRange is an integer setting with default 6. The mouse path uses half its value on either side of 50: 47 through 53 maps to 50, and leaving that interval releases the snap. Controlled checks covered both boundaries, configurable range, persisted fractional values and reset. A browser layout check retained exactly 38 percent at widths of 1,000 and 600 pixels.
+
+## Two-way automatic selection and recovery profiles
+
+TranslationLanguageRules is the single ordered policy for startup normalization, selecting the other pane's language, disabled two-way-auto switching, automatic destination fallback and reverse edits using the last detected source. The existing behavior remains the default. Enabling two-way automatic selection permits both selectors to remain Automatic; the actual request direction resolves without changing those selectors.
+
+Simple mode chooses the opposite language in the configured pair. Advanced mode evaluates ordered OR conditions and chooses the first matching target; unmatched inputs use the simple pair. The visual editor adds, removes and reorders these conditions. Unknown source detection stays provider-auto rather than fabricating a source language.
+
+Recovery profiles configure only online burst budgets and retry pauses; every engine still starts immediately. Responsive, Balanced and Quality presets can be adjusted and saved under user-provided names. Invalid custom profile data remains recoverable, does not break the settings menu and is backed up before an explicit edit replaces it. Profile save failures remain visible. There is no total retry-count limit while a request is current.
+
+The status light is a button with its prior visual footprint. Gray disables online translation; green indicates online participation, amber indicates pending work/retry and red indicates failure. Rich HTML tooltips cover controls and include a per-detector comparison table. The reusable CoreTooltip also exists in the source template; it uses paired Css.razor styles and a collocated JavaScript module.

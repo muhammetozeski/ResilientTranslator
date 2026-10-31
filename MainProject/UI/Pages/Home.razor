@@ -7,6 +7,7 @@
 @inherits ResilientTranslator.MainProject.UI.Layout.Architecture.PageBase
 <PageTitle>@AppConstants.AppNameHumanReadable</PageTitle>
 <HomeCss />
+@inject Microsoft.JSInterop.IJSRuntime JavaScript
 <StatusTickerCss />
 <section class="translator" data-window-background>
     <header class="toolbar" data-window-background inert="@(SettingsOpen ? string.Empty : null)">
@@ -14,24 +15,27 @@
         <Stack Direction="Stack.Directions.Row" Space="AppMeasures.Size.Px5" Align="Stack.Aligns.Center" Justify="Stack.Justifies.Start" Wrap="false" ItemPaddingTop="0" ItemPaddingRight="0" ItemPaddingBottom="0" ItemPaddingLeft="0" CustomClass="swap-actions"><IconButton Appearance="ControlAppearance.Compact" CustomClass="icon-button" title="@Strings.SwapLanguages" aria-label="@Strings.SwapLanguages" OnClick="TranslationWorkspace.SwapLanguagesAsync" Size="AppMeasures.Size.Px32"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15L7 5L11 15M4.5 12H9.5M16 7H25M20.5 4V7M18 8C19 11 21 13 25 15M24 8C23 11 21 13 17 15M4 21H23M20 18L23 21L20 24M7 18L4 21L7 24"/></g></svg></IconButton>
 <IconButton Appearance="ControlAppearance.Compact" CustomClass="icon-button" title="@Strings.SwapTexts" aria-label="@Strings.SwapTexts" OnClick="TranslationWorkspace.SwapTexts" Size="AppMeasures.Size.Px32"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4H11M3 8H9M3 12H10M17 4H25M17 8H23M17 12H24M4 21H23M20 18L23 21L20 24M7 18L4 21L7 24"/></g></svg></IconButton></Stack>
         <div class="language-pair" data-window-background>
-            <select aria-label="@Strings.SourceLanguage" value="@TranslationWorkspace.SourceLanguage" @onchange="SourceChanged">@LanguageOptions()</select>
+            <select data-tooltip="@FeatureText.Get("SourceTooltip")" aria-label="@Strings.SourceLanguage" value="@TranslationWorkspace.SourceLanguage" @onchange="SourceChanged">@LanguageOptions()</select>
             <CoreButton Appearance="ControlAppearance.Bare" CustomClass="send" title="@Strings.TranslateNow" aria-label="@Strings.TranslateNow" data-native-command="translate" OnClick="TranslateNow">→</CoreButton>
-            <select aria-label="@Strings.TargetLanguage" value="@TranslationWorkspace.TargetLanguage" @onchange="TargetChanged">@LanguageOptions()</select>
+            <select data-tooltip="@FeatureText.Get("TargetTooltip")" aria-label="@Strings.TargetLanguage" value="@TranslationWorkspace.TargetLanguage" @onchange="TargetChanged">@LanguageOptions()</select>
         </div>
-        <StatusTicker Text="@TranslationWorkspace.Status" State="@(TranslationWorkspace.HasError ? "error" : TranslationWorkspace.IsBusy ? "busy" : "ready")" Speed="@Preferences.StatusSpeed" />
+        <StatusTicker Text="@TranslationWorkspace.Status" State="@LightState" OnToggle="TranslationWorkspace.ToggleOnlineAsync" LightTooltip="@ModeTooltip" Speed="@Preferences.StatusSpeed" />
         <CoreButton Appearance="ControlAppearance.Bare" CustomClass="hide" title="@Strings.Hide" aria-label="@Strings.Hide" data-native-command="hide" OnClick="Hide">−</CoreButton>
     </header>
     <div class="editors" data-window-background inert="@(SettingsOpen ? string.Empty : null)" style="@AppStyles.BuildEditorTypography(Preferences.EditorFontFamily,Preferences.EditorFontSize)">
-        <CoreInput Multiline="true" IsGrouped="false" @ref="InputElement" id="input" aria-label="@Strings.InputLabel" spellcheck="false" Value="@TranslationWorkspace.Input" OnInput="InputChanged" />
+        <CoreInput Multiline="true" IsGrouped="false" @ref="InputElement" id="input" data-tooltip="@FeatureText.Get("InputTooltip")" aria-label="@Strings.InputLabel" spellcheck="false" Value="@TranslationWorkspace.Input" OnInput="InputChanged" />
         <EditorSplitter />
-        <CoreInput Multiline="true" IsGrouped="false" id="output" aria-label="@Strings.OutputLabel" spellcheck="false" Value="@TranslationWorkspace.Output" OnInput="OutputChanged" />
+        <CoreInput Multiline="true" IsGrouped="false" id="output" data-tooltip="@FeatureText.Get("OutputTooltip")" aria-label="@Strings.OutputLabel" spellcheck="false" Value="@TranslationWorkspace.Output" OnInput="OutputChanged" />
     </div>
-    <div class="resize-grip" data-window-resize aria-hidden="true"></div>
+    <div class="resize-grip" data-tooltip="@FeatureText.Get("ResizeTooltip")" data-window-resize aria-hidden="true"></div>
     @if (SettingsOpen) { <SettingsPanel OnClose="CloseSettings" /> }
 </section>
 @code {
     CoreInput? InputElement;
     bool SettingsOpen;
+    readonly CancellationTokenSource Warmup=new();
+    string LightState=>!Settings.OnlineEnabled.Value ? "offline" : TranslationWorkspace.HasError?"error":TranslationWorkspace.IsBusy?"busy":"ready";
+    string ModeTooltip=>FeatureText.Get(LightState=="offline"?"OfflineTooltip":"OnlineTooltip");
 
     /// <summary>Connects the retained screen to editor state, preferences and native opening focus.</summary>
     protected override void OnInitialized()
@@ -52,7 +56,16 @@
     });
     /// <summary>Signals native readiness only after the first complete Blazor render.</summary>
     /// <param name="firstRender">Whether this is the first completed render of this component instance.</param>
-    protected override void OnAfterRender(bool firstRender) { if (firstRender) TranslationWorkspace.ViewReady?.Invoke(); }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(!firstRender)return;
+        TranslationWorkspace.ViewReady?.Invoke();
+        await ExceptionBoundary.RunSafelyAsync(async token=>
+        {
+            await TranslationRuntime.InitializeAsync(JavaScript);
+            _=ExceptionBoundary.RunSafelyAsync(ct=>TranslationRuntime.WarmAsync(ct),Warmup.Token,operationName:"WarmLocalEngines");
+        },operationName:"InitializeLocalEngines");
+    }
     /// <summary>Renders shared-state notifications on the owning dispatcher.</summary>
     void Refresh() => _ = ExceptionBoundary.RunSafelyAsync(async token => await InvokeAsync(StateHasChanged).WaitAsync(token),operationName:"RefreshHome");
     /// <summary>Opens the preferences dialog from the product icon or title.</summary>
@@ -88,6 +101,7 @@
     /// <summary>Releases retained screen subscriptions when its component is disposed.</summary>
     public override void Dispose()
     {
+        Warmup.Cancel();Warmup.Dispose();
         TranslationWorkspace.Changed -= Refresh;
         Preferences.Changed -= Refresh;
         TranslationWorkspace.WindowHidden -= DismissSettings;

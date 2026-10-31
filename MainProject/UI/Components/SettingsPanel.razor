@@ -73,16 +73,16 @@
     double Speed = Preferences.StatusSpeed;
     static readonly HashSet<ISetting> RecoverySettings = [Settings.AttemptTimeout,
         Settings.ConcurrentRetries, Settings.ConcurrentBudget, Settings.SequentialRetries, Settings.SequentialBudget,
-        Settings.OnlineTotalBudget, Settings.OnlineRecoveryRounds, Settings.OnlineRetryPause];
+        Settings.OnlineTotalBudget, Settings.OnlineRetryPause];
     static readonly HashSet<ISetting> BehaviorSettings = [.. RecoverySettings, Settings.OnlineEnabled,
         Settings.DetectorChoice, Settings.TwoWayAutomatic, Settings.AutoLanguageMode, Settings.AutoFirstLanguage,
         Settings.AutoSecondLanguage, Settings.AutoLanguageRules, Settings.UseBergamot, Settings.UseToz,
-        Settings.BergamotWorkers, Settings.TozWorkers, Settings.TozThreads, Settings.BergamotBeam, Settings.TozBeam,
+        Settings.BergamotWorkers, Settings.BergamotCachedDirections, Settings.TozWorkers, Settings.TozThreads, Settings.BergamotBeam, Settings.TozBeam,
         Settings.ModelLoadTimeout, Settings.LocalTranslationTimeout, Settings.LocalRetries, Settings.LocalRetryDelay,
         Settings.DetectorModelLoadTimeout, Settings.DetectorTimeout, Settings.DetectorMaximumCharacters,
         Settings.ConcurrentRetryDelay, Settings.SequentialRetryDelay, Settings.ChunkByteLimit, Settings.TypingDelay,
-        Settings.DetectorLoadBudget, Settings.DetectorGateBudget, Settings.MaximumCacheEntries, Settings.MaximumCachedCharacters];
-    DetectorKind SelectedDetector => Enum.TryParse<DetectorKind>(Settings.DetectorChoice.Value, out var selected) ? selected : DetectorKind.Lingua;
+        Settings.DetectorGateBudget, Settings.MaximumCacheEntries, Settings.MaximumCachedCharacters];
+    DetectorKind SelectedDetector => DetectorRegistry.ResolveChoice(Settings.DetectorChoice.Value);
     bool CanDeleteProfile => TranslationProfiles.All.Any(profile => profile.Id == Settings.ActiveRecoveryProfile.Value)
         && !TranslationProfiles.BuiltIn.Any(profile => profile.Id == Settings.ActiveRecoveryProfile.Value);
 
@@ -196,7 +196,7 @@
             await TranslationProfiles.ApplyAsync(args.Value?.ToString() ?? "").WaitAsync(token);
             await ReconfigureAsync(request, token);
         }, operationName: "ApplyTranslationProfile");
-        if (owner == SettingsAction && !Disposed) Error = result.Succeeded ? Preferences.SaveError : Strings.InvalidSetting;
+        if (owner == SettingsAction && !Disposed) Error = Preferences.SaveError.Length>0 ? Preferences.SaveError : result.Succeeded ? "" : Strings.InvalidSetting;
     }
 
     /// <summary>Saves current recovery values as a named profile without interrupting translation.</summary>
@@ -205,7 +205,7 @@
     {
         object owner = SettingsAction = new();
         var result = await ExceptionBoundary.RunSafelyAsync(token => TranslationProfiles.AddAsync(ProfileName).WaitAsync(token), operationName: "SaveTranslationProfile");
-        if (owner == SettingsAction && !Disposed) { Error = result.Succeeded ? Preferences.SaveError : Strings.InvalidSetting; if (result.Succeeded && Preferences.SaveError.Length == 0) ProfileName = ""; }
+        if (owner == SettingsAction && !Disposed) { Error = Preferences.SaveError.Length>0 ? Preferences.SaveError : result.Succeeded ? "" : Strings.InvalidSetting; if (result.Succeeded && Preferences.SaveError.Length == 0) ProfileName = ""; }
     }
 
     /// <summary>Deletes only a user-created preset without changing current recovery values.</summary>
@@ -215,7 +215,7 @@
         if (!CanDeleteProfile) return;
         object owner = SettingsAction = new();
         var result = await ExceptionBoundary.RunSafelyAsync(token => TranslationProfiles.DeleteAsync(Settings.ActiveRecoveryProfile.Value).WaitAsync(token), operationName: "DeleteTranslationProfile");
-        if (owner == SettingsAction && !Disposed) Error = result.Succeeded ? Preferences.SaveError : Strings.InvalidSetting;
+        if (owner == SettingsAction && !Disposed) Error = Preferences.SaveError.Length>0 ? Preferences.SaveError : result.Succeeded ? "" : Strings.InvalidSetting;
     }
 
     /// <summary>Updates the real ticker component locally while the user moves the speed slider.</summary>

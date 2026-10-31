@@ -4,7 +4,7 @@
 @inject IJSRuntime JavaScript
 @implements IAsyncDisposable
 <EditorSplitterCss />
-<div class="editor-splitter" @ref="Element" role="separator" aria-orientation="vertical" aria-label="@Strings.EditorSplit" aria-valuemin="10" aria-valuemax="90" aria-valuenow="@Preferences.InputShare" tabindex="0"></div>
+<div class="editor-splitter" @ref="Element" role="separator" aria-orientation="vertical" aria-label="@Strings.EditorSplit" data-tooltip="@FeatureText.Get("SplitterTooltip")" aria-valuemin="10" aria-valuemax="90" aria-valuenow="@Preferences.InputShare" tabindex="0"></div>
 @code {
     ElementReference Element;
     IJSObjectReference? Module;

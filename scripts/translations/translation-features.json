@@ -1,61 +1,470 @@
 {
-  "OnlineEnabled": {"tr":"Çevrimiçi çeviri","en":"Online translation","de":"Online-Übersetzung","fr":"Traduction en ligne","es":"Traducción en línea","it":"Traduzione online","ru":"Онлайн-перевод"},
-  "TranslationStrategy": {"tr":"Çeviri modu","en":"Translation mode","de":"Übersetzungsmodus","fr":"Mode de traduction","es":"Modo de traducción","it":"Modalità di traduzione","ru":"Режим перевода"},
-  "TwoWayAutomatic": {"tr":"İki yönlü otomatik dil seçimi","en":"Two-way automatic language selection","de":"Automatische Sprachwahl in beide Richtungen","fr":"Choix automatique des langues dans les deux sens","es":"Selección automática de idiomas en ambos sentidos","it":"Scelta automatica delle lingue in entrambe le direzioni","ru":"Автоматический выбор языка в обоих направлениях"},
-  "AutoLanguageMode": {"tr":"Otomatik dil seçimi modu","en":"Automatic language selection mode","de":"Modus der automatischen Sprachwahl","fr":"Mode de choix automatique des langues","es":"Modo de selección automática de idiomas","it":"Modalità di scelta automatica delle lingue","ru":"Режим автоматического выбора языка"},
-  "FirstLanguage": {"tr":"Birinci dil","en":"First language","de":"Erste Sprache","fr":"Première langue","es":"Primer idioma","it":"Prima lingua","ru":"Первый язык"},
-  "SecondLanguage": {"tr":"İkinci dil","en":"Second language","de":"Zweite Sprache","fr":"Deuxième langue","es":"Segundo idioma","it":"Seconda lingua","ru":"Второй язык"},
-  "UseBergamot": {"tr":"Bergamot motorunu kullan","en":"Use Bergamot","de":"Bergamot verwenden","fr":"Utiliser Bergamot","es":"Usar Bergamot","it":"Usa Bergamot","ru":"Использовать Bergamot"},
-  "UseToz": {"tr":"Töz motorunu kullan","en":"Use Töz","de":"Töz verwenden","fr":"Utiliser Töz","es":"Usar Töz","it":"Usa Töz","ru":"Использовать Töz"},
-  "BergamotWorkers": {"tr":"Bergamot: paralel çalışan sayısı","en":"Bergamot: parallel workers","de":"Bergamot: parallele Worker","fr":"Bergamot : traitements parallèles","es":"Bergamot: procesos de trabajo paralelos","it":"Bergamot: elaborazioni parallele","ru":"Bergamot: параллельные обработчики"},
-  "TozWorkers": {"tr":"Töz: paralel çalışan sayısı","en":"Töz: parallel workers","de":"Töz: parallele Worker","fr":"Töz : traitements parallèles","es":"Töz: procesos de trabajo paralelos","it":"Töz: elaborazioni parallele","ru":"Töz: параллельные обработчики"},
-  "TozThreads": {"tr":"Töz: işlem başına iş parçacığı","en":"Töz: threads per operation","de":"Töz: Threads pro Vorgang","fr":"Töz : fils d’exécution par opération","es":"Töz: hilos por operación","it":"Töz: thread per operazione","ru":"Töz: потоки на операцию"},
-  "BergamotBeam": {"tr":"Bergamot: değerlendirilen çeviri adayı","en":"Bergamot: translation candidates considered","de":"Bergamot: berücksichtigte Übersetzungskandidaten","fr":"Bergamot : traductions candidates évaluées","es":"Bergamot: traducciones candidatas evaluadas","it":"Bergamot: traduzioni candidate valutate","ru":"Bergamot: число рассматриваемых вариантов перевода"},
-  "TozBeam": {"tr":"Töz: değerlendirilen çeviri adayı","en":"Töz: translation candidates considered","de":"Töz: berücksichtigte Übersetzungskandidaten","fr":"Töz : traductions candidates évaluées","es":"Töz: traducciones candidatas evaluadas","it":"Töz: traduzioni candidate valutate","ru":"Töz: число рассматриваемых вариантов перевода"},
-  "ModelLoadTimeout": {"tr":"Model yükleme süre sınırı (ms)","en":"Model loading time limit (ms)","de":"Zeitlimit zum Laden des Modells (ms)","fr":"Durée limite de chargement du modèle (ms)","es":"Tiempo máximo de carga del modelo (ms)","it":"Tempo massimo di caricamento del modello (ms)","ru":"Предельное время загрузки модели (мс)"},
-  "LocalTranslationTimeout": {"tr":"Yerel çeviri süre sınırı (ms)","en":"Local translation time limit (ms)","de":"Zeitlimit für lokale Übersetzungen (ms)","fr":"Durée limite de traduction locale (ms)","es":"Tiempo máximo de traducción local (ms)","it":"Tempo massimo di traduzione locale (ms)","ru":"Предельное время локального перевода (мс)"},
-  "LocalRetries": {"tr":"Yerel çeviri ek deneme sayısı","en":"Additional local translation attempts","de":"Zusätzliche lokale Übersetzungsversuche","fr":"Tentatives supplémentaires de traduction locale","es":"Intentos adicionales de traducción local","it":"Tentativi aggiuntivi di traduzione locale","ru":"Дополнительные попытки локального перевода"},
-  "LocalRetryDelay": {"tr":"Yerel ek denemeler arası bekleme (ms)","en":"Delay between local retries (ms)","de":"Wartezeit zwischen lokalen Wiederholungen (ms)","fr":"Attente entre les nouvelles tentatives locales (ms)","es":"Espera entre reintentos locales (ms)","it":"Attesa tra i tentativi locali (ms)","ru":"Пауза между локальными попытками (мс)"},
-  "OfflineStartDelay": {"tr":"Yerel çeviriyi başlatma gecikmesi (ms)","en":"Delay before starting local translation (ms)","de":"Verzögerung vor lokaler Übersetzung (ms)","fr":"Délai avant la traduction locale (ms)","es":"Espera antes de iniciar la traducción local (ms)","it":"Attesa prima di avviare la traduzione locale (ms)","ru":"Задержка перед запуском локального перевода (мс)"},
-  "OnlineTotalBudget": {"tr":"Çevrimiçi denemelerin toplam süre sınırı (s)","en":"Total online attempt time limit (s)","de":"Gesamtzeitlimit für Online-Versuche (s)","fr":"Durée totale limite des tentatives en ligne (s)","es":"Tiempo máximo total de los intentos en línea (s)","it":"Tempo massimo totale dei tentativi online (s)","ru":"Общее предельное время онлайн-попыток (с)"},
-  "OnlineRecoveryRounds": {"tr":"Çevrimiçi kurtarma turu sayısı","en":"Online recovery rounds","de":"Online-Wiederherstellungsrunden","fr":"Cycles de récupération en ligne","es":"Rondas de recuperación en línea","it":"Cicli di recupero online","ru":"Число циклов восстановления онлайн-перевода"},
-  "OnlineRetryPause": {"tr":"Çevrimiçi turlar arası bekleme (ms)","en":"Delay between online rounds (ms)","de":"Wartezeit zwischen Online-Runden (ms)","fr":"Attente entre les cycles en ligne (ms)","es":"Espera entre rondas en línea (ms)","it":"Attesa tra i cicli online (ms)","ru":"Пауза между онлайн-циклами (мс)"},
-  "RecoveryProfile": {"tr":"Bekleme ve kurtarma profili","en":"Waiting and recovery profile","de":"Warte- und Wiederherstellungsprofil","fr":"Profil d’attente et de récupération","es":"Perfil de espera y recuperación","it":"Profilo di attesa e recupero","ru":"Профиль ожидания и восстановления"},
-  "ProfileResponsive": {"tr":"Çabuk sonuç","en":"Quick result","de":"Schnelles Ergebnis","fr":"Résultat rapide","es":"Resultado rápido","it":"Risultato rapido","ru":"Быстрый результат"},
-  "ProfileBalanced": {"tr":"Dengeli","en":"Balanced","de":"Ausgewogen","fr":"Équilibré","es":"Equilibrado","it":"Bilanciato","ru":"Сбалансированный"},
-  "ProfileQuality": {"tr":"Kalite öncelikli","en":"Quality first","de":"Qualität zuerst","fr":"Priorité à la qualité","es":"Prioridad a la calidad","it":"Priorità alla qualità","ru":"Приоритет качества"},
-  "ProfileCustom": {"tr":"Özel ayarlar","en":"Custom settings","de":"Benutzerdefinierte Einstellungen","fr":"Réglages personnalisés","es":"Ajustes personalizados","it":"Impostazioni personalizzate","ru":"Свои настройки"},
-  "SaveProfile": {"tr":"Profil olarak kaydet","en":"Save as profile","de":"Als Profil speichern","fr":"Enregistrer comme profil","es":"Guardar como perfil","it":"Salva come profilo","ru":"Сохранить как профиль"},
-  "DeleteProfile": {"tr":"Profili sil","en":"Delete profile","de":"Profil löschen","fr":"Supprimer le profil","es":"Eliminar perfil","it":"Elimina profilo","ru":"Удалить профиль"},
-  "ProfileName": {"tr":"Profil adı","en":"Profile name","de":"Profilname","fr":"Nom du profil","es":"Nombre del perfil","it":"Nome del profilo","ru":"Название профиля"},
-  "AutomaticMode": {"tr":"Otomatik","en":"Automatic","de":"Automatisch","fr":"Automatique","es":"Automático","it":"Automatico","ru":"Автоматически"},
-  "OfflineMode": {"tr":"Çevrimdışı","en":"Offline","de":"Offline","fr":"Hors ligne","es":"Sin conexión","it":"Offline","ru":"Офлайн"},
-  "FastestMode": {"tr":"En hızlı sonuç, ardından daha iyi çeviri","en":"Fastest result, then better translation","de":"Schnellstes Ergebnis, danach bessere Übersetzung","fr":"Résultat le plus rapide, puis meilleure traduction","es":"El resultado más rápido y después una mejor traducción","it":"Prima il risultato più rapido, poi la traduzione migliore","ru":"Сначала быстрый результат, затем лучший перевод"},
-  "SimpleMode": {"tr":"Basit","en":"Simple","de":"Einfach","fr":"Simple","es":"Simple","it":"Semplice","ru":"Простой"},
-  "AdvancedMode": {"tr":"Gelişmiş","en":"Advanced","de":"Erweitert","fr":"Avancé","es":"Avanzado","it":"Avanzato","ru":"Расширенный"},
-  "EngineStarted": {"tr":"{0} çeviriye başladı.","en":"{0} started translating.","de":"{0} hat mit der Übersetzung begonnen.","fr":"{0} a commencé la traduction.","es":"{0} ha empezado a traducir.","it":"{0} ha iniziato la traduzione.","ru":"{0}: перевод начат."},
-  "EngineUnavailable": {"tr":"{0} motoru kullanılamıyor.","en":"{0} is unavailable.","de":"{0} ist nicht verfügbar.","fr":"{0} n’est pas disponible.","es":"{0} no está disponible.","it":"{0} non è disponibile.","ru":"{0} недоступен."},
-  "OnlineStarted": {"tr":"Çevrimiçi çeviri başladı.","en":"Online translation started.","de":"Die Online-Übersetzung wurde gestartet.","fr":"La traduction en ligne a commencé.","es":"Se ha iniciado la traducción en línea.","it":"La traduzione online è iniziata.","ru":"Онлайн-перевод начат."},
-  "OnlineRetrying": {"tr":"Çevrimiçi çeviri yeniden deneniyor.","en":"Retrying online translation.","de":"Die Online-Übersetzung wird erneut versucht.","fr":"Nouvelle tentative de traduction en ligne.","es":"Reintentando la traducción en línea.","it":"Nuovo tentativo di traduzione online.","ru":"Повторная попытка онлайн-перевода."},
-  "OfflineFallback": {"tr":"Yerel çeviri motorları kullanılıyor.","en":"Using local translation engines.","de":"Lokale Übersetzungsmodule werden verwendet.","fr":"Utilisation des moteurs de traduction locaux.","es":"Se están usando los motores de traducción locales.","it":"Uso dei motori di traduzione locali.","ru":"Используются локальные системы перевода."},
-  "ModeTooltip": {"tr":"Geçerli mod: {0}. Çevrimiçi çeviriyi açmak veya kapatmak için tıkla.","en":"Current mode: {0}. Click to enable or disable online translation.","de":"Aktueller Modus: {0}. Klicken, um Online-Übersetzung ein- oder auszuschalten.","fr":"Mode actuel : {0}. Cliquez pour activer ou désactiver la traduction en ligne.","es":"Modo actual: {0}. Haz clic para activar o desactivar la traducción en línea.","it":"Modalità attuale: {0}. Fai clic per attivare o disattivare la traduzione online.","ru":"Текущий режим: {0}. Нажмите, чтобы включить или отключить онлайн-перевод."},
-  "OfflineTooltip": {"tr":"Gri mod: yalnızca yerel çeviri motorları kullanılır. Çevrimiçi motor çağrılmaz ve internet kontrolü beklenmez. Çevrimiçi çeviriyi açmak için tıkla.","en":"Gray mode: only local translation engines are used. The online engine is not called and no internet check is awaited. Click to enable online translation.","de":"Grauer Modus: Es werden nur lokale Übersetzungsmodule verwendet. Das Online-Modul wird nicht aufgerufen und es wird nicht auf eine Internetprüfung gewartet. Klicken, um Online-Übersetzung zu aktivieren.","fr":"Mode gris : seuls les moteurs locaux sont utilisés. Le moteur en ligne n’est pas appelé et aucune vérification Internet n’est attendue. Cliquez pour activer la traduction en ligne.","es":"Modo gris: solo se usan motores locales. No se llama al motor en línea ni se espera una comprobación de Internet. Haz clic para activar la traducción en línea.","it":"Modalità grigia: si usano solo i motori locali. Il motore online non viene chiamato e non si attende una verifica di Internet. Fai clic per attivare la traduzione online.","ru":"Серый режим: используются только локальные системы. Онлайн-перевод не вызывается, проверка Интернета не ожидается. Нажмите, чтобы включить онлайн-перевод."},
-  "OnlineTooltip": {"tr":"Çevrimiçi çeviriye izin veriliyor. Kullanılacak motorlar seçili çeviri moduna göre belirlenir. Çevrimiçi çeviriyi kapatmak için tıkla.","en":"Online translation is allowed. The selected translation mode determines which engines are used. Click to disable online translation.","de":"Online-Übersetzung ist erlaubt. Der ausgewählte Übersetzungsmodus bestimmt die verwendeten Module. Klicken, um Online-Übersetzung zu deaktivieren.","fr":"La traduction en ligne est autorisée. Le mode choisi détermine les moteurs utilisés. Cliquez pour désactiver la traduction en ligne.","es":"La traducción en línea está permitida. El modo seleccionado determina qué motores se usan. Haz clic para desactivar la traducción en línea.","it":"La traduzione online è consentita. La modalità scelta determina quali motori usare. Fai clic per disattivare la traduzione online.","ru":"Онлайн-перевод разрешён. Используемые системы определяются выбранным режимом. Нажмите, чтобы отключить онлайн-перевод."},
-  "FastestTooltip": {"tr":"Etkin çeviri motorları birlikte başlar. İlk sonuç hemen gösterilir; Töz sonucu Bergamot’un, çevrimiçi sonuç da yerel sonuçların yerini alır.","en":"Enabled translation engines start together. The first result is shown immediately; Töz replaces Bergamot, and an online result replaces local results.","de":"Aktivierte Übersetzungsmodule starten gemeinsam. Das erste Ergebnis wird sofort angezeigt; Töz ersetzt Bergamot und ein Online-Ergebnis ersetzt lokale Ergebnisse.","fr":"Les moteurs activés démarrent ensemble. Le premier résultat s’affiche immédiatement ; Töz remplace Bergamot, puis un résultat en ligne remplace les résultats locaux.","es":"Los motores activados empiezan juntos. El primer resultado se muestra de inmediato; Töz sustituye a Bergamot y un resultado en línea sustituye a los locales.","it":"I motori attivi partono insieme. Il primo risultato viene mostrato subito; Töz sostituisce Bergamot e un risultato online sostituisce quelli locali.","ru":"Включённые системы запускаются вместе. Первый результат показывается сразу; Töz заменяет результат Bergamot, а онлайн-перевод заменяет локальные результаты."},
-  "AutoRoutingHelp": {"tr":"Açıldığında iki dil kutusu da Otomatik seçilebilir. Basit mod algılanan dile göre dil çiftinin diğerini seçer; gelişmiş modda ilk eşleşen kural kullanılır.","en":"When enabled, both language selectors can be Automatic. Simple mode chooses the other language of the pair; advanced mode uses the first matching rule.","de":"Wenn aktiviert, können beide Sprachfelder auf Automatisch stehen. Der einfache Modus wählt die andere Sprache des Paars; der erweiterte Modus verwendet die erste passende Regel.","fr":"Une fois activé, les deux sélecteurs peuvent être sur Automatique. Le mode simple choisit l’autre langue de la paire ; le mode avancé utilise la première règle correspondante.","es":"Al activarlo, ambos selectores pueden estar en Automático. El modo simple elige el otro idioma del par; el avanzado usa la primera regla que coincida.","it":"Se attivo, entrambi i selettori possono essere su Automatico. La modalità semplice sceglie l’altra lingua della coppia; quella avanzata usa la prima regola corrispondente.","ru":"При включении оба поля языка могут быть автоматическими. Простой режим выбирает другой язык пары; расширенный использует первое подходящее правило."},
-  "ProfileHelp": {"tr":"Hazır profil bekleme ve yeniden deneme ayarlarını birlikte uygular. Değerleri ayrıca değiştirebilir ve kendi profil adınla kaydedebilirsin.","en":"A preset applies waiting and retry settings together. You can also adjust individual values and save them under your own profile name.","de":"Ein vordefiniertes Profil wendet Warte- und Wiederholungseinstellungen gemeinsam an. Einzelne Werte lassen sich ändern und unter einem eigenen Profilnamen speichern.","fr":"Un profil prédéfini applique ensemble les réglages d’attente et de nouvelle tentative. Vous pouvez modifier chaque valeur et enregistrer votre propre profil.","es":"Un perfil aplica juntos los ajustes de espera y reintento. También puedes cambiar valores individuales y guardarlos con tu propio nombre de perfil.","it":"Un profilo predefinito applica insieme le impostazioni di attesa e dei tentativi. Puoi modificare i singoli valori e salvarli con un nome di profilo personale.","ru":"Готовый профиль применяет настройки ожидания и повторных попыток вместе. Отдельные значения можно изменить и сохранить под своим названием профиля."},
-  "SettingHelp": {"tr":"{0}. Varsayılan değer: {1}.","en":"{0}. Default value: {1}.","de":"{0}. Standardwert: {1}.","fr":"{0}. Valeur par défaut : {1}.","es":"{0}. Valor predeterminado: {1}.","it":"{0}. Valore predefinito: {1}.","ru":"{0}. Значение по умолчанию: {1}."},
-  "SourceTooltip": {"tr":"Sol metin kutusunun dili. Otomatik seçildiğinde metnin dili algılanır; iki yönlü otomatik seçim açıksa karşı dil de kurallara göre seçilir.","en":"The left text box’s language. Automatic detects the text’s language; when two-way automatic selection is enabled, routing rules choose the other language too.","de":"Die Sprache des linken Textfelds. Automatisch erkennt die Textsprache; bei automatischer Sprachwahl in beide Richtungen bestimmen Regeln auch die andere Sprache.","fr":"Langue du texte à gauche. Automatique détecte la langue du texte ; si le choix automatique dans les deux sens est activé, les règles choisissent aussi l’autre langue.","es":"Idioma del texto de la izquierda. Automático detecta el idioma; si está activada la selección automática en ambos sentidos, las reglas también eligen el otro idioma.","it":"Lingua del testo a sinistra. Automatico rileva la lingua; se la scelta automatica in entrambe le direzioni è attiva, le regole scelgono anche l’altra lingua.","ru":"Язык левого поля. Автоматический режим определяет язык текста; при включённом двустороннем выборе правила определяют и другой язык."},
-  "TargetTooltip": {"tr":"Sağ metin kutusunun dili. Bu kutudaki metni düzenlemek ters yönde çeviri başlatır. İki yönlü otomatik seçim açıksa iki kutu da Otomatik olabilir.","en":"The right text box’s language. Editing this text starts translation in the reverse direction. Both selectors can be Automatic when two-way automatic selection is enabled.","de":"Die Sprache des rechten Textfelds. Bearbeiten dieses Texts startet die Übersetzung in Gegenrichtung. Bei automatischer Sprachwahl in beide Richtungen können beide Felder Automatisch sein.","fr":"Langue du texte à droite. Modifier ce texte lance une traduction dans l’autre sens. Les deux sélecteurs peuvent être sur Automatique si le choix dans les deux sens est activé.","es":"Idioma del texto de la derecha. Editarlo inicia una traducción en sentido inverso. Ambos selectores pueden estar en Automático si está activada la selección en ambos sentidos.","it":"Lingua del testo a destra. Modificarlo avvia una traduzione nella direzione opposta. Entrambi i selettori possono essere Automatico se la scelta in entrambe le direzioni è attiva.","ru":"Язык правого поля. Изменение текста запускает обратный перевод. Оба поля могут быть автоматическими при включённом двустороннем выборе."},
-  "InputTooltip": {"tr":"Çevirmek istediğin metni yaz veya yapıştır. Yazmayı bıraktığında çeviri başlar; ok düğmesi beklemeden yeni bir çeviri ister.","en":"Type or paste the text to translate. Translation starts after you stop typing; the arrow button requests a fresh translation immediately.","de":"Den zu übersetzenden Text eingeben oder einfügen. Die Übersetzung beginnt nach der Eingabepause; die Pfeiltaste fordert sofort eine neue Übersetzung an.","fr":"Saisissez ou collez le texte à traduire. La traduction démarre après une pause de saisie ; le bouton flèche demande immédiatement une nouvelle traduction.","es":"Escribe o pega el texto que quieras traducir. La traducción empieza cuando dejas de escribir; el botón de flecha solicita una nueva traducción de inmediato.","it":"Scrivi o incolla il testo da tradurre. La traduzione inizia quando smetti di scrivere; il pulsante freccia richiede subito una nuova traduzione.","ru":"Введите или вставьте текст для перевода. Перевод начинается после паузы во вводе; кнопка со стрелкой сразу запрашивает новый перевод."},
-  "OutputTooltip": {"tr":"Çeviri burada görünür. Bu metni de düzenleyebilirsin; değişikliğin diğer kutuya ters yönde çevrilir.","en":"The translation appears here. You can edit this text too; your changes are translated back into the other box.","de":"Hier erscheint die Übersetzung. Auch dieser Text ist bearbeitbar; Änderungen werden zurück in das andere Feld übersetzt.","fr":"La traduction apparaît ici. Vous pouvez aussi modifier ce texte ; les changements sont traduits dans l’autre sens vers l’autre champ.","es":"La traducción aparece aquí. También puedes editar este texto; los cambios se traducen en sentido inverso al otro cuadro.","it":"La traduzione appare qui. Puoi modificare anche questo testo; le modifiche vengono tradotte nella direzione opposta nell’altro campo.","ru":"Здесь появляется перевод. Этот текст тоже можно редактировать; изменения переводятся обратно в другое поле."},
-  "ResizeTooltip": {"tr":"Pencerenin boyutunu değiştirmek için sağ alt köşeyi sürükle.","en":"Drag the bottom-right corner to resize the window.","de":"Zum Ändern der Fenstergröße die rechte untere Ecke ziehen.","fr":"Faites glisser le coin inférieur droit pour redimensionner la fenêtre.","es":"Arrastra la esquina inferior derecha para cambiar el tamaño de la ventana.","it":"Trascina l’angolo in basso a destra per ridimensionare la finestra.","ru":"Перетащите правый нижний угол, чтобы изменить размер окна."},
-  "SplitterTooltip": {"tr":"Metin kutularının genişlik oranını değiştirmek için sürükle. Pencerenin boyutu değişince oran korunur; ayarlardan yüzde 50’ye dönebilirsin.","en":"Drag to change the text boxes’ width ratio. The ratio is preserved when the window is resized; settings can reset it to 50 percent.","de":"Ziehen, um das Breitenverhältnis der Textfelder zu ändern. Es bleibt bei Fenstergrößenänderungen erhalten und lässt sich in den Einstellungen auf 50 Prozent zurücksetzen.","fr":"Faites glisser pour changer le rapport de largeur des champs. Il est conservé au redimensionnement ; les paramètres permettent de revenir à 50 pour cent.","es":"Arrastra para cambiar la proporción de ancho de los cuadros. Se conserva al redimensionar la ventana; puedes restablecerla al 50 por ciento en los ajustes.","it":"Trascina per cambiare il rapporto di larghezza dei campi. Il rapporto resta invariato ridimensionando la finestra; nelle impostazioni puoi riportarlo al 50 per cento.","ru":"Перетащите, чтобы изменить соотношение ширины полей. Оно сохраняется при изменении размера окна; в настройках можно вернуть 50 процентов."},
-  "DetectorReady": {"tr":"Dil algılayıcısı hazır.","en":"Language detector is ready.","de":"Die Spracherkennung ist bereit.","fr":"Le détecteur de langue est prêt.","es":"El detector de idioma está listo.","it":"Il rilevatore di lingua è pronto.","ru":"Определитель языка готов."},
-  "SettingsApplied": {"tr":"Ayarlar uygulandı.","en":"Settings applied.","de":"Einstellungen angewendet.","fr":"Paramètres appliqués.","es":"Ajustes aplicados.","it":"Impostazioni applicate.","ru":"Настройки применены."},
-  "DetectorModelLoadTimeout": {"tr":"Dil algılama modeli yükleme sınırı (ms)","en":"Language detector model loading limit (ms)","de":"Zeitlimit zum Laden des Spracherkennungsmodells (ms)","fr":"Durée limite de chargement du détecteur de langue (ms)","es":"Tiempo máximo de carga del detector de idioma (ms)","it":"Tempo massimo di caricamento del rilevatore di lingua (ms)","ru":"Предельное время загрузки определителя языка (мс)"},
-  "DetectorTimeout": {"tr":"Dil algılama süre sınırı (ms)","en":"Language detection time limit (ms)","de":"Zeitlimit für die Spracherkennung (ms)","fr":"Durée limite de détection de langue (ms)","es":"Tiempo máximo de detección de idioma (ms)","it":"Tempo massimo di rilevamento della lingua (ms)","ru":"Предельное время определения языка (мс)"},
-  "DetectorMaximumCharacters": {"tr":"Dil algılamada incelenecek en fazla karakter","en":"Maximum characters examined for language detection","de":"Maximale Zeichenanzahl für die Spracherkennung","fr":"Nombre maximal de caractères analysés pour détecter la langue","es":"Máximo de caracteres analizados para detectar el idioma","it":"Numero massimo di caratteri analizzati per rilevare la lingua","ru":"Максимальное число символов для определения языка"},
-  "BooleanOn": {"tr":"Açık","en":"On","de":"Ein","fr":"Activé","es":"Activado","it":"Attivo","ru":"Включено"},
-  "BooleanOff": {"tr":"Kapalı","en":"Off","de":"Aus","fr":"Désactivé","es":"Desactivado","it":"Disattivato","ru":"Выключено"}
+  "OnlineEnabled": {
+    "tr": "Çevrimiçi çeviri",
+    "en": "Online translation",
+    "de": "Online-Übersetzung",
+    "fr": "Traduction en ligne",
+    "es": "Traducción en línea",
+    "it": "Traduzione online",
+    "ru": "Онлайн-перевод"
+  },
+  "TwoWayAutomatic": {
+    "tr": "İki yönlü otomatik dil seçimi",
+    "en": "Two-way automatic language selection",
+    "de": "Automatische Sprachwahl in beide Richtungen",
+    "fr": "Choix automatique des langues dans les deux sens",
+    "es": "Selección automática de idiomas en ambos sentidos",
+    "it": "Scelta automatica delle lingue in entrambe le direzioni",
+    "ru": "Автоматический выбор языка в обоих направлениях"
+  },
+  "AutoLanguageMode": {
+    "tr": "Otomatik dil seçimi modu",
+    "en": "Automatic language selection mode",
+    "de": "Modus der automatischen Sprachwahl",
+    "fr": "Mode de choix automatique des langues",
+    "es": "Modo de selección automática de idiomas",
+    "it": "Modalità di scelta automatica delle lingue",
+    "ru": "Режим автоматического выбора языка"
+  },
+  "FirstLanguage": {
+    "tr": "Birinci dil",
+    "en": "First language",
+    "de": "Erste Sprache",
+    "fr": "Première langue",
+    "es": "Primer idioma",
+    "it": "Prima lingua",
+    "ru": "Первый язык"
+  },
+  "SecondLanguage": {
+    "tr": "İkinci dil",
+    "en": "Second language",
+    "de": "Zweite Sprache",
+    "fr": "Deuxième langue",
+    "es": "Segundo idioma",
+    "it": "Seconda lingua",
+    "ru": "Второй язык"
+  },
+  "UseBergamot": {
+    "tr": "Bergamot motorunu kullan",
+    "en": "Use Bergamot",
+    "de": "Bergamot verwenden",
+    "fr": "Utiliser Bergamot",
+    "es": "Usar Bergamot",
+    "it": "Usa Bergamot",
+    "ru": "Использовать Bergamot"
+  },
+  "UseToz": {
+    "tr": "Töz motorunu kullan",
+    "en": "Use Töz",
+    "de": "Töz verwenden",
+    "fr": "Utiliser Töz",
+    "es": "Usar Töz",
+    "it": "Usa Töz",
+    "ru": "Использовать Töz"
+  },
+  "BergamotWorkers": {
+    "tr": "Bergamot: paralel çalışan sayısı",
+    "en": "Bergamot: parallel workers",
+    "de": "Bergamot: parallele Worker",
+    "fr": "Bergamot : traitements parallèles",
+    "es": "Bergamot: procesos de trabajo paralelos",
+    "it": "Bergamot: elaborazioni parallele",
+    "ru": "Bergamot: параллельные обработчики"
+  },
+  "TozWorkers": {
+    "tr": "Töz: paralel çalışan sayısı",
+    "en": "Töz: parallel workers",
+    "de": "Töz: parallele Worker",
+    "fr": "Töz : traitements parallèles",
+    "es": "Töz: procesos de trabajo paralelos",
+    "it": "Töz: elaborazioni parallele",
+    "ru": "Töz: параллельные обработчики"
+  },
+  "TozThreads": {
+    "tr": "Töz: işlem başına iş parçacığı",
+    "en": "Töz: threads per operation",
+    "de": "Töz: Threads pro Vorgang",
+    "fr": "Töz : fils d’exécution par opération",
+    "es": "Töz: hilos por operación",
+    "it": "Töz: thread per operazione",
+    "ru": "Töz: потоки на операцию"
+  },
+  "BergamotBeam": {
+    "tr": "Bergamot: değerlendirilen çeviri adayı",
+    "en": "Bergamot: translation candidates considered",
+    "de": "Bergamot: berücksichtigte Übersetzungskandidaten",
+    "fr": "Bergamot : traductions candidates évaluées",
+    "es": "Bergamot: traducciones candidatas evaluadas",
+    "it": "Bergamot: traduzioni candidate valutate",
+    "ru": "Bergamot: число рассматриваемых вариантов перевода"
+  },
+  "TozBeam": {
+    "tr": "Töz: değerlendirilen çeviri adayı",
+    "en": "Töz: translation candidates considered",
+    "de": "Töz: berücksichtigte Übersetzungskandidaten",
+    "fr": "Töz : traductions candidates évaluées",
+    "es": "Töz: traducciones candidatas evaluadas",
+    "it": "Töz: traduzioni candidate valutate",
+    "ru": "Töz: число рассматриваемых вариантов перевода"
+  },
+  "ModelLoadTimeout": {
+    "tr": "Model yükleme süre sınırı (ms)",
+    "en": "Model loading time limit (ms)",
+    "de": "Zeitlimit zum Laden des Modells (ms)",
+    "fr": "Durée limite de chargement du modèle (ms)",
+    "es": "Tiempo máximo de carga del modelo (ms)",
+    "it": "Tempo massimo di caricamento del modello (ms)",
+    "ru": "Предельное время загрузки модели (мс)"
+  },
+  "LocalTranslationTimeout": {
+    "tr": "Yerel çeviri süre sınırı (ms)",
+    "en": "Local translation time limit (ms)",
+    "de": "Zeitlimit für lokale Übersetzungen (ms)",
+    "fr": "Durée limite de traduction locale (ms)",
+    "es": "Tiempo máximo de traducción local (ms)",
+    "it": "Tempo massimo di traduzione locale (ms)",
+    "ru": "Предельное время локального перевода (мс)"
+  },
+  "LocalRetries": {
+    "tr": "Yerel çeviri ek deneme sayısı",
+    "en": "Additional local translation attempts",
+    "de": "Zusätzliche lokale Übersetzungsversuche",
+    "fr": "Tentatives supplémentaires de traduction locale",
+    "es": "Intentos adicionales de traducción local",
+    "it": "Tentativi aggiuntivi di traduzione locale",
+    "ru": "Дополнительные попытки локального перевода"
+  },
+  "LocalRetryDelay": {
+    "tr": "Yerel ek denemeler arası bekleme (ms)",
+    "en": "Delay between local retries (ms)",
+    "de": "Wartezeit zwischen lokalen Wiederholungen (ms)",
+    "fr": "Attente entre les nouvelles tentatives locales (ms)",
+    "es": "Espera entre reintentos locales (ms)",
+    "it": "Attesa tra i tentativi locali (ms)",
+    "ru": "Пауза между локальными попытками (мс)"
+  },
+  "OnlineTotalBudget": {
+    "tr": "Çevrimiçi denemelerin toplam süre sınırı (s)",
+    "en": "Total online attempt time limit (s)",
+    "de": "Gesamtzeitlimit für Online-Versuche (s)",
+    "fr": "Durée totale limite des tentatives en ligne (s)",
+    "es": "Tiempo máximo total de los intentos en línea (s)",
+    "it": "Tempo massimo totale dei tentativi online (s)",
+    "ru": "Общее предельное время онлайн-попыток (с)"
+  },
+  "OnlineRetryPause": {
+    "tr": "Çevrimiçi turlar arası bekleme (ms)",
+    "en": "Delay between online rounds (ms)",
+    "de": "Wartezeit zwischen Online-Runden (ms)",
+    "fr": "Attente entre les cycles en ligne (ms)",
+    "es": "Espera entre rondas en línea (ms)",
+    "it": "Attesa tra i cicli online (ms)",
+    "ru": "Пауза между онлайн-циклами (мс)"
+  },
+  "RecoveryProfile": {
+    "tr": "Bekleme ve kurtarma profili",
+    "en": "Waiting and recovery profile",
+    "de": "Warte- und Wiederherstellungsprofil",
+    "fr": "Profil d’attente et de récupération",
+    "es": "Perfil de espera y recuperación",
+    "it": "Profilo di attesa e recupero",
+    "ru": "Профиль ожидания и восстановления"
+  },
+  "ProfileResponsive": {
+    "tr": "Çabuk sonuç",
+    "en": "Quick result",
+    "de": "Schnelles Ergebnis",
+    "fr": "Résultat rapide",
+    "es": "Resultado rápido",
+    "it": "Risultato rapido",
+    "ru": "Быстрый результат"
+  },
+  "ProfileBalanced": {
+    "tr": "Dengeli",
+    "en": "Balanced",
+    "de": "Ausgewogen",
+    "fr": "Équilibré",
+    "es": "Equilibrado",
+    "it": "Bilanciato",
+    "ru": "Сбалансированный"
+  },
+  "ProfileQuality": {
+    "tr": "Kalite öncelikli",
+    "en": "Quality first",
+    "de": "Qualität zuerst",
+    "fr": "Priorité à la qualité",
+    "es": "Prioridad a la calidad",
+    "it": "Priorità alla qualità",
+    "ru": "Приоритет качества"
+  },
+  "ProfileCustom": {
+    "tr": "Özel ayarlar",
+    "en": "Custom settings",
+    "de": "Benutzerdefinierte Einstellungen",
+    "fr": "Réglages personnalisés",
+    "es": "Ajustes personalizados",
+    "it": "Impostazioni personalizzate",
+    "ru": "Свои настройки"
+  },
+  "SaveProfile": {
+    "tr": "Profil olarak kaydet",
+    "en": "Save as profile",
+    "de": "Als Profil speichern",
+    "fr": "Enregistrer comme profil",
+    "es": "Guardar como perfil",
+    "it": "Salva come profilo",
+    "ru": "Сохранить как профиль"
+  },
+  "DeleteProfile": {
+    "tr": "Profili sil",
+    "en": "Delete profile",
+    "de": "Profil löschen",
+    "fr": "Supprimer le profil",
+    "es": "Eliminar perfil",
+    "it": "Elimina profilo",
+    "ru": "Удалить профиль"
+  },
+  "ProfileName": {
+    "tr": "Profil adı",
+    "en": "Profile name",
+    "de": "Profilname",
+    "fr": "Nom du profil",
+    "es": "Nombre del perfil",
+    "it": "Nome del profilo",
+    "ru": "Название профиля"
+  },
+  "SimpleMode": {
+    "tr": "Basit",
+    "en": "Simple",
+    "de": "Einfach",
+    "fr": "Simple",
+    "es": "Simple",
+    "it": "Semplice",
+    "ru": "Простой"
+  },
+  "AdvancedMode": {
+    "tr": "Gelişmiş",
+    "en": "Advanced",
+    "de": "Erweitert",
+    "fr": "Avancé",
+    "es": "Avanzado",
+    "it": "Avanzato",
+    "ru": "Расширенный"
+  },
+  "EngineStarted": {
+    "tr": "{0} çeviriye başladı.",
+    "en": "{0} started translating.",
+    "de": "{0} hat mit der Übersetzung begonnen.",
+    "fr": "{0} a commencé la traduction.",
+    "es": "{0} ha empezado a traducir.",
+    "it": "{0} ha iniziato la traduzione.",
+    "ru": "{0}: перевод начат."
+  },
+  "EngineUnavailable": {
+    "tr": "{0} motoru kullanılamıyor.",
+    "en": "{0} is unavailable.",
+    "de": "{0} ist nicht verfügbar.",
+    "fr": "{0} n’est pas disponible.",
+    "es": "{0} no está disponible.",
+    "it": "{0} non è disponibile.",
+    "ru": "{0} недоступен."
+  },
+  "OnlineStarted": {
+    "tr": "Çevrimiçi çeviri başladı.",
+    "en": "Online translation started.",
+    "de": "Die Online-Übersetzung wurde gestartet.",
+    "fr": "La traduction en ligne a commencé.",
+    "es": "Se ha iniciado la traducción en línea.",
+    "it": "La traduzione online è iniziata.",
+    "ru": "Онлайн-перевод начат."
+  },
+  "OnlineRetrying": {
+    "tr": "Çevrimiçi çeviri yeniden deneniyor.",
+    "en": "Retrying online translation.",
+    "de": "Die Online-Übersetzung wird erneut versucht.",
+    "fr": "Nouvelle tentative de traduction en ligne.",
+    "es": "Reintentando la traducción en línea.",
+    "it": "Nuovo tentativo di traduzione online.",
+    "ru": "Повторная попытка онлайн-перевода."
+  },
+  "OfflineFallback": {
+    "tr": "Yerel çeviri motorları kullanılıyor.",
+    "en": "Using local translation engines.",
+    "de": "Lokale Übersetzungsmodule werden verwendet.",
+    "fr": "Utilisation des moteurs de traduction locaux.",
+    "es": "Se están usando los motores de traducción locales.",
+    "it": "Uso dei motori di traduzione locali.",
+    "ru": "Используются локальные системы перевода."
+  },
+  "OfflineTooltip": {
+    "tr": "Gri mod: yalnızca yerel çeviri motorları kullanılır. Çevrimiçi motor çağrılmaz ve internet kontrolü beklenmez. Çevrimiçi çeviriyi açmak için tıkla.",
+    "en": "Gray mode: only local translation engines are used. The online engine is not called and no internet check is awaited. Click to enable online translation.",
+    "de": "Grauer Modus: Es werden nur lokale Übersetzungsmodule verwendet. Das Online-Modul wird nicht aufgerufen und es wird nicht auf eine Internetprüfung gewartet. Klicken, um Online-Übersetzung zu aktivieren.",
+    "fr": "Mode gris : seuls les moteurs locaux sont utilisés. Le moteur en ligne n’est pas appelé et aucune vérification Internet n’est attendue. Cliquez pour activer la traduction en ligne.",
+    "es": "Modo gris: solo se usan motores locales. No se llama al motor en línea ni se espera una comprobación de Internet. Haz clic para activar la traducción en línea.",
+    "it": "Modalità grigia: si usano solo i motori locali. Il motore online non viene chiamato e non si attende una verifica di Internet. Fai clic per attivare la traduzione online.",
+    "ru": "Серый режим: используются только локальные системы. Онлайн-перевод не вызывается, проверка Интернета не ожидается. Нажмите, чтобы включить онлайн-перевод."
+  },
+  "OnlineTooltip": {
+    "ru": "Зелёный: онлайн-перевод включён. Жёлтый: перевод или повторная попытка. Красный: ошибка перевода. Все подходящие системы запускаются сразу; лучший результат отменяет задачи с меньшим приоритетом. Нажмите для серого режима.",
+    "es": "Verde: traducción en línea activada. Ámbar: traducción o reintento en curso. Rojo: error. Todos los motores compatibles empiezan de inmediato; un resultado mejor cancela los trabajos de menor prioridad. Haz clic para activar el modo gris.",
+    "it": "Verde: traduzione online attiva. Giallo: traduzione o nuovo tentativo in corso. Rosso: errore. Tutti i motori compatibili partono subito; un risultato migliore annulla i lavori di priorità inferiore. Fai clic per passare alla modalità grigia.",
+    "fr": "Vert : traduction en ligne activée. Jaune : traduction ou nouvelle tentative en cours. Rouge : échec. Tous les moteurs adaptés démarrent immédiatement ; un meilleur résultat annule les tâches de priorité inférieure. Cliquez pour passer au mode gris.",
+    "de": "Grün: Online-Übersetzung aktiv. Gelb: Übersetzung oder Wiederholung läuft. Rot: Übersetzung fehlgeschlagen. Alle geeigneten Module starten sofort; ein besseres Ergebnis bricht nachrangige Arbeit ab. Klicken für den grauen Modus.",
+    "en": "Green: online translation enabled. Amber: translating or retrying. Red: translation failed. All eligible engines start immediately; a better result cancels lower-priority work. Click to switch to gray mode.",
+    "tr": "Yeşil: çevrimiçi çeviri açık. Sarı: çeviri veya yeniden deneme sürüyor. Kırmızı: çeviri alınamadı. Bütün uygun motorlar hemen başlar; daha iyi sonuç geldiğinde alt düzey işler iptal edilir. Gri moda geçmek için tıkla."
+  },
+  "AutoRoutingHelp": {
+    "tr": "Açıldığında iki dil kutusu da Otomatik seçilebilir. Basit mod algılanan dile göre dil çiftinin diğerini seçer; gelişmiş modda ilk eşleşen kural kullanılır.",
+    "en": "When enabled, both language selectors can be Automatic. Simple mode chooses the other language of the pair; advanced mode uses the first matching rule.",
+    "de": "Wenn aktiviert, können beide Sprachfelder auf Automatisch stehen. Der einfache Modus wählt die andere Sprache des Paars; der erweiterte Modus verwendet die erste passende Regel.",
+    "fr": "Une fois activé, les deux sélecteurs peuvent être sur Automatique. Le mode simple choisit l’autre langue de la paire ; le mode avancé utilise la première règle correspondante.",
+    "es": "Al activarlo, ambos selectores pueden estar en Automático. El modo simple elige el otro idioma del par; el avanzado usa la primera regla que coincida.",
+    "it": "Se attivo, entrambi i selettori possono essere su Automatico. La modalità semplice sceglie l’altra lingua della coppia; quella avanzata usa la prima regola corrispondente.",
+    "ru": "При включении оба поля языка могут быть автоматическими. Простой режим выбирает другой язык пары; расширенный использует первое подходящее правило."
+  },
+  "ProfileHelp": {
+    "tr": "Hazır profil bekleme ve yeniden deneme ayarlarını birlikte uygular. Değerleri ayrıca değiştirebilir ve kendi profil adınla kaydedebilirsin.",
+    "en": "A preset applies waiting and retry settings together. You can also adjust individual values and save them under your own profile name.",
+    "de": "Ein vordefiniertes Profil wendet Warte- und Wiederholungseinstellungen gemeinsam an. Einzelne Werte lassen sich ändern und unter einem eigenen Profilnamen speichern.",
+    "fr": "Un profil prédéfini applique ensemble les réglages d’attente et de nouvelle tentative. Vous pouvez modifier chaque valeur et enregistrer votre propre profil.",
+    "es": "Un perfil aplica juntos los ajustes de espera y reintento. También puedes cambiar valores individuales y guardarlos con tu propio nombre de perfil.",
+    "it": "Un profilo predefinito applica insieme le impostazioni di attesa e dei tentativi. Puoi modificare i singoli valori e salvarli con un nome di profilo personale.",
+    "ru": "Готовый профиль применяет настройки ожидания и повторных попыток вместе. Отдельные значения можно изменить и сохранить под своим названием профиля."
+  },
+  "SettingHelp": {
+    "tr": "{0}. Varsayılan değer: {1}.",
+    "en": "{0}. Default value: {1}.",
+    "de": "{0}. Standardwert: {1}.",
+    "fr": "{0}. Valeur par défaut : {1}.",
+    "es": "{0}. Valor predeterminado: {1}.",
+    "it": "{0}. Valore predefinito: {1}.",
+    "ru": "{0}. Значение по умолчанию: {1}."
+  },
+  "SourceTooltip": {
+    "tr": "Sol metin kutusunun dili. Otomatik seçildiğinde metnin dili algılanır; iki yönlü otomatik seçim açıksa karşı dil de kurallara göre seçilir.",
+    "en": "The left text box’s language. Automatic detects the text’s language; when two-way automatic selection is enabled, routing rules choose the other language too.",
+    "de": "Die Sprache des linken Textfelds. Automatisch erkennt die Textsprache; bei automatischer Sprachwahl in beide Richtungen bestimmen Regeln auch die andere Sprache.",
+    "fr": "Langue du texte à gauche. Automatique détecte la langue du texte ; si le choix automatique dans les deux sens est activé, les règles choisissent aussi l’autre langue.",
+    "es": "Idioma del texto de la izquierda. Automático detecta el idioma; si está activada la selección automática en ambos sentidos, las reglas también eligen el otro idioma.",
+    "it": "Lingua del testo a sinistra. Automatico rileva la lingua; se la scelta automatica in entrambe le direzioni è attiva, le regole scelgono anche l’altra lingua.",
+    "ru": "Язык левого поля. Автоматический режим определяет язык текста; при включённом двустороннем выборе правила определяют и другой язык."
+  },
+  "TargetTooltip": {
+    "tr": "Sağ metin kutusunun dili. Bu kutudaki metni düzenlemek ters yönde çeviri başlatır. İki yönlü otomatik seçim açıksa iki kutu da Otomatik olabilir.",
+    "en": "The right text box’s language. Editing this text starts translation in the reverse direction. Both selectors can be Automatic when two-way automatic selection is enabled.",
+    "de": "Die Sprache des rechten Textfelds. Bearbeiten dieses Texts startet die Übersetzung in Gegenrichtung. Bei automatischer Sprachwahl in beide Richtungen können beide Felder Automatisch sein.",
+    "fr": "Langue du texte à droite. Modifier ce texte lance une traduction dans l’autre sens. Les deux sélecteurs peuvent être sur Automatique si le choix dans les deux sens est activé.",
+    "es": "Idioma del texto de la derecha. Editarlo inicia una traducción en sentido inverso. Ambos selectores pueden estar en Automático si está activada la selección en ambos sentidos.",
+    "it": "Lingua del testo a destra. Modificarlo avvia una traduzione nella direzione opposta. Entrambi i selettori possono essere Automatico se la scelta in entrambe le direzioni è attiva.",
+    "ru": "Язык правого поля. Изменение текста запускает обратный перевод. Оба поля могут быть автоматическими при включённом двустороннем выборе."
+  },
+  "InputTooltip": {
+    "tr": "Çevirmek istediğin metni yaz veya yapıştır. Yazmayı bıraktığında çeviri başlar; ok düğmesi beklemeden yeni bir çeviri ister.",
+    "en": "Type or paste the text to translate. Translation starts after you stop typing; the arrow button requests a fresh translation immediately.",
+    "de": "Den zu übersetzenden Text eingeben oder einfügen. Die Übersetzung beginnt nach der Eingabepause; die Pfeiltaste fordert sofort eine neue Übersetzung an.",
+    "fr": "Saisissez ou collez le texte à traduire. La traduction démarre après une pause de saisie ; le bouton flèche demande immédiatement une nouvelle traduction.",
+    "es": "Escribe o pega el texto que quieras traducir. La traducción empieza cuando dejas de escribir; el botón de flecha solicita una nueva traducción de inmediato.",
+    "it": "Scrivi o incolla il testo da tradurre. La traduzione inizia quando smetti di scrivere; il pulsante freccia richiede subito una nuova traduzione.",
+    "ru": "Введите или вставьте текст для перевода. Перевод начинается после паузы во вводе; кнопка со стрелкой сразу запрашивает новый перевод."
+  },
+  "OutputTooltip": {
+    "tr": "Çeviri burada görünür. Bu metni de düzenleyebilirsin; değişikliğin diğer kutuya ters yönde çevrilir.",
+    "en": "The translation appears here. You can edit this text too; your changes are translated back into the other box.",
+    "de": "Hier erscheint die Übersetzung. Auch dieser Text ist bearbeitbar; Änderungen werden zurück in das andere Feld übersetzt.",
+    "fr": "La traduction apparaît ici. Vous pouvez aussi modifier ce texte ; les changements sont traduits dans l’autre sens vers l’autre champ.",
+    "es": "La traducción aparece aquí. También puedes editar este texto; los cambios se traducen en sentido inverso al otro cuadro.",
+    "it": "La traduzione appare qui. Puoi modificare anche questo testo; le modifiche vengono tradotte nella direzione opposta nell’altro campo.",
+    "ru": "Здесь появляется перевод. Этот текст тоже можно редактировать; изменения переводятся обратно в другое поле."
+  },
+  "ResizeTooltip": {
+    "tr": "Pencerenin boyutunu değiştirmek için sağ alt köşeyi sürükle.",
+    "en": "Drag the bottom-right corner to resize the window.",
+    "de": "Zum Ändern der Fenstergröße die rechte untere Ecke ziehen.",
+    "fr": "Faites glisser le coin inférieur droit pour redimensionner la fenêtre.",
+    "es": "Arrastra la esquina inferior derecha para cambiar el tamaño de la ventana.",
+    "it": "Trascina l’angolo in basso a destra per ridimensionare la finestra.",
+    "ru": "Перетащите правый нижний угол, чтобы изменить размер окна."
+  },
+  "SplitterTooltip": {
+    "tr": "Metin kutularının genişlik oranını değiştirmek için sürükle. Pencerenin boyutu değişince oran korunur; ayarlardan yüzde 50’ye dönebilirsin.",
+    "en": "Drag to change the text boxes’ width ratio. The ratio is preserved when the window is resized; settings can reset it to 50 percent.",
+    "de": "Ziehen, um das Breitenverhältnis der Textfelder zu ändern. Es bleibt bei Fenstergrößenänderungen erhalten und lässt sich in den Einstellungen auf 50 Prozent zurücksetzen.",
+    "fr": "Faites glisser pour changer le rapport de largeur des champs. Il est conservé au redimensionnement ; les paramètres permettent de revenir à 50 pour cent.",
+    "es": "Arrastra para cambiar la proporción de ancho de los cuadros. Se conserva al redimensionar la ventana; puedes restablecerla al 50 por ciento en los ajustes.",
+    "it": "Trascina per cambiare il rapporto di larghezza dei campi. Il rapporto resta invariato ridimensionando la finestra; nelle impostazioni puoi riportarlo al 50 per cento.",
+    "ru": "Перетащите, чтобы изменить соотношение ширины полей. Оно сохраняется при изменении размера окна; в настройках можно вернуть 50 процентов."
+  },
+  "DetectorReady": {
+    "tr": "Dil algılayıcısı hazır.",
+    "en": "Language detector is ready.",
+    "de": "Die Spracherkennung ist bereit.",
+    "fr": "Le détecteur de langue est prêt.",
+    "es": "El detector de idioma está listo.",
+    "it": "Il rilevatore di lingua è pronto.",
+    "ru": "Определитель языка готов."
+  },
+  "SettingsApplied": {
+    "tr": "Ayarlar uygulandı.",
+    "en": "Settings applied.",
+    "de": "Einstellungen angewendet.",
+    "fr": "Paramètres appliqués.",
+    "es": "Ajustes aplicados.",
+    "it": "Impostazioni applicate.",
+    "ru": "Настройки применены."
+  },
+  "DetectorModelLoadTimeout": {
+    "tr": "Dil algılama modeli yükleme sınırı (ms)",
+    "en": "Language detector model loading limit (ms)",
+    "de": "Zeitlimit zum Laden des Spracherkennungsmodells (ms)",
+    "fr": "Durée limite de chargement du détecteur de langue (ms)",
+    "es": "Tiempo máximo de carga del detector de idioma (ms)",
+    "it": "Tempo massimo di caricamento del rilevatore di lingua (ms)",
+    "ru": "Предельное время загрузки определителя языка (мс)"
+  },
+  "DetectorTimeout": {
+    "tr": "Dil algılama süre sınırı (ms)",
+    "en": "Language detection time limit (ms)",
+    "de": "Zeitlimit für die Spracherkennung (ms)",
+    "fr": "Durée limite de détection de langue (ms)",
+    "es": "Tiempo máximo de detección de idioma (ms)",
+    "it": "Tempo massimo di rilevamento della lingua (ms)",
+    "ru": "Предельное время определения языка (мс)"
+  },
+  "DetectorMaximumCharacters": {
+    "tr": "Dil algılamada incelenecek en fazla karakter",
+    "en": "Maximum characters examined for language detection",
+    "de": "Maximale Zeichenanzahl für die Spracherkennung",
+    "fr": "Nombre maximal de caractères analysés pour détecter la langue",
+    "es": "Máximo de caracteres analizados para detectar el idioma",
+    "it": "Numero massimo di caratteri analizzati per rilevare la lingua",
+    "ru": "Максимальное число символов для определения языка"
+  },
+  "BooleanOn": {
+    "tr": "Açık",
+    "en": "On",
+    "de": "Ein",
+    "fr": "Activé",
+    "es": "Activado",
+    "it": "Attivo",
+    "ru": "Включено"
+  },
+  "BooleanOff": {
+    "tr": "Kapalı",
+    "en": "Off",
+    "de": "Aus",
+    "fr": "Désactivé",
+    "es": "Desactivado",
+    "it": "Disattivato",
+    "ru": "Выключено"
+  },
+  "BergamotCachedDirections": {
+    "ru": "Bergamot: направления моделей в памяти",
+    "es": "Bergamot: direcciones conservadas en memoria",
+    "it": "Bergamot: direzioni mantenute in memoria",
+    "fr": "Bergamot : directions conservées en mémoire",
+    "de": "Bergamot: gespeicherte Modellrichtungen",
+    "en": "Bergamot: retained model directions",
+    "tr": "Bergamot: bellekte tutulan yön sayısı"
+  }
 }

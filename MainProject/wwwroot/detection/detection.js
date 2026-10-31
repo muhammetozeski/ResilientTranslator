@@ -4,7 +4,7 @@ let options = { loadTimeoutMs: 15000, detectTimeoutMs: 3000 };
 export function configure(value) { options = { ...options, ...value }; }
 function create(kind) {
     const classic = kind === 'Cld2';
-    const worker = new Worker(new URL(classic ? './vendor/cld-worker.js' : './detector.worker.mjs', import.meta.url), classic ? {} : { type: 'module' });
+    const worker = new Worker(new URL(classic ? './vendor/cld-worker.js' : './detector.worker.js', import.meta.url), classic ? {} : { type: 'module' });
     const slot = { worker, active: null, ready: null };
     workers.set(kind, slot);
     slot.ready = new Promise((resolve, reject) => {

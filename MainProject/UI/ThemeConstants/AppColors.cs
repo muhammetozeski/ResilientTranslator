@@ -9,6 +9,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
     public static class AppColors
     {
         public static Color Control => ThemeManager.Current.Control;
+        public static Color OfflineStatus => ThemeManager.Current.OfflineStatus;
         public static Color ControlHover => ThemeManager.Current.ControlHover;
         public static Color ControlBorder => ThemeManager.Current.ControlBorder;
         public static Color EditorBorder => ThemeManager.Current.EditorBorder;

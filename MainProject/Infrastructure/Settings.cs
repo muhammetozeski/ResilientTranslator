@@ -75,8 +75,7 @@ internal static class Settings
     public static readonly Setting<int> MaximumCacheEntries = new(128);
     [Preference(nameof(Strings.SettingMaximumCachedCharacters), true, 0, 100000)]
     public static readonly Setting<int> MaximumCachedCharacters = new(8192);
-    [Preference(nameof(Strings.SettingDetectorLoadBudget), true, 0, 30000)]
-    public static readonly Setting<int> DetectorLoadBudget = new(3000);
+
     [Preference(nameof(Strings.SettingDetectorGateBudget), true, 0, 5000)]
     public static readonly Setting<int> DetectorGateBudget = new(250);
     [Preference(nameof(Strings.SettingClipboardChangeBudget), true, 50, 5000)]
@@ -87,6 +86,33 @@ internal static class Settings
     public static readonly Setting<int> CenterSnapRange = new(6);
     public static readonly Setting<int> WindowWidth = new(1000);
     public static readonly Setting<int> WindowHeight = new(560);
+    [Preference(nameof(Strings.OnlineEnabled))] public static readonly Setting<bool> OnlineEnabled = new(true);
+    [Preference(nameof(Strings.DetectorLabel))] public static readonly Setting<string> DetectorChoice = new("Lingua");
+    [Preference(nameof(Strings.TwoWayAutomatic))] public static readonly Setting<bool> TwoWayAutomatic = new(false);
+    [Preference(nameof(Strings.AutoLanguageMode))] public static readonly Setting<string> AutoLanguageMode = new("Simple");
+    [Preference(nameof(Strings.FirstLanguage))] public static readonly Setting<string> AutoFirstLanguage = new("en");
+    [Preference(nameof(Strings.SecondLanguage))] public static readonly Setting<string> AutoSecondLanguage = new("tr");
+    [Preference(nameof(Strings.RoutingRules))] public static readonly Setting<string> AutoLanguageRules = new("[]");
+    [Preference(nameof(Strings.UseBergamot),true)] public static readonly Setting<bool> UseBergamot = new(true);
+    [Preference(nameof(Strings.UseToz),true)] public static readonly Setting<bool> UseToz = new(true);
+    [Preference(nameof(Strings.BergamotWorkers),true,1,8)] public static readonly Setting<int> BergamotWorkers = new(2);
+    [Preference(nameof(Strings.TozWorkers),true,1,4)] public static readonly Setting<int> TozWorkers = new(1);
+    [Preference(nameof(Strings.TozThreads),true,1,8)] public static readonly Setting<int> TozThreads = new(1);
+    [Preference(nameof(Strings.BergamotBeam),true,1,8)] public static readonly Setting<int> BergamotBeam = new(4);
+    [Preference(nameof(Strings.TozBeam),true,1,8)] public static readonly Setting<int> TozBeam = new(4);
+    [Preference(nameof(Strings.ModelLoadTimeout),true,1000,180000)] public static readonly Setting<int> ModelLoadTimeout = new(60000);
+    [Preference(nameof(Strings.LocalTranslationTimeout),true,1000,120000)] public static readonly Setting<int> LocalTranslationTimeout = new(30000);
+    [Preference(nameof(Strings.LocalRetries),true,0,5)] public static readonly Setting<int> LocalRetries = new(1);
+    [Preference(nameof(Strings.LocalRetryDelay),true,0,5000)] public static readonly Setting<int> LocalRetryDelay = new(100);
+    [Preference(nameof(Strings.OnlineTotalBudget),true,1,120)] public static readonly Setting<double> OnlineTotalBudget = new(13);
+    [Preference(nameof(Strings.OnlineRetryPause),true,100,60000)] public static readonly Setting<int> OnlineRetryPause = new(8000);
+    [Preference(nameof(Strings.RecoveryProfile))] public static readonly Setting<string> ActiveRecoveryProfile = new("balanced");
+    public static readonly Setting<string> RecoveryProfiles = new("[]");
+    public static readonly Setting<int> RecoveryProfileVersion = new(0);
+    [Preference(nameof(Strings.BergamotCachedDirections),true,1,2)] public static readonly Setting<int> BergamotCachedDirections = new(2);
+    [Preference(nameof(Strings.DetectorModelLoadTimeout),true,1000,120000)] public static readonly Setting<int> DetectorModelLoadTimeout = new(15000);
+    [Preference(nameof(Strings.DetectorTimeout),true,1,30000)] public static readonly Setting<int> DetectorTimeout = new(3000);
+    [Preference(nameof(Strings.DetectorMaximumCharacters),true,10,1000000)] public static readonly Setting<int> DetectorMaximumCharacters = new(20000);
 }
 
 /// <summary>Exposes a registered typed setting to generic validation and settings editors.</summary>

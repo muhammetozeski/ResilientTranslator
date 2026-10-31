@@ -1,123 +1,77 @@
 using Lingua;
-using ResilientTranslator.MainProject.Services;
-using System.Reflection;
-using System.Runtime.Loader;
+using ResilientTranslator.MainProject.Infrastructure.Detection;
 namespace ResilientTranslator.MainProject.Infrastructure;
 
-/// <summary>Executes one unchanged translation engine on its own background thread and owns all of its network clients.</summary>
+/// <summary>Owns one command's dedicated background thread, cancellable engine sessions and progressive results.</summary>
 internal sealed class TranslationJob
 {
-    const bool IsLogEnabled = true;
-    static readonly SemaphoreSlim DetectionGate = new(1,1);
-    readonly CancellationTokenSource Cancellation = new();
-    readonly TaskCompletionSource<(string? Text, Exception? Error, string Function, string Service)> Completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
-    TranslationSession? ActiveSession;
+    const bool IsLogEnabled=true;
+    readonly CancellationTokenSource Cancellation=new();
+    readonly TaskCompletionSource<TranslationUpdate> Completion=new(TaskCreationOptions.RunContinuationsAsynchronously);
     readonly long Revision;
+    TranslationSession? ActiveSession;
     int Canceled;
-    public Task<(string? Text, Exception? Error, string Function, string Service)> Result => Completion.Task;
-
-    /// <summary>Starts an independent worker without executing provider initialization or network calls on the UI thread.</summary>
-    /// <param name="revision">The editor request identity used in diagnostic records.</param>
-    /// <param name="text">The immutable text snapshot for this job.</param>
-    /// <param name="source">The source language code.</param>
-    /// <param name="target">The target language code.</param>
-    /// <param name="input">The immutable source text, language direction and execution options for this attempt.</param>
-    /// <param name="detector">The shared one-time offline language-detector initialization task.</param>
-    /// <param name="onDetected">Publishes detection only while the caller still owns the active request.</param>
-    public TranslationJob(long revision, TranslationInput input, Task<LanguageDetector> detector, Action<Language> onDetected)
+    public Task<TranslationUpdate> Result=>Completion.Task;
+    public TranslationJob(long revision,TranslationInput input,Action<string> onDetected,Action<TranslationUpdate> publish,Action<string> status)
     {
-        Revision = revision;
-        var worker = new Thread(() => Execute(input,detector,onDetected)) { IsBackground = true, Name = $"Translation-{revision}" };
-        worker.Start();
+        Revision=revision;
+        new Thread(()=>Execute(input,onDetected,publish,status)){IsBackground=true,Name=$"Translation-{revision}"}.Start();
     }
-
-    /// <summary>Marks this job obsolete immediately and schedules network cancellation without waiting on the caller.</summary>
     public void Cancel()
     {
-        if (Interlocked.Exchange(ref Canceled, 1) != 0) return;
-        ExceptionBoundary.LogSafely($"Translation cancellation requested; revision={Revision}", IsLogEnabled);
-        new Thread(() =>
-        {
-            try { Cancellation.Cancel(); }
-            catch (Exception error) { ExceptionBoundary.LogSafely($"Translation cancellation callback failed; revision={Revision}; error={error}", IsLogEnabled); }
-            finally { StopClients(); }
-        }) { IsBackground = true, Name = $"CancelTranslation-{Revision}" }.Start();
+        if(Interlocked.Exchange(ref Canceled,1)!=0)return;
+        var cancellation=Cancellation.CancelAsync();
+        _=ExceptionBoundary.RunSafelyAsync(async _=>{try{await cancellation.ConfigureAwait(false);}finally{await Task.Run(StopClients).ConfigureAwait(false);}},operationName:$"CancelTranslation-{Revision}");
+        Log($"Translation cancellation requested; request={Revision}",Run:IsLogEnabled);
     }
-
-    /// <summary>Runs and contains one isolated engine invocation; no abandoned engine can update application state.</summary>
-    /// <param name="input">The immutable source text, language direction and execution options for this attempt.</param>
-    /// <param name="detectorTask">The shared offline detector to await before provider-side detection fallback.</param>
-    /// <param name="onDetected">Publishes detection only while the caller still owns the active request.</param>
-    void Execute(TranslationInput input, Task<LanguageDetector> detectorTask, Action<Language> onDetected)
+    void Execute(TranslationInput input,Action<string> onDetected,Action<TranslationUpdate> publish,Action<string> status)
     {
-        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-        try
+        try{Completion.TrySetResult(ExecuteAsync(input,onDetected,publish,status).GetAwaiter().GetResult());}
+        catch(OperationCanceledException)when(Cancellation.IsCancellationRequested){Completion.TrySetCanceled(Cancellation.Token);}
+        catch(Exception error){Completion.TrySetException(error);ExceptionBoundary.LogSafely($"Translation worker failed; request={Revision}; error={error}",IsLogEnabled);}
+        finally{StopClients();Log($"Translation worker exited; request={Revision}",Run:IsLogEnabled);}
+    }
+    async Task<TranslationUpdate> ExecuteAsync(TranslationInput input,Action<string> onDetected,Action<TranslationUpdate> publish,Action<string> status)
+    {
+        var token=Cancellation.Token;string? detected=null;bool detectionFailed=false;
+        if(input.SourceLanguage==TranslationLanguageRules.Automatic)
         {
-            var token = Cancellation.Token;
-            string text=input.Text,source=input.SourceLanguage,target=input.TargetLanguage;
-            if(source==TranslationWorkspace.Automatic)
+            try
             {
+                detected=await DetectorRegistry.DetectAsync(input.Detector,input.Text,token).WaitAsync(TimeSpan.FromMilliseconds(Settings.DetectorModelLoadTimeout.Value+Settings.DetectorTimeout.Value),token).ConfigureAwait(false);
+                token.ThrowIfCancellationRequested();
+                if(detected is null)throw new InvalidDataException("The selected detector could not identify the source language.");
+                onDetected(detected);
+                Log($"Language detected; request={Revision}; detector={input.Detector}; result={detected}",Run:IsLogEnabled);
+            }
+            catch(Exception error)when(!token.IsCancellationRequested)
+            {
+                Log($"Selected detector failed; falling back to Lingua; request={Revision}; detector={input.Detector}; error={error}",Run:IsLogEnabled);
                 try
                 {
-                    var detector=detectorTask.WaitAsync(TimeSpan.FromMilliseconds(Settings.DetectorLoadBudget.Value),token).GetAwaiter().GetResult();
-                    if(!DetectionGate.WaitAsync(TimeSpan.FromMilliseconds(Settings.DetectorGateBudget.Value),token).WaitAsync(token).GetAwaiter().GetResult())
-                        throw new TimeoutException("The shared language detector is busy; use provider detection for this request.");
-                    try
-                    {
-                        var detected=detector.DetectLanguageOf(text);
-                        token.ThrowIfCancellationRequested();
-                        source=detected==Language.Unknown ? TranslationWorkspace.FallbackLanguage : LanguageInfo.IsoCode6391(detected).ToString().ToLowerInvariant();
-                        onDetected(detected);
-                        ExceptionBoundary.LogSafely($"Language detected; request={Revision}; language={source}; detected={detected}",IsLogEnabled);
-                    }
-                    finally { DetectionGate.Release(); }
+                    detected=await DetectorRegistry.DetectAsync(DetectorKind.Lingua,input.Text,token).WaitAsync(TimeSpan.FromMilliseconds(Settings.DetectorModelLoadTimeout.Value),token).ConfigureAwait(false);
+                    token.ThrowIfCancellationRequested();if(detected is null)throw new InvalidDataException("Lingua could not identify the source language.");onDetected(detected);
                 }
-                catch(Exception detectionError) when(!token.IsCancellationRequested)
+                catch(Exception fallbackError)when(!token.IsCancellationRequested)
                 {
-                    source=TranslationWorkspace.Automatic;
-                    ExceptionBoundary.LogSafely($"Offline detection failed; using the original provider's automatic source detection; request={Revision}; error={detectionError}",IsLogEnabled);
+                    detectionFailed=true;
+                    Log($"All local detection failed; preserving provider auto detection; request={Revision}; error={new AggregateException(error,fallbackError)}",Run:IsLogEnabled);
                 }
             }
-            if(target==TranslationWorkspace.Automatic) target=TranslationWorkspace.FallbackLanguage;
-            token.ThrowIfCancellationRequested();
-            ExceptionBoundary.LogSafely($"Translation worker started; revision={Revision}; thread={Environment.CurrentManagedThreadId}; source={source}; target={target}; text={text}", IsLogEnabled);
-            using var trace=EngineTrace.Enter(Revision,0,TranslationMode.Concurrent);
-            var confirmed=TranslationRecovery.ExecuteAsync(text,source,target,async (attempt,innerToken) =>
+        }
+        var direction=TranslationLanguageRules.ResolveRequest(input.SourceLanguage,input.TargetLanguage,detected,input.Routing??AutoRoutingOptions.Default);
+        if(detectionFailed)direction=direction with{Source=TranslationLanguageRules.Automatic};
+        using var trace=EngineTrace.Enter(Revision,0,TranslationMode.Concurrent);
+        return await TranslationCoordinator.ExecuteAsync(Revision,input,direction,async onlineToken=>
+        {
+            return await TranslationRecovery.ExecuteAsync(input.Text,direction.Source,direction.Target,async(attempt,innerToken)=>
             {
                 using var session=new TranslationSession(Revision,attempt.Number);
                 Interlocked.Exchange(ref ActiveSession,session)?.Dispose();
-                try
-                {
-                    innerToken.ThrowIfCancellationRequested();
-                    return await session.ExecuteAsync(attempt,innerToken).WaitAsync(innerToken).ConfigureAwait(false);
-                }
-                finally { Interlocked.CompareExchange(ref ActiveSession,null,session); }
-            },token,bypassCache:input.ForceNetwork).WaitAsync(token).GetAwaiter().GetResult();
-            token.ThrowIfCancellationRequested();
-            Completion.TrySetResult((confirmed.Text,null,confirmed.Function,confirmed.Service));
-        }
-        catch (OperationCanceledException) when (Cancellation.IsCancellationRequested)
-        {
-            Completion.TrySetCanceled(Cancellation.Token);
-            ExceptionBoundary.LogSafely($"Translation worker canceled; revision={Revision}", IsLogEnabled);
-        }
-        catch (Exception error)
-        {
-            Completion.TrySetException(error);
-            ExceptionBoundary.LogSafely($"Translation worker failed; revision={Revision}; error={error}", IsLogEnabled);
-        }
-        finally
-        {
-            StopClients();
-
-            ExceptionBoundary.LogSafely($"Translation worker exited; revision={Revision}; thread={Environment.CurrentManagedThreadId}; elapsedMs={stopwatch.Elapsed.TotalMilliseconds:F1}", IsLogEnabled);
-        }
+                try{return await session.ExecuteAsync(attempt,innerToken).WaitAsync(innerToken).ConfigureAwait(false);}
+                finally{Interlocked.CompareExchange(ref ActiveSession,null,session);}
+            },onlineToken,bypassCache:input.ForceNetwork).ConfigureAwait(false);
+        },publish,status,token).ConfigureAwait(false);
     }
-
-    /// <summary>Stops only this worker's current attempt; each retry owns a different session.</summary>
-    void StopClients() => Interlocked.Exchange(ref ActiveSession,null)?.Dispose();
+    void StopClients()=>Interlocked.Exchange(ref ActiveSession,null)?.Dispose();
 }
-
-
-

@@ -7,8 +7,12 @@
 .detector-picker-row:hover, .detector-picker-row.selected { background:@AppColors.ControlHover.ToRgbaHex(true); }
 .detector-picker-name { flex:1; padding:@(AppMeasures.Space.Px8)px; text-align:start; color:@AppColors.TextPrimary.ToRgbaHex(true); }
 .detector-picker-info { width:@(AppMeasures.Size.Px24)px; height:@(AppMeasures.Size.Px24)px; margin-inline-end:@(AppMeasures.Space.Px4)px; border:@(AppMeasures.Border.Thin)px solid @AppColors.ControlBorder.ToRgbaHex(true); border-radius:50%; color:@AppColors.TextSecondary.ToRgbaHex(true); font-style:italic; font-family:serif; }
-.detector-benchmark { border-collapse:collapse; margin-block:@(AppMeasures.Space.Px8)px; font-size:@(AppMeasures.Font.Small)px; }
+.detector-benchmark { width:100%; border-collapse:collapse; margin-block:@(AppMeasures.Space.Px8)px; font-size:@(AppMeasures.Font.Small)px; }
 .detector-benchmark th, .detector-benchmark td { text-align:start; padding:@(AppMeasures.Space.Px6)px; border-bottom:@(AppMeasures.Border.Thin)px solid @AppColors.ControlBorder.ToRgbaHex(true); white-space:nowrap; }
 .detector-benchmark tr.highlight { background:@AppColors.ControlHover.ToRgbaHex(true); color:@AppColors.IconText.ToRgbaHex(true); font-weight:@AppMeasures.Weight.Bold; }
 .detector-benchmark-note { margin:0; max-width:@(AppMeasures.Size.Px680)px; color:@AppColors.TextSecondary.ToRgbaHex(true); }
+.detector-benchmark th { white-space:normal; max-width:@(AppMeasures.Tooltip.ColumnWidth)px; vertical-align:bottom; color:@AppColors.TextSecondary.ToRgbaHex(true); font-weight:@AppMeasures.Weight.Medium; }
+.detector-benchmark td:not(:first-child),.detector-benchmark th:not(:first-child) { text-align:right; font-variant-numeric:tabular-nums; }
+.detector-benchmark td:first-child { border-inline-start:@(AppMeasures.Border.Medium)px solid transparent; }
+.detector-benchmark tr.highlight td:first-child { border-inline-start-color:@AppColors.Primary.ToRgbaHex(true); }
 </style>

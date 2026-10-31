@@ -1,5 +1,6 @@
 param([switch]$Deploy)
 $ErrorActionPreference = 'Stop'
+& (Join-Path $PSScriptRoot 'MainProject/Infrastructure/Offline/Prepare-OfflineAssets.ps1')
 $package = Join-Path $PSScriptRoot 'publish\ResilientTranslator'
 $payload = Join-Path $package 'AppData'
 $project = Join-Path $PSScriptRoot 'ResilientTranslator\ResilientTranslator.csproj'

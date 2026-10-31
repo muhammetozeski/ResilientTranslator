@@ -1,13 +1,29 @@
-# Offline translation integration decision
+# Offline translation and progressive recovery
 
-Agreed with the user on 2026-10-31; implementation is pending.
+The shared application calls the original Bergamot JavaScript/WebAssembly engine and original Töz ONNX models through separate local JavaScript modules in the retained BlazorWebView. Production does not start Node.js or convert model formats. C# owns request lifetime, settings and publication; terminable Web Workers perform local inference.
 
-Use Bergamot for offline translation. Reuse its supplied JavaScript/WebAssembly engine and original language models through the application's existing BlazorWebView. A small separate JavaScript module connects the engine to a C# translation service through Blazor JavaScript interop. Keep translation work in a Web Worker so it does not block the interface.
+## One normal execution policy
 
-Do not embed executable JavaScript source in C# strings. Calling an exported JavaScript function by its string name through IJSRuntime is acceptable. The user accepts the small separate JavaScript bridge and the supplied engine's internal JavaScript.
+Every eligible engine starts immediately: Bergamot, Töz for a Turkish-containing pair, and the unchanged online engine. Results advance monotonically from Bergamot to Töz to online. A better result cancels lower-ranked work immediately; a new RequestContext cancels every older branch. Only the current request object may change editor text or status. Numeric transport IDs are diagnostics/interop handles, not C# ownership.
 
-This approach does not require a separate Node.js runtime. Reuse the supplied engine rather than rewriting its inference or converting the models. Keep the integration consistent with the project's existing coding principles.
+Gray mode disables the online branch completely, including connectivity checks. Network loss does not change modes or erase a successful local result. Failed online bursts retry indefinitely with a cancellable pause until success or request cancellation. Each burst still has finite attempt and phase budgets. Logs retain every attempt; the in-memory failure list is bounded.
 
-Engine source: https://github.com/browsermt/bergamot-translator
+Bergamot provides all twelve English-centric directions for the application's seven languages and composes non-English pairs through English. Töz uses the original bidirectional Turkish-English weights; Turkish/other-language requests combine a Töz leg with a Bergamot English leg. These chains race independently against the complete Bergamot translation.
 
-Mozilla's browser integration example: https://github.com/mozilla/translate
+## Worker lifetime and model assets
+
+Workers are retained and primed while the window is hidden. Cancellation terminates the active worker, rather than leaving obsolete computation running behind a discarded Task. Pool capacity, beam sizes, supported thread count, model loading budgets, local recovery and model cache limits are advanced preferences. Browsers without shared-memory support use one ONNX thread per worker; independent workers still execute concurrently.
+
+The original Bergamot WebAssembly build exhausted its memory when five model directions were retained in one worker. The production bridge therefore bounds each worker's model cache to at most two directions and replaces a worker when another language pair requires room. English pivot translation needs two directions.
+
+`MainProject/Infrastructure/Offline/Prepare-OfflineAssets.ps1` downloads missing assets from the tracked manifest and verifies exact size and SHA-256. Publish calls this script before building. Model files live under `MainProject/wwwroot/offline/models`, are excluded from Git, and ship as application static assets. Model and runtime licenses are retained with their respective assets.
+
+## Detection and failure recovery
+
+The detector picker exposes full seven-language Lingua, MediaPipe, small fastText, TinyLD, TinyLD Light, Firefox CLD2, franc-min and CLD3. The comparison table is the measured 150-example sample: 130 Turkish/English examples and 20 examples across the other five languages. Lingua low-accuracy and full fastText are deliberately excluded.
+
+A failed or inconclusive selected detector falls back to Lingua. If neither identifies the source, provider-side automatic detection remains available; unknown text is never assigned identical guessed source and target languages and published unchanged as a successful offline translation.
+
+## Evidence
+
+The original production worker code translated all twelve Bergamot directions, an English-pivot pair and both Töz pivot directions in isolated browser-worker-compatible consumers. Real worker cancellation terminated old computation and allowed a newer request to finish. All seven browser detector implementations matched their original 150 reference predictions. Controlled consumers using the actual coordinator and resilience code verified progressive publication, lower-priority cancellation, gray-mode isolation and online retry cancellation. These checks do not replace a native WebView interaction trial.

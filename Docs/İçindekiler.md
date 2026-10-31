@@ -3,6 +3,7 @@
 Read the relevant verified project knowledge before changing recovery behavior.
 
 - [Documentation guide](Documentation-Guide.md): how to add evidence-backed project knowledge without duplicating source or activity logs.
+- [Future work](todos.md): requested model catalog and one-click installation.
 - [Why this knowledge is retained](Documentation-Purpose.md): the project-specific mistakes these documents prevent.
 - [Translation recovery](Translation-Recovery.md): service retries, attempt isolation, cancellation, confirmed-result reuse and failure surfacing.
 - [Offline translation](Offline-Translation.md): agreed Bergamot integration through the existing WebView, with a C# service and a separate JavaScript bridge; implementation pending.

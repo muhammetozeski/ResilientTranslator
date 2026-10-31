@@ -3,7 +3,7 @@ const iso = { eng: 'en', tur: 'tr', deu: 'de', fra: 'fr', spa: 'es', ita: 'it', 
 let detect;
 async function initialize(kind) {
     if (kind === 'MediaPipe') {
-        const { LanguageDetector } = await import('./vendor/mediapipe.mjs');
+        const { LanguageDetector } = await import('./vendor/mediapipe.js');
         const detector = await LanguageDetector.createFromOptions({
             wasmLoaderPath: new URL('./vendor/text_wasm_internal.js', import.meta.url).href,
             wasmBinaryPath: new URL('./vendor/text_wasm_internal.wasm', import.meta.url).href
@@ -13,7 +13,7 @@ async function initialize(kind) {
         });
         detect = text => detector.detect(text).languages[0]?.languageCode ?? null;
     } else if (kind === 'FastText') {
-        const { default: createRuntime } = await import('./vendor/fasttext.mjs');
+        const { default: createRuntime } = await import('./vendor/fasttext.js');
         const runtime = await createRuntime({ wasmBinary: new Uint8Array(await checkedFetch('./vendor/fasttext_wasm.wasm')) });
         runtime.FS.writeFile('/language-model.ftz', new Uint8Array(await checkedFetch('./models/lid.176.ftz')));
         const model = new runtime.FastText();
@@ -29,13 +29,13 @@ async function initialize(kind) {
             } finally { results.delete(); }
         };
     } else if (kind === 'TinyLd' || kind === 'TinyLdLight') {
-        const module = await import(kind === 'TinyLd' ? './vendor/tinyld.mjs' : './vendor/tinyldLight.mjs');
+        const module = await import(kind === 'TinyLd' ? './vendor/tinyld.js' : './vendor/tinyldLight.js');
         detect = text => module.detect(text, { only: allowed }) || null;
     } else if (kind === 'Franc') {
-        const { franc } = await import('./vendor/franc.mjs');
+        const { franc } = await import('./vendor/franc.js');
         detect = text => iso[franc(text, { minLength: 0, only: Object.keys(iso).filter(code => code !== 'und') })] ?? null;
     } else if (kind === 'Cld3') {
-        const { loadModule } = await import('./vendor/cld3.mjs');
+        const { loadModule } = await import('./vendor/cld3.js');
         const factory = await loadModule();
         const detector = factory.create(0, 20000);
         detect = text => detector.findLanguage(text).language;

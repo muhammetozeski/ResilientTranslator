@@ -3,13 +3,19 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JavaScript
 <div class="status-ticker" @ref="Element" role="status" aria-label="@Text">
-    <i class="status-light @State" aria-hidden="true"></i>
+    @if (OnToggle.HasDelegate)
+    {
+        <CoreTooltip Text="@LightTooltip"><CoreButton Appearance="ControlAppearance.Bare" CustomClass="@($"status-light {State}")" OnClick="OnToggle" aria-label="@LightTooltip" /></CoreTooltip>
+    }
+    else { <i class="status-light @State" aria-hidden="true"></i> }
     <div class="status-viewport"><span class="status-track" aria-hidden="true"><span>@Text</span><span hidden>@Text</span></span></div>
 </div>
 @code {
     [Parameter] public string Text { get; set; } = "";
     [Parameter] public string State { get; set; } = "ready";
     [Parameter] public double Speed { get; set; } = 70;
+    [Parameter] public EventCallback OnToggle {get;set;}
+    [Parameter] public string LightTooltip {get;set;}="";
     ElementReference Element;
     IJSObjectReference? Module;
     bool Disposed;

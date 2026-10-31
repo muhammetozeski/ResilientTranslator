@@ -8,8 +8,8 @@ namespace ResilientTranslator.MainProject.Services;
 public static class TranslationWorkspace
 {
     const bool IsLogEnabled = true;
-    public const string Automatic = "auto";
-    public const string FallbackLanguage = "en";
+    public const string Automatic = TranslationLanguageRules.Automatic;
+    public const string FallbackLanguage = TranslationLanguageRules.FallbackLanguage;
     internal static readonly Task<LanguageDetector> Detector = Task.Factory.StartNew(static () =>
     {
         var timer=Stopwatch.StartNew();
@@ -50,8 +50,9 @@ public static class TranslationWorkspace
     public static void Initialize()
     {
         SourceLanguage=Settings.DefaultSourceLanguage.Value is { Length: > 0 } source ? source : Settings.SourceLanguage.Value; TargetLanguage=Settings.DefaultTargetLanguage.Value is { Length: > 0 } target ? target : Settings.TargetLanguage.Value;
-        if(SourceLanguage==Automatic && TargetLanguage==Automatic) TargetLanguage=FallbackLanguage;
+        TranslationProfiles.Initialize();
         LastConcreteSourceLanguage=Settings.LastConcreteSourceLanguage.Value; LastConcreteTargetLanguage=Settings.LastConcreteTargetLanguage.Value;
+        ApplySelection(TranslationLanguageRules.NormalizeInitialization(Selection,TranslationProfiles.Routing));
         Status=Strings.Ready;
         LocManager.LanguageChanged -= RefreshLanguage;
         LocManager.LanguageChanged += RefreshLanguage;
@@ -86,24 +87,12 @@ public static class TranslationWorkspace
         {
             if(expectedRequest is not null && expectedRequest != Current) return;
             previous=Current; Current=request=new();
-            if(!string.IsNullOrWhiteSpace(text))
-            {
-                if(fromInput && TargetLanguage==Automatic)
-                {
-                    TargetLanguage=LastConcreteTargetLanguage=FallbackLanguage;
-                    preferences=new(SourceLanguage,TargetLanguage,LastConcreteSourceLanguage,LastConcreteTargetLanguage);
-                }
-                else if(!fromInput && SourceLanguage==Automatic)
-                {
-                    SourceLanguage=!string.IsNullOrWhiteSpace(Input) && LastDetectedInputLanguage!=Language.Unknown
-                        ? LanguageInfo.IsoCode6391(LastDetectedInputLanguage).ToString().ToLowerInvariant() : FallbackLanguage;
-                    LastConcreteSourceLanguage=SourceLanguage;
-                    preferences=new(SourceLanguage,TargetLanguage,LastConcreteSourceLanguage,LastConcreteTargetLanguage);
-                }
-            }
+            var selection=TranslationLanguageRules.NormalizeEdit(Selection,fromInput,!string.IsNullOrWhiteSpace(text),!string.IsNullOrWhiteSpace(Input),
+                LastDetectedInputLanguage==Language.Unknown?null:LanguageInfo.IsoCode6391(LastDetectedInputLanguage).ToString().ToLowerInvariant(),TranslationProfiles.Routing);
+            if(selection!=Selection){ApplySelection(selection);preferences=new(SourceLanguage,TargetLanguage,LastConcreteSourceLanguage,LastConcreteTargetLanguage);}
             if(preferences is not null) { previousSave=CurrentSettingsRequest; CurrentSettingsRequest=saveRequest=new(); }
             if(fromInput) Input=text; else Output=text;
-            input=new(text,fromInput ? SourceLanguage : TargetLanguage,fromInput ? TargetLanguage : SourceLanguage,forceNetwork);
+            input=new(text,fromInput ? SourceLanguage : TargetLanguage,fromInput ? TargetLanguage : SourceLanguage,forceNetwork,TranslationProfiles.Routing,ResilientTranslator.MainProject.Infrastructure.Detection.DetectorRegistry.ResolveChoice(Settings.DetectorChoice.Value));
             IsBusy=false; HasError=false; Status=Strings.Ready;
         }
         previous.Cancel(); RequestSuperseded?.Invoke();
@@ -122,9 +111,22 @@ public static class TranslationWorkspace
             }
             Changed?.Invoke();
             var timer=Stopwatch.StartNew();
-            var job=new TranslationJob(request.Id,input,Detector,detected =>
+            var job=new TranslationJob(request.Id,input,detected =>
             {
-                lock(StateGate) { if(request == Current && fromInput && detected!=Language.Unknown) LastDetectedInputLanguage=detected; }
+                lock(StateGate) { if(request==Current && fromInput) LastDetectedInputLanguage=ParseLanguage(detected); }
+            },update=>
+            {
+                lock(StateGate)
+                {
+                    if(request!=Current || request.Token.IsCancellationRequested)return;
+                    if(fromInput)Output=update.Text;else Input=update.Text;
+                    Status=$"{update.Service} · {update.ElapsedMilliseconds:0} ms";
+                }
+                Changed?.Invoke();
+            },message=>
+            {
+                lock(StateGate){if(request!=Current || request.Token.IsCancellationRequested)return;Status=message;}
+                Changed?.Invoke();
             });
             using var registration=token.Register(job.Cancel);
             request.Attach(job);
@@ -135,8 +137,8 @@ public static class TranslationWorkspace
                 lock(StateGate)
                 {
                     if(request != Current) return;
-                    if(result.Error is not null) throw result.Error;
-                    if(fromInput) Output=result.Text ?? ""; else Input=result.Text ?? "";
+
+                    if(fromInput) Output=result.Text; else Input=result.Text;
                     Status=$"{result.Service} · {timer.Elapsed.TotalMilliseconds:0} ms";
                 }
                 Log($"Translation applied; request={request.Id}; text={result.Text}; service={result.Service}; elapsedMs={timer.Elapsed.TotalMilliseconds:F1}",Run:IsLogEnabled);
@@ -169,12 +171,8 @@ public static class TranslationWorkspace
         LanguagePreferences preferences;
         lock(StateGate)
         {
-            bool sourceChanged=source != SourceLanguage;
-            if(source==Automatic && target==Automatic) { if(sourceChanged) target=LastConcreteTargetLanguage; else source=LastConcreteSourceLanguage; }
-            else if(source==target) { if(sourceChanged) target=SourceLanguage; else source=TargetLanguage; }
-            if(source!=Automatic) LastConcreteSourceLanguage=source;
-            if(target!=Automatic) LastConcreteTargetLanguage=target;
-            SourceLanguage=source; TargetLanguage=target;
+            ApplySelection(TranslationLanguageRules.NormalizeSelection(Selection,source,target,TranslationProfiles.Routing));
+            source=SourceLanguage;target=TargetLanguage;
             preferences=new(source,target,LastConcreteSourceLanguage,LastConcreteTargetLanguage);
             previousSave=CurrentSettingsRequest; CurrentSettingsRequest=saveRequest=new();
             input=Input;
@@ -182,7 +180,7 @@ public static class TranslationWorkspace
         previousSave.Cancel();
         Task persistence=PersistPreferencesAsync(preferences,saveRequest);
         Task translation;
-        if(target==Automatic) { CancelPending(); translation=Task.CompletedTask; }
+        if(target==Automatic && !Settings.TwoWayAutomatic.Value) { CancelPending(); translation=Task.CompletedTask; }
         else translation=EditAsync(input,true,true);
         await Task.WhenAll(persistence,translation);
     }
@@ -194,4 +192,13 @@ public static class TranslationWorkspace
     {
         lock(StateGate) return owner == CurrentSettingsRequest ? Preferences.SaveLanguagesAsync(preferences) : Task.CompletedTask;
     }
-}
+    static LanguageSelection Selection=>new(SourceLanguage,TargetLanguage,LastConcreteSourceLanguage,LastConcreteTargetLanguage);
+    static void ApplySelection(LanguageSelection value){SourceLanguage=value.Source;TargetLanguage=value.Target;LastConcreteSourceLanguage=value.LastSource;LastConcreteTargetLanguage=value.LastTarget;}
+    static Language ParseLanguage(string value)=>value switch{"tr"=>Language.Turkish,"de"=>Language.German,"fr"=>Language.French,"es"=>Language.Spanish,"it"=>Language.Italian,"ru"=>Language.Russian,"en"=>Language.English,_=>Language.Unknown};
+    public static async Task ToggleOnlineAsync()
+    {
+        CancelPending();
+        await Preferences.SetAsync(Settings.OnlineEnabled,(!Settings.OnlineEnabled.Value).ToString());
+        await EditAsync(Input,true,true);
+    }
+    public static Task RestartAsync()=>EditAsync(Input,true,true);}

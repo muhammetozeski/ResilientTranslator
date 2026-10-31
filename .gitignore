@@ -178,6 +178,7 @@ DocProject/Help/html
 
 # Click-Once directory
 publish/
+/MainProject/wwwroot/offline/models/
 
 # Publish Web Output
 *.[Pp]ublish.xml

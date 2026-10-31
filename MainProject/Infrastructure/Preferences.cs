@@ -26,6 +26,7 @@ public static class Preferences
         .Where(item => item.Editor is not null)
         .Select(item => new PreferenceEntry((ISetting)item.Field.GetValue(null)!, item.Editor!)).ToArray();
     public static event Action? Changed;
+    internal static void NotifyChanged()=>Changed?.Invoke();
     public static Func<CancellationToken,Task<string[]>>? LoadFonts;
     public static double InputShare => Settings.InputShare.Value;
     public static int CenterSnapRange => Settings.CenterSnapRange.Value;
@@ -155,6 +156,11 @@ public static class Preferences
         if (setting == Settings.EditorColor) return Settings.EditorColor.Value is { } color && Regex.IsMatch(color, "^#[0-9a-fA-F]{6}$");
         if (setting == Settings.DefaultSourceLanguage || setting == Settings.DefaultTargetLanguage)
             return setting.Value is string code && (code == "" || LanguageCatalog.All.Any(language => language.Code == code));
+        if(setting==Settings.AutoFirstLanguage || setting==Settings.AutoSecondLanguage)
+            return TranslationLanguageRules.IsConcrete((string?)setting.Value) && Settings.AutoFirstLanguage.Value!=Settings.AutoSecondLanguage.Value;
+        if(setting==Settings.AutoLanguageMode)return Enum.TryParse<AutoLanguageMode>((string?)setting.Value,out var mode)&&Enum.IsDefined(mode);
+        if(setting==Settings.DetectorChoice)return Enum.TryParse<Detection.DetectorKind>((string?)setting.Value,out var detector)&&Enum.IsDefined(detector);
+        if(setting==Settings.AutoLanguageRules){try{_ = LanguageRuleSet.Parse((string?)setting.Value);return true;}catch(System.Text.Json.JsonException){return false;}catch(ArgumentException){return false;}}
         return setting != Settings.EditorFont || !string.IsNullOrWhiteSpace(Settings.EditorFont.Value);
     }
 }

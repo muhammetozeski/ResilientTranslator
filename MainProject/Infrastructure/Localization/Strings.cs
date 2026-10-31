@@ -1,6 +1,6 @@
 namespace ResilientTranslator.MainProject.Infrastructure.Localization;
 /// <summary>Contains UI strings loaded from the seven embedded language files.</summary>
-public static class Strings
+public static partial class Strings
 {
     public static string SwapLanguages = "Dillerin yerini değiştir";
     public static string SwapTexts = "Metinlerin yerini değiştir";

@@ -30,6 +30,11 @@ public static class DetectorRegistry
         new(DetectorKind.Franc, "franc-min", 121793, .0255, 101, 19),
         new(DetectorKind.Cld3, "CLD3", 1090047, .0659, 99, 14)
     ];
+    public static DetectorKind ResolveChoice(string value)
+    {
+        if(Enum.TryParse<DetectorKind>(value,out var result)&&Enum.IsDefined(result))return result;
+        ExceptionBoundary.LogSafely($"Invalid detector selection; using Lingua; value={value}",IsLogEnabled);return DetectorKind.Lingua;
+    }
     public static async Task InitializeAsync(IJSRuntime js)
     {
         await InitializationGate.WaitAsync().ConfigureAwait(false);
@@ -47,7 +52,7 @@ public static class DetectorRegistry
                 try { await previous.DisposeAsync(); }
                 catch (Exception error) { ExceptionBoundary.LogSafely($"Previous detector bridge cleanup failed; error={error}", IsLogEnabled); }
             }
-            var module = await js.InvokeAsync<IJSObjectReference>("import", "./_content/MainProject/detection/detection.mjs");
+            var module = await js.InvokeAsync<IJSObjectReference>("import", "./_content/MainProject/detection/detection.js");
             try { await module.InvokeVoidAsync("configure", Options); }
             catch (Exception error)
             {
@@ -82,7 +87,7 @@ public static class DetectorRegistry
             {
                 language = await Task.Run(async () => {
                     var detector = await TranslationWorkspace.Detector.WaitAsync(TimeSpan.FromMilliseconds(options.LoadTimeoutMs), token).ConfigureAwait(false);
-                    await LinguaGate.WaitAsync(token).ConfigureAwait(false);
+                    if(!await LinguaGate.WaitAsync(TimeSpan.FromMilliseconds(Settings.DetectorGateBudget.Value),token).ConfigureAwait(false)) throw new TimeoutException("The shared Lingua detector is occupied.");
                     try
                     {
                         token.ThrowIfCancellationRequested();
