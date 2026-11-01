@@ -1,0 +1,45 @@
+@using ResilientTranslator.MainProject.Infrastructure.Speech
+@using ResilientTranslator.MainProject.Infrastructure
+@using ResilientTranslator.MainProject.Infrastructure.Localization
+@using ResilientTranslator.MainProject.Services
+@implements IDisposable
+@inject SpeechPlayback Playback
+<SpeechButtonCss />
+@if (Language == "en")
+{
+    <IconButton Appearance="ControlAppearance.Bare" CustomClass="@ButtonClass" aria-label="@Description" data-tooltip="@Description" Disabled="@string.IsNullOrWhiteSpace(Text)" aria-busy="@(Active && Playback.State == SpeechState.Preparing)" OnClick="Toggle" Size="AppMeasures.Size.Px32">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9H8L13 5V19L8 15H4Z" fill="currentColor" />
+            @if (Active && Playback.State == SpeechState.Playing) { <rect x="17" y="8" width="5" height="8" rx="1" fill="currentColor" /> }
+            else { <path class="speech-waves" d="M16 8C19 10 19 14 16 16M19 5C24 9 24 15 19 19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /> }
+        </svg>
+    </IconButton>
+}
+@code {
+    [Parameter] public bool FromInput { get; set; }
+    string Text="", Language="";
+    bool Active=>Playback.Owner==this;
+    string ButtonClass=>Active && Playback.State==SpeechState.Preparing ? "speech-button speech-preparing" : "speech-button";
+    string Description=>Active ? Playback.State==SpeechState.Preparing ? Strings.SpeechPreparing : Strings.SpeechStop : Playback.FailedOwner==this ? Strings.SpeechFailed : Strings.SpeechListen;
+    protected override void OnInitialized()
+    {
+        TranslationWorkspace.EditorsChanged+=EditorChanged;
+        Playback.Changed+=Refresh;
+        (Text,Language)=TranslationWorkspace.SpeechEditor(FromInput);
+    }
+    void EditorChanged()=>_=ExceptionBoundary.RunSafelyAsync(async _=>await InvokeAsync(async ()=>
+    {
+        var snapshot=TranslationWorkspace.SpeechEditor(FromInput);
+        bool stop=Active && (snapshot.Text!=Text || snapshot.Language!="en");
+        (Text,Language)=snapshot;
+        if(stop) await Playback.StopAsync();
+        StateHasChanged();
+    }),operationName:"RefreshSpeechEditor");
+    void Refresh()=>_=ExceptionBoundary.RunSafelyAsync(async _=>await InvokeAsync(StateHasChanged),operationName:"RefreshSpeechButton");
+    Task Toggle()=>Playback.ToggleAsync(this,Text);
+    public void Dispose()
+    {
+        TranslationWorkspace.EditorsChanged-=EditorChanged;
+        Playback.Changed-=Refresh;
+        if(Active)_=Playback.StopAsync();
+    }
+}

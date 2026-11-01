@@ -3,6 +3,7 @@ namespace ResilientTranslator.MainProject.Constants.ThemeConstants
     /// <summary>Defines shared dimensions, typography and timing values consumed by Razor styles.</summary>
     public static class AppMeasures
     {
+        public static class Speech { public const string IdleOpacity = "0.3"; }
         public static class Tooltip
         {
             public const int TextWidth=260, TableWidth=500, TextHeight=180, MaximumHeight=320, ViewportInset=24, ColumnWidth=130, OpenDelay=1000, CloseDelay=120, FadeDuration=600;

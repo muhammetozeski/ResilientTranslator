@@ -23,9 +23,9 @@
         <CoreButton Appearance="ControlAppearance.Bare" CustomClass="hide" data-tooltip="@Strings.HelpHide" aria-label="@Strings.Hide" data-native-command="hide" OnClick="Hide">−</CoreButton>
     </header>
     <div class="editors" data-window-background inert="@(SettingsOpen ? string.Empty : null)" style="@AppStyles.BuildEditorTypography(Preferences.EditorFontFamily,Preferences.EditorFontSize)">
-        <CoreInput Multiline="true" IsGrouped="false" @ref="InputElement" id="input" data-tooltip="@FeatureText.Get("InputTooltip")" aria-label="@Strings.InputLabel" spellcheck="false" Value="@TranslationWorkspace.Input" OnInput="InputChanged" />
+        <div class="editor-pane"><CoreInput Multiline="true" IsGrouped="false" @ref="InputElement" id="input" data-tooltip="@FeatureText.Get("InputTooltip")" aria-label="@Strings.InputLabel" spellcheck="false" Value="@TranslationWorkspace.Input" OnInput="InputChanged" /><SpeechButton FromInput="true" /></div>
         <EditorSplitter />
-        <CoreInput Multiline="true" IsGrouped="false" id="output" data-tooltip="@FeatureText.Get("OutputTooltip")" aria-label="@Strings.OutputLabel" spellcheck="false" Value="@TranslationWorkspace.Output" OnInput="OutputChanged" />
+        <div class="editor-pane output-pane"><CoreInput Multiline="true" IsGrouped="false" id="output" data-tooltip="@FeatureText.Get("OutputTooltip")" aria-label="@Strings.OutputLabel" spellcheck="false" Value="@TranslationWorkspace.Output" OnInput="OutputChanged" /><SpeechButton FromInput="false" /></div>
     </div>
     <CoreTooltip Text="@FeatureText.Get("ResizeTooltip")" Anchor="@ResizeHandle" Flat="true"><div @ref="ResizeElement" class="resize-grip" data-tooltip="@FeatureText.Get("ResizeTooltip")" data-window-resize aria-hidden="true"></div></CoreTooltip>
     @if (SettingsOpen) { <SettingsPanel OnClose="CloseSettings" /> }

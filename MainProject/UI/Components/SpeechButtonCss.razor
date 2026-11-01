@@ -1,0 +1,8 @@
+<style>
+    .translator .speech-button{position:absolute;right:@(AppMeasures.Size.Px8)px;bottom:@(AppMeasures.Size.Px8)px;display:grid;place-items:center;padding:@(AppMeasures.Size.Px5)px;border:0;border-radius:@(AppMeasures.Radius.Small)px;background:transparent;color:@AppColors.TextPrimary.ToRgbaHex(true);opacity:@AppMeasures.Speech.IdleOpacity;cursor:pointer}
+    .translator .speech-button:hover,.translator .speech-button:focus-visible{opacity:1;background:@AppColors.ControlHover.ToRgbaHex(true)}
+    .speech-button svg{width:@(AppMeasures.Size.Px23)px;height:@(AppMeasures.Size.Px23)px}
+    .speech-preparing .speech-waves{animation:speech-pulse @(AppMeasures.Spinner.SpinDurationMs)ms ease-in-out infinite}
+    @@keyframes speech-pulse{0%,100%{opacity:1}50%{opacity:0.15}}
+    @@media(prefers-reduced-motion:reduce){.speech-preparing .speech-waves{animation:none;stroke-dasharray:2 2}}
+</style>

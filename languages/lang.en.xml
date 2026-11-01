@@ -222,4 +222,8 @@
   <s name="HelpUseToz">Uses Töz for Turkish pairs, combining with Bergamot through English when needed.</s>
   <s name="HelpWhite">Restores white text in both editors.</s>
   <s name="HelpWorkers">Retained worker count. More parallel jobs use more RAM.</s>
+  <s name="SpeechListen">Read aloud. The second listen to the same text is slightly slower.</s>
+  <s name="SpeechPreparing">Preparing speech. Press again to cancel.</s>
+  <s name="SpeechStop">Stop reading aloud.</s>
+  <s name="SpeechFailed">Speech could not be generated. Press to retry.</s>
 </strings>

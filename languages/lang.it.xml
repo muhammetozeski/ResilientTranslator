@@ -222,4 +222,8 @@
   <s name="HelpUseToz">Usa Töz per coppie turche, combinandolo con Bergamot tramite inglese se necessario.</s>
   <s name="HelpWhite">Ripristina il testo bianco nei due riquadri.</s>
   <s name="HelpWorkers">Numero di worker pronti. Più lavori paralleli richiedono più RAM.</s>
+  <s name="SpeechListen">Leggi ad alta voce. Il secondo ascolto dello stesso testo è leggermente più lento.</s>
+  <s name="SpeechPreparing">Preparazione della voce. Premi di nuovo per annullare.</s>
+  <s name="SpeechStop">Interrompi la lettura.</s>
+  <s name="SpeechFailed">Impossibile generare la voce. Premi per riprovare.</s>
 </strings>

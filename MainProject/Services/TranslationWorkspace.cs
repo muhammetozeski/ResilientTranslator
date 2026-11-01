@@ -37,6 +37,28 @@ public static class TranslationWorkspace
     public static bool IsBusy { get; private set; }
     public static bool HasError { get; private set; }
     public static event Action? Changed;
+    public static event Action? EditorsChanged;
+    static string? DetectedInput, DetectedOutput;
+    static (string Text, string Language) LastInputSpeech, LastOutputSpeech;
+    /// <summary>Reads language state already resolved by translation; never invokes a detector.</summary>
+    public static (string Text, string Language) SpeechEditor(bool fromInput)
+    {
+        lock(StateGate) return fromInput
+            ? (Input, SourceLanguage == Automatic ? DetectedInput ?? Automatic : SourceLanguage)
+            : (Output, TargetLanguage == Automatic ? DetectedOutput ?? Automatic : TargetLanguage);
+    }
+    static void NotifyChanged()
+    {
+        bool editorsChanged;
+        lock(StateGate)
+        {
+            var input=SpeechEditor(true); var output=SpeechEditor(false);
+            editorsChanged=input!=LastInputSpeech || output!=LastOutputSpeech;
+            LastInputSpeech=input; LastOutputSpeech=output;
+        }
+        if(editorsChanged) EditorsChanged?.Invoke();
+        Changed?.Invoke();
+    }
     public static event Action? RequestSuperseded;
     public static Action? HideWindow;
     public static Action? ViewReady;
@@ -62,13 +84,13 @@ public static class TranslationWorkspace
     static void RefreshLanguage()
     {
         lock(StateGate) { if(IsBusy) Status=Strings.Translating; else if(HasError) Status=Strings.TranslationFailed; else if(!Status.Contains(" ms")) Status=Strings.Ready; }
-        Changed?.Invoke();
+        NotifyChanged();
     }    /// <summary>Replaces the owner atomically, then cancels old work outside the short state lock.</summary>
     public static void CancelPending()
     {
         RequestContext previous;
         lock(StateGate) { previous=Current; Current=new(); IsBusy=false; HasError=false; Status=Strings.Ready; }
-        previous.Cancel(); RequestSuperseded?.Invoke(); Changed?.Invoke();
+        previous.Cancel(); RequestSuperseded?.Invoke(); NotifyChanged();
     }
     /// <summary>Accepts an editor snapshot, resolves an automatic destination and starts an independent translation worker.</summary>
     /// <param name="text">The complete immutable editor snapshot.</param>
@@ -91,14 +113,14 @@ public static class TranslationWorkspace
                 LastDetectedInputLanguage==Language.Unknown?null:LanguageInfo.IsoCode6391(LastDetectedInputLanguage).ToString().ToLowerInvariant(),TranslationProfiles.Routing);
             if(selection!=Selection){ApplySelection(selection);preferences=new(SourceLanguage,TargetLanguage,LastConcreteSourceLanguage,LastConcreteTargetLanguage);}
             if(preferences is not null) { previousSave=CurrentSettingsRequest; CurrentSettingsRequest=saveRequest=new(); }
-            if(fromInput) Input=text; else Output=text;
+            if(fromInput) { Input=text; DetectedInput=null; } else { Output=text; DetectedOutput=null; }
             input=new(text,fromInput ? SourceLanguage : TargetLanguage,fromInput ? TargetLanguage : SourceLanguage,forceNetwork,TranslationProfiles.Routing,ResilientTranslator.MainProject.Infrastructure.Detection.DetectorRegistry.ResolveChoice(Settings.DetectorChoice.Value));
             IsBusy=false; HasError=false; Status=Strings.Ready;
         }
         previous.Cancel(); RequestSuperseded?.Invoke();
         if(preferences is not null && saveRequest is not null) { previousSave?.Cancel(); _=PersistPreferencesAsync(preferences,saveRequest); }
         Log($"Editor changed; request={request.Id}; fromInput={fromInput}; immediate={immediate}; source={input.SourceLanguage}; target={input.TargetLanguage}; text={text}",Run:IsLogEnabled);
-        Changed?.Invoke();
+        NotifyChanged();
         var outcome=await ExceptionBoundary.RunSafelyAsync(async token =>
         {
             if(!immediate) await Task.Delay(Settings.TypingDelay.Value,token).WaitAsync(token);
@@ -109,24 +131,34 @@ public static class TranslationWorkspace
                 if(string.IsNullOrWhiteSpace(text)) { if(fromInput) Output=""; else Input=""; return; }
                 IsBusy=true; Status=Strings.Translating;
             }
-            Changed?.Invoke();
+            NotifyChanged();
             var timer=Stopwatch.StartNew();
+            string? detectedForRequest=null;
             var job=new TranslationJob(request.Id,input,detected =>
             {
-                lock(StateGate) { if(request==Current && fromInput) LastDetectedInputLanguage=ParseLanguage(detected); }
+                lock(StateGate)
+                {
+                    if(request!=Current)return;
+                    detectedForRequest=detected;
+                    if(fromInput) { LastDetectedInputLanguage=ParseLanguage(detected); DetectedInput=detected; }
+                    else DetectedOutput=detected;
+                }
+                NotifyChanged();
             },update=>
             {
                 lock(StateGate)
                 {
                     if(request!=Current || request.Token.IsCancellationRequested)return;
-                    if(fromInput)Output=update.Text;else Input=update.Text;
+                    var direction=TranslationLanguageRules.ResolveRequest(input.SourceLanguage,input.TargetLanguage,detectedForRequest,input.Routing??AutoRoutingOptions.Default);
+                    if(fromInput) { Output=update.Text; DetectedOutput=direction.Target; }
+                    else { Input=update.Text; DetectedInput=direction.Target; }
                     Status=$"{update.Service} · {update.ElapsedMilliseconds:0} ms";
                 }
-                Changed?.Invoke();
+                NotifyChanged();
             },message=>
             {
                 lock(StateGate){if(request!=Current || request.Token.IsCancellationRequested)return;Status=message;}
-                Changed?.Invoke();
+                NotifyChanged();
             });
             using var registration=token.Register(job.Cancel);
             request.Attach(job);
@@ -147,14 +179,14 @@ public static class TranslationWorkspace
         },request.Token,operationName:$"Translate-{request.Id}");
         bool refresh;
         lock(StateGate) { refresh=request == Current; if(refresh) { IsBusy=false; if(outcome.Status==OperationStatus.Failed) { HasError=true; Status=Strings.TranslationFailed; } } }
-        if(refresh) Changed?.Invoke();
+        if(refresh) NotifyChanged();
     }
     /// <summary>Exchanges both texts as one command, retaining both values.</summary>
     public static void SwapTexts()
     {
         RequestContext previous;
-        lock(StateGate) { previous=Current; Current=new(); (Input,Output)=(Output,Input); IsBusy=false; HasError=false; Status=Strings.Ready; }
-        previous.Cancel(); RequestSuperseded?.Invoke(); Changed?.Invoke();
+        lock(StateGate) { previous=Current; Current=new(); (Input,Output)=(Output,Input); (DetectedInput,DetectedOutput)=(DetectedOutput,DetectedInput); IsBusy=false; HasError=false; Status=Strings.Ready; }
+        previous.Cancel(); RequestSuperseded?.Invoke(); NotifyChanged();
         Log("Editor texts swapped",Run:IsLogEnabled);
     }
     /// <summary>Exchanges the two language selections.</summary>
@@ -202,3 +234,4 @@ public static class TranslationWorkspace
         await EditAsync(Input,true,true);
     }
     public static Task RestartAsync()=>EditAsync(Input,true,true);}
+

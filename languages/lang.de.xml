@@ -222,4 +222,8 @@
   <s name="HelpUseToz">Nutzt Töz für Türkisch-Paare, bei Bedarf mit Bergamot über Englisch.</s>
   <s name="HelpWhite">Setzt den Text beider Felder auf Weiß.</s>
   <s name="HelpWorkers">Anzahl vorgehaltener Worker. Mehr parallele Aufgaben benötigen mehr RAM.</s>
+  <s name="SpeechListen">Vorlesen. Beim zweiten Anhören desselben Textes wird etwas langsamer gesprochen.</s>
+  <s name="SpeechPreparing">Sprachausgabe wird vorbereitet. Zum Abbrechen erneut drücken.</s>
+  <s name="SpeechStop">Vorlesen stoppen.</s>
+  <s name="SpeechFailed">Die Sprachausgabe ist fehlgeschlagen. Zum Wiederholen drücken.</s>
 </strings>

@@ -1,6 +1,6 @@
 # Resilient Translator
 
-![Version](https://img.shields.io/badge/version-1.1.0-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
+![Version](https://img.shields.io/badge/version-1.2.0-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
 
 A portable, borderless MAUI Blazor translator with a warm hidden window and two editable text panes.
 
@@ -10,6 +10,7 @@ A portable, borderless MAUI Blazor translator with a warm hidden window and two 
 - A new command cancels the previous request; only the current request object may publish its result.
 - Bergamot, applicable Töz translation chains and online services start immediately. The first result appears immediately; higher-priority results replace it and cancel lower-priority computation. Online recovery continues until success or cancellation.
 - Click the status light for gray mode: local translation only, without online requests. The package includes models for all seven supported languages, using English as a bridge where necessary.
+- English editors offer local read-aloud with a cancelable preparation indicator. The last recording stays in RAM; successive listens alternate normal and slightly slower playback.
 - Single left click on the tray icon toggles the window. Middle click exits.
 - A compact toolbar swaps languages or texts; its arrow starts a fresh translation immediately.
 - Click the icon or title for persistent appearance, startup-language and technical settings. The application UI supports Turkish, English, German, French, Spanish, Italian and Russian.
@@ -45,6 +46,7 @@ With two-way automatic selection disabled, an Automatic output destination becom
 
 
 Developer knowledge: [documentation index](Docs/İçindekiler.md).
+
 
 
 

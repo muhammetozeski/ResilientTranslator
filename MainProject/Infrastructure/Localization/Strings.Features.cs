@@ -151,6 +151,10 @@ public static partial class Strings
     public static string SettingsApplied = "Ayarlar uygulandı.";
     public static string SimpleMode = "Basit";
     public static string SourceTooltip = "Sol metin kutusunun dili. Otomatik seçildiğinde metnin dili algılanır; iki yönlü otomatik seçim açıksa karşı dil de kurallara göre seçilir.";
+    public static string SpeechFailed = "Ses üretilemedi. Yeniden denemek için bas.";
+    public static string SpeechListen = "Seslendir. Aynı metin ikinci dinleyişte biraz daha yavaş çalar.";
+    public static string SpeechPreparing = "Ses hazırlanıyor. İptal etmek için tekrar bas.";
+    public static string SpeechStop = "Seslendirmeyi durdur.";
     public static string SplitterTooltip = "Metin kutularının genişlik oranını değiştirmek için sürükle. Pencerenin boyutu değişince oran korunur; ayarlardan yüzde 50’ye dönebilirsin.";
     public static string TargetTooltip = "Sağ metin kutusunun dili. Bu kutudaki metni düzenlemek ters yönde çeviri başlatır. İki yönlü otomatik seçim açıksa iki kutu da Otomatik olabilir.";
     public static string TooltipDelay = "Tooltip açılış beklemesi (sn)";

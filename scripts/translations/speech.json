@@ -1,0 +1,38 @@
+{
+  "SpeechStop": {
+    "es": "Detener la lectura.",
+    "fr": "Arrêter la lecture.",
+    "ru": "Остановить чтение.",
+    "de": "Vorlesen stoppen.",
+    "it": "Interrompi la lettura.",
+    "tr": "Seslendirmeyi durdur.",
+    "en": "Stop reading aloud."
+  },
+  "SpeechPreparing": {
+    "es": "Preparando la voz. Pulsa de nuevo para cancelar.",
+    "fr": "Préparation de la voix. Appuyez à nouveau pour annuler.",
+    "ru": "Подготовка речи. Нажмите ещё раз для отмены.",
+    "de": "Sprachausgabe wird vorbereitet. Zum Abbrechen erneut drücken.",
+    "it": "Preparazione della voce. Premi di nuovo per annullare.",
+    "tr": "Ses hazırlanıyor. İptal etmek için tekrar bas.",
+    "en": "Preparing speech. Press again to cancel."
+  },
+  "SpeechListen": {
+    "es": "Leer en voz alta. La segunda escucha del mismo texto es un poco más lenta.",
+    "fr": "Lire à voix haute. La deuxième écoute du même texte est légèrement plus lente.",
+    "ru": "Прочитать вслух. Второе прослушивание того же текста немного медленнее.",
+    "de": "Vorlesen. Beim zweiten Anhören desselben Textes wird etwas langsamer gesprochen.",
+    "it": "Leggi ad alta voce. Il secondo ascolto dello stesso testo è leggermente più lento.",
+    "tr": "Seslendir. Aynı metin ikinci dinleyişte biraz daha yavaş çalar.",
+    "en": "Read aloud. The second listen to the same text is slightly slower."
+  },
+  "SpeechFailed": {
+    "en": "Speech could not be generated. Press to retry.",
+    "es": "No se pudo generar la voz. Pulsa para reintentar.",
+    "tr": "Ses üretilemedi. Yeniden denemek için bas.",
+    "it": "Impossibile generare la voce. Premi per riprovare.",
+    "ru": "Не удалось создать речь. Нажмите, чтобы повторить.",
+    "fr": "La voix n'a pas pu être générée. Appuyez pour réessayer.",
+    "de": "Die Sprachausgabe ist fehlgeschlagen. Zum Wiederholen drücken."
+  }
+}

@@ -222,4 +222,8 @@
   <s name="HelpUseToz">Türkçe içeren çiftlerde Töz’ü kullanır. Diğer dil için gerektiğinde Bergamot ile İngilizce üzerinden zincir kurar.</s>
   <s name="HelpWhite">İki metin kutusundaki yazı rengini doğrudan beyaza döndürür.</s>
   <s name="HelpWorkers">Hazır tutulan işçi sayısı. Daha fazla paralel iş yapılabilir fakat RAM tüketimi artar.</s>
+  <s name="SpeechListen">Seslendir. Aynı metin ikinci dinleyişte biraz daha yavaş çalar.</s>
+  <s name="SpeechPreparing">Ses hazırlanıyor. İptal etmek için tekrar bas.</s>
+  <s name="SpeechStop">Seslendirmeyi durdur.</s>
+  <s name="SpeechFailed">Ses üretilemedi. Yeniden denemek için bas.</s>
 </strings>
