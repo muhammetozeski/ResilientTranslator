@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <strings>
   <LanguageName>Türkçe</LanguageName>
   <s name="SwapLanguages">Dillerin yerini değiştir</s>
@@ -226,7 +226,13 @@
   <s name="SpeechPreparing">Ses hazırlanıyor. İptal etmek için tekrar bas.</s>
   <s name="SpeechStop">Seslendirmeyi durdur.</s>
   <s name="SpeechFailed">Ses üretilemedi. Yeniden denemek için bas.</s>
+  <s name="GlobalShortcutLabel">Açma/gizleme kısayolu</s>
+  <s name="HelpGlobalShortcut">Düğmeye basıp istediğiniz tuşları ve fare düğmelerini birlikte basılı tutun; sonra sol tıkla onaylayın veya iptal edin. Mouse 4/5 ve Ctrl, Shift, Alt, Win birleşimleri desteklenir. Tek başına sol tık atanmaz; Ctrl + sol tık atanabilir. Varsayılan Win + &lt;.</s>
   <s name="HelpSpeechPronunciation">Metni ses modeline hazırlayan telaffuz yöntemini seçer. Misaki + sinir ağı varsayılandır; FYLs-G2P alternatifidir. Seçim değişince aynı metnin sesi yeniden hazırlanır.</s>
   <s name="MisakiNeuralName">Misaki + sinir ağı</s>
+  <s name="ShortcutAccept">Onayla</s>
+  <s name="ShortcutCancel">İptal</s>
+  <s name="ShortcutFailed">Kısayol uygulanamadı. Başka bir birleşim deneyin.</s>
+  <s name="ShortcutHold">İstediğiniz birleşimi basılı tutun…</s>
   <s name="SpeechPronunciationLabel">İngilizce telaffuz motoru</s>
 </strings>

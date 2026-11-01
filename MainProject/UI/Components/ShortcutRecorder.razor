@@ -1,0 +1,34 @@
+@using ResilientTranslator.MainProject.Infrastructure
+@using ResilientTranslator.MainProject.Infrastructure.Input
+@using ResilientTranslator.MainProject.Infrastructure.Localization
+@implements IDisposable
+@inject IGlobalShortcut Shortcut
+<ShortcutRecorderCss />
+<div class="shortcut-recorder">
+    <CoreButton Appearance="ControlAppearance.Compact" Disabled="@Shortcut.IsCapturing" OnClick="Begin" data-tooltip="@Strings.HelpGlobalShortcut" aria-label="@Strings.GlobalShortcutLabel">@Shortcut.Display(Shortcut.Current)</CoreButton>
+    @if(Shortcut.IsCapturing)
+    {
+        <span role="status">@(Shortcut.Candidate is {} chord ? Shortcut.Display(chord) : Strings.ShortcutHold)</span>
+        <CoreButton Appearance="ControlAppearance.Compact" Disabled="@(Shortcut.Candidate is null)" OnClick="Accept" data-tooltip="@Strings.ShortcutAccept">@Strings.ShortcutAccept</CoreButton>
+        <CoreButton Appearance="ControlAppearance.Compact" OnClick="Cancel" data-tooltip="@Strings.ShortcutCancel">@Strings.ShortcutCancel</CoreButton>
+    }
+    @if(Error.Length>0){<span class="settings-error" role="alert">@Error</span>}
+</div>
+@code {
+    string Error="";
+    protected override void OnInitialized()=>Shortcut.Changed+=Refresh;
+    void Refresh()=>_=ExceptionBoundary.RunSafelyAsync(async _=>await InvokeAsync(StateHasChanged),operationName:"RefreshShortcutRecorder");
+    Task Begin()=>Run(Shortcut.BeginCaptureAsync);
+    Task Accept()=>Run(()=>Shortcut.EndCaptureAsync(true));
+    Task Cancel()=>Run(()=>Shortcut.EndCaptureAsync(false));
+    async Task Run(Func<Task> action)
+    {
+        var outcome=await ExceptionBoundary.RunSafelyAsync(async _=>await action(),operationName:"ConfigureGlobalShortcut");
+        Error=outcome.Succeeded?"":Strings.ShortcutFailed;
+    }
+    public void Dispose()
+    {
+        Shortcut.Changed-=Refresh;
+        if(Shortcut.IsCapturing)_=ExceptionBoundary.RunSafelyAsync(async _=>await Shortcut.EndCaptureAsync(false),operationName:"CancelClosedShortcutRecorder");
+    }
+}

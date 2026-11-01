@@ -30,6 +30,7 @@ public static partial class Strings
     public static string EngineStarted = "{0} çeviriye başladı.";
     public static string EngineUnavailable = "{0} motoru kullanılamıyor.";
     public static string FirstLanguage = "Birinci dil";
+    public static string GlobalShortcutLabel = "Açma/gizleme kısayolu";
     public static string HelpActiveRecoveryProfile = "Çevrimiçi süreleri ve tekrar aralıklarını birlikte uygular. Diğer motorların hemen başlamasını değiştirmez.";
     public static string HelpAddRule = "Listenin sonuna yeni bir kaynak dil ve hedef dil koşulu ekler.";
     public static string HelpAttemptTimeout = "Tek bir çevrimiçi denemeye ayrılan saniye. Süre dolarsa deneme iptal edilip kurtarma sürer.";
@@ -72,6 +73,7 @@ public static partial class Strings
     public static string HelpEnableLogging = "İşlemleri, hataları ve çevirilen metinleri tanılama dosyalarına kaydeder.";
     public static string HelpEnableTooltips = "Açıklama kutularını açar veya kapatır; kapatınca bekleyen kutular da açılmaz.";
     public static string HelpFontStep = "Yazı boyutunu bir piksel değiştirir; varsa ondalık kısmı korur.";
+    public static string HelpGlobalShortcut = "Düğmeye basıp istediğiniz tuşları ve fare düğmelerini birlikte basılı tutun; sonra sol tıkla onaylayın veya iptal edin. Mouse 4/5 ve Ctrl, Shift, Alt, Win birleşimleri desteklenir. Tek başına sol tık atanmaz; Ctrl + sol tık atanabilir. Varsayılan Win + <.";
     public static string HelpHide = "Pencereyi gizler; uygulama tepside çalışmaya devam eder.";
     public static string HelpInputShare = "Sol kutunun toplam alandaki yüzdesi. Pencere boyutu değişse de bu oran korunur.";
     public static string HelpLanguage = "Arayüzün dilini değiştirir; çeviri dillerini değiştirmez. Otomatik, Windows dilini izler.";
@@ -151,6 +153,10 @@ public static partial class Strings
     public static string SecondLanguage = "İkinci dil";
     public static string SettingHelp = "{0}. Varsayılan değer: {1}.";
     public static string SettingsApplied = "Ayarlar uygulandı.";
+    public static string ShortcutAccept = "Onayla";
+    public static string ShortcutCancel = "İptal";
+    public static string ShortcutFailed = "Kısayol uygulanamadı. Başka bir birleşim deneyin.";
+    public static string ShortcutHold = "İstediğiniz birleşimi basılı tutun…";
     public static string SimpleMode = "Basit";
     public static string SourceTooltip = "Sol metin kutusunun dili. Otomatik seçildiğinde metnin dili algılanır; iki yönlü otomatik seçim açıksa karşı dil de kurallara göre seçilir.";
     public static string SpeechFailed = "Ses üretilemedi. Yeniden denemek için bas.";

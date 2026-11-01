@@ -26,6 +26,7 @@ namespace ResilientTranslator
                 });
 
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.AddSingleton<MainProject.Infrastructure.Input.IGlobalShortcut>(GlobalShortcut.Instance);
             builder.Services.AddScoped<MainProject.Infrastructure.Speech.EnglishPronunciation>();
             builder.Services.AddScoped<MainProject.Infrastructure.Speech.IEnglishPhonemizer>(services=>services.GetRequiredService<MainProject.Infrastructure.Speech.EnglishPronunciation>());
             builder.Services.AddScoped<MainProject.Infrastructure.Speech.SpeechPlayback>();

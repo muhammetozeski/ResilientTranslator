@@ -33,6 +33,7 @@ internal static class SettingsManagerSettings
 /// <summary>Declares the application&apos;s persistent typed values and reflected UI metadata.</summary>
 internal static class Settings
 {
+    [Preference(nameof(Strings.GlobalShortcutLabel),true)] public static readonly Setting<string> GlobalShortcut=new("");
     [Preference(nameof(Strings.SpeechPronunciationLabel),true)] public static readonly Setting<Speech.PronunciationEngine> SpeechPronunciation=new(Speech.PronunciationEngine.Misaki);
     [Preference(nameof(Strings.EnableTooltips))] public static readonly Setting<bool> EnableTooltips=new(true);
     [Preference(nameof(Strings.TooltipDelay),true,0,60)] public static readonly Setting<double> TooltipDelay=new(1);

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <strings>
   <LanguageName>Français</LanguageName>
   <s name="SwapLanguages">Permuter les langues</s>
@@ -226,7 +226,13 @@
   <s name="SpeechPreparing">Préparation de la voix. Appuyez à nouveau pour annuler.</s>
   <s name="SpeechStop">Arrêter la lecture.</s>
   <s name="SpeechFailed">La voix n'a pas pu être générée. Appuyez pour réessayer.</s>
+  <s name="GlobalShortcutLabel">Raccourci afficher/masquer</s>
+  <s name="HelpGlobalShortcut">Cliquez puis maintenez les touches et boutons de souris souhaités. Un clic gauche simple confirme ou annule. Mouse 4/5, Ctrl, Maj, Alt et Win sont pris en charge. Le clic gauche seul est exclu, Ctrl + clic gauche est permis. Par défaut : Win + &lt;.</s>
   <s name="HelpSpeechPronunciation">Choisit la préparation du texte anglais pour le modèle vocal. Misaki neuronal est utilisé par défaut, FYLs-G2P est l’alternative. Un changement recrée l’enregistrement.</s>
   <s name="MisakiNeuralName">Misaki + neuronal</s>
+  <s name="ShortcutAccept">Confirmer</s>
+  <s name="ShortcutCancel">Annuler</s>
+  <s name="ShortcutFailed">Impossible d’appliquer ce raccourci. Essayez une autre combinaison.</s>
+  <s name="ShortcutHold">Maintenez la combinaison souhaitée…</s>
   <s name="SpeechPronunciationLabel">Moteur de prononciation anglaise</s>
 </strings>

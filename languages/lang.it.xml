@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <strings>
   <LanguageName>Italiano</LanguageName>
   <s name="SwapLanguages">Scambia lingue</s>
@@ -226,7 +226,13 @@
   <s name="SpeechPreparing">Preparazione della voce. Premi di nuovo per annullare.</s>
   <s name="SpeechStop">Interrompi la lettura.</s>
   <s name="SpeechFailed">Impossibile generare la voce. Premi per riprovare.</s>
+  <s name="GlobalShortcutLabel">Scorciatoia mostra/nascondi</s>
+  <s name="HelpGlobalShortcut">Premi e tieni insieme i tasti e pulsanti desiderati. Conferma o annulla con un normale clic sinistro. Supporta Mouse 4/5, Ctrl, Maiusc, Alt e Win. Il solo clic sinistro non è assegnabile; Ctrl + clic sinistro sì. Predefinito: Win + &lt;.</s>
   <s name="HelpSpeechPronunciation">Seleziona la preparazione del testo inglese per il modello vocale. Misaki neurale è predefinito; FYLs-G2P è l’alternativa. Cambiando si rigenera la registrazione.</s>
   <s name="MisakiNeuralName">Misaki + neurale</s>
+  <s name="ShortcutAccept">Conferma</s>
+  <s name="ShortcutCancel">Annulla</s>
+  <s name="ShortcutFailed">Impossibile applicare la scorciatoia. Prova un’altra combinazione.</s>
+  <s name="ShortcutHold">Tieni premuta la combinazione…</s>
   <s name="SpeechPronunciationLabel">Motore di pronuncia inglese</s>
 </strings>

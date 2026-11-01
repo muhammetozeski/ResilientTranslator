@@ -54,7 +54,8 @@
             @foreach (var entry in Preferences.Entries.Where(item => item.Editor.Technical))
             {
                 <CoreHelp Text="@Help(entry.Setting)"><label data-tooltip="@Help(entry.Setting)"><CoreTooltip Text="@Help(entry.Setting)"><span>@entry.Label</span></CoreTooltip>
-                    @if(entry.Setting==Settings.SpeechPronunciation) { <CoreSelect value="@Settings.SpeechPronunciation.Value.ToString()" OnChange="args=>Change(entry.Setting,args)" aria-label="@entry.Label" data-tooltip="@Help(entry.Setting)"><option value="Misaki">@Strings.MisakiNeuralName</option><option value="Fyls">FYLs-G2P</option></CoreSelect> }
+                    @if(entry.Setting==Settings.GlobalShortcut) { <ShortcutRecorder /> }
+                    else if(entry.Setting==Settings.SpeechPronunciation) { <CoreSelect value="@Settings.SpeechPronunciation.Value.ToString()" OnChange="args=>Change(entry.Setting,args)" aria-label="@entry.Label" data-tooltip="@Help(entry.Setting)"><option value="Misaki">@Strings.MisakiNeuralName</option><option value="Fyls">FYLs-G2P</option></CoreSelect> }
                     else if (entry.Setting.ValueType == typeof(bool)) { <CoreInput IsGrouped="false" type="checkbox" checked="@((bool)entry.Setting.Value!)" OnChange="args => Change(entry.Setting,args)" aria-label="@entry.Label" data-tooltip="@Help(entry.Setting)" /> }
                     else { <CoreInput IsGrouped="false" type="number" min="@Invariant(entry.Editor.Minimum)" max="@Invariant(entry.Editor.Maximum)" step="@(entry.Setting.ValueType==typeof(int) ? "1" : "any")" Value="@Convert.ToString(entry.Setting.Value,CultureInfo.InvariantCulture)" OnChange="args => Change(entry.Setting,args)" aria-label="@entry.Label" data-tooltip="@Help(entry.Setting)" /> }
                 </label></CoreHelp>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <strings>
   <LanguageName>Русский</LanguageName>
   <s name="SwapLanguages">Поменять языки</s>
@@ -226,7 +226,13 @@
   <s name="SpeechPreparing">Подготовка речи. Нажмите ещё раз для отмены.</s>
   <s name="SpeechStop">Остановить чтение.</s>
   <s name="SpeechFailed">Не удалось создать речь. Нажмите, чтобы повторить.</s>
+  <s name="GlobalShortcutLabel">Сочетание показа и скрытия</s>
+  <s name="HelpGlobalShortcut">Нажмите кнопку и удерживайте нужные клавиши и кнопки мыши вместе. Обычным левым щелчком подтвердите или отмените. Поддерживаются Mouse 4/5, Ctrl, Shift, Alt, Win. Левый щелчок отдельно не назначается, Ctrl + левый щелчок разрешён. По умолчанию Win + &lt;.</s>
   <s name="HelpSpeechPronunciation">Выбирает подготовку английского текста для речевой модели. По умолчанию Misaki с нейросетью, альтернатива — FYLs-G2P. При смене запись создаётся заново.</s>
   <s name="MisakiNeuralName">Misaki + нейросеть</s>
+  <s name="ShortcutAccept">Подтвердить</s>
+  <s name="ShortcutCancel">Отмена</s>
+  <s name="ShortcutFailed">Не удалось применить сочетание. Попробуйте другое.</s>
+  <s name="ShortcutHold">Удерживайте нужное сочетание…</s>
   <s name="SpeechPronunciationLabel">Движок английского произношения</s>
 </strings>

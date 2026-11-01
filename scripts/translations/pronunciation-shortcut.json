@@ -1,29 +1,11 @@
 {
-  "SpeechPronunciationLabel": {
-    "tr": "İngilizce telaffuz motoru",
-    "en": "English pronunciation engine",
-    "de": "Englische Aussprache",
-    "fr": "Moteur de prononciation anglaise",
-    "es": "Motor de pronunciación inglesa",
-    "it": "Motore di pronuncia inglese",
-    "ru": "Движок английского произношения"
-  },
-  "HelpSpeechPronunciation": {
-    "tr": "Metni ses modeline hazırlayan telaffuz yöntemini seçer. Misaki + sinir ağı varsayılandır; FYLs-G2P alternatifidir. Seçim değişince aynı metnin sesi yeniden hazırlanır.",
-    "en": "Selects how English text is prepared for the speech model. Misaki + neural is the default; FYLs-G2P is the alternative. Changing it rebuilds the recording for the same text.",
-    "de": "Wählt die Aufbereitung englischer Texte für das Sprachmodell. Standard ist Misaki mit neuronalem Modell, alternativ FYLs-G2P. Ein Wechsel erzeugt die Aufnahme neu.",
-    "fr": "Choisit la préparation du texte anglais pour le modèle vocal. Misaki neuronal est utilisé par défaut, FYLs-G2P est l’alternative. Un changement recrée l’enregistrement.",
-    "es": "Selecciona la preparación del texto inglés para el modelo de voz. Misaki neuronal es el predeterminado; FYLs-G2P es la alternativa. Al cambiarlo se regenera la grabación.",
-    "it": "Seleziona la preparazione del testo inglese per il modello vocale. Misaki neurale è predefinito; FYLs-G2P è l’alternativa. Cambiando si rigenera la registrazione.",
-    "ru": "Выбирает подготовку английского текста для речевой модели. По умолчанию Misaki с нейросетью, альтернатива — FYLs-G2P. При смене запись создаётся заново."
-  },
-  "MisakiNeuralName": {
-    "tr": "Misaki + sinir ağı",
-    "en": "Misaki + neural",
-    "de": "Misaki + neuronal",
-    "fr": "Misaki + neuronal",
-    "es": "Misaki + neuronal",
-    "it": "Misaki + neurale",
-    "ru": "Misaki + нейросеть"
-  }
+"SpeechPronunciationLabel":{"tr":"İngilizce telaffuz motoru","en":"English pronunciation engine","de":"Englische Aussprache","fr":"Moteur de prononciation anglaise","es":"Motor de pronunciación inglesa","it":"Motore di pronuncia inglese","ru":"Движок английского произношения"},
+"HelpSpeechPronunciation":{"tr":"Metni ses modeline hazırlayan telaffuz yöntemini seçer. Misaki + sinir ağı varsayılandır; FYLs-G2P alternatifidir. Seçim değişince aynı metnin sesi yeniden hazırlanır.","en":"Selects how English text is prepared for the speech model. Misaki + neural is the default; FYLs-G2P is the alternative. Changing it rebuilds the recording for the same text.","de":"Wählt die Aufbereitung englischer Texte für das Sprachmodell. Standard ist Misaki mit neuronalem Modell, alternativ FYLs-G2P. Ein Wechsel erzeugt die Aufnahme neu.","fr":"Choisit la préparation du texte anglais pour le modèle vocal. Misaki neuronal est utilisé par défaut, FYLs-G2P est l’alternative. Un changement recrée l’enregistrement.","es":"Selecciona la preparación del texto inglés para el modelo de voz. Misaki neuronal es el predeterminado; FYLs-G2P es la alternativa. Al cambiarlo se regenera la grabación.","it":"Seleziona la preparazione del testo inglese per il modello vocale. Misaki neurale è predefinito; FYLs-G2P è l’alternativa. Cambiando si rigenera la registrazione.","ru":"Выбирает подготовку английского текста для речевой модели. По умолчанию Misaki с нейросетью, альтернатива — FYLs-G2P. При смене запись создаётся заново."},
+"MisakiNeuralName":{"tr":"Misaki + sinir ağı","en":"Misaki + neural","de":"Misaki + neuronal","fr":"Misaki + neuronal","es":"Misaki + neuronal","it":"Misaki + neurale","ru":"Misaki + нейросеть"},
+"GlobalShortcutLabel":{"tr":"Açma/gizleme kısayolu","en":"Show/hide shortcut","de":"Tastenkombination zum Ein-/Ausblenden","fr":"Raccourci afficher/masquer","es":"Atajo para mostrar/ocultar","it":"Scorciatoia mostra/nascondi","ru":"Сочетание показа и скрытия"},
+"HelpGlobalShortcut":{"tr":"Düğmeye basıp istediğiniz tuşları ve fare düğmelerini birlikte basılı tutun; sonra sol tıkla onaylayın veya iptal edin. Mouse 4/5 ve Ctrl, Shift, Alt, Win birleşimleri desteklenir. Tek başına sol tık atanmaz; Ctrl + sol tık atanabilir. Varsayılan Win + <.","en":"Press the button, then hold the desired keys and mouse buttons together. Use a plain left click to accept or cancel. Supports Mouse 4/5 and Ctrl, Shift, Alt, Win combinations. Left click alone cannot be assigned; Ctrl + left click can. Default: Win + <.","de":"Taste anklicken, dann gewünschte Tasten und Maustasten gemeinsam halten. Mit einfachem Linksklick bestätigen oder abbrechen. Mouse 4/5, Strg, Umschalt, Alt und Win werden unterstützt. Linksklick allein ist ausgeschlossen, Strg + Linksklick erlaubt. Standard: Win + <.","fr":"Cliquez puis maintenez les touches et boutons de souris souhaités. Un clic gauche simple confirme ou annule. Mouse 4/5, Ctrl, Maj, Alt et Win sont pris en charge. Le clic gauche seul est exclu, Ctrl + clic gauche est permis. Par défaut : Win + <.","es":"Pulsa y mantén juntas las teclas y botones deseados. Confirma o cancela con un clic izquierdo simple. Admite Mouse 4/5, Ctrl, Mayús, Alt y Win. El clic izquierdo solo no se asigna; Ctrl + clic izquierdo sí. Predeterminado: Win + <.","it":"Premi e tieni insieme i tasti e pulsanti desiderati. Conferma o annulla con un normale clic sinistro. Supporta Mouse 4/5, Ctrl, Maiusc, Alt e Win. Il solo clic sinistro non è assegnabile; Ctrl + clic sinistro sì. Predefinito: Win + <.","ru":"Нажмите кнопку и удерживайте нужные клавиши и кнопки мыши вместе. Обычным левым щелчком подтвердите или отмените. Поддерживаются Mouse 4/5, Ctrl, Shift, Alt, Win. Левый щелчок отдельно не назначается, Ctrl + левый щелчок разрешён. По умолчанию Win + <."},
+"ShortcutHold":{"tr":"İstediğiniz birleşimi basılı tutun…","en":"Hold the desired combination…","de":"Gewünschte Kombination gedrückt halten…","fr":"Maintenez la combinaison souhaitée…","es":"Mantén la combinación deseada…","it":"Tieni premuta la combinazione…","ru":"Удерживайте нужное сочетание…"},
+"ShortcutAccept":{"tr":"Onayla","en":"Accept","de":"Bestätigen","fr":"Confirmer","es":"Confirmar","it":"Conferma","ru":"Подтвердить"},
+"ShortcutCancel":{"tr":"İptal","en":"Cancel","de":"Abbrechen","fr":"Annuler","es":"Cancelar","it":"Annulla","ru":"Отмена"},
+"ShortcutFailed":{"tr":"Kısayol uygulanamadı. Başka bir birleşim deneyin.","en":"The shortcut could not be applied. Try another combination.","de":"Die Kombination konnte nicht angewendet werden. Bitte eine andere versuchen.","fr":"Impossible d’appliquer ce raccourci. Essayez une autre combinaison.","es":"No se pudo aplicar el atajo. Prueba otra combinación.","it":"Impossibile applicare la scorciatoia. Prova un’altra combinazione.","ru":"Не удалось применить сочетание. Попробуйте другое."}
 }

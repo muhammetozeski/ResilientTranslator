@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <strings>
   <LanguageName>Deutsch</LanguageName>
   <s name="SwapLanguages">Sprachen tauschen</s>
@@ -226,7 +226,13 @@
   <s name="SpeechPreparing">Sprachausgabe wird vorbereitet. Zum Abbrechen erneut drücken.</s>
   <s name="SpeechStop">Vorlesen stoppen.</s>
   <s name="SpeechFailed">Die Sprachausgabe ist fehlgeschlagen. Zum Wiederholen drücken.</s>
+  <s name="GlobalShortcutLabel">Tastenkombination zum Ein-/Ausblenden</s>
+  <s name="HelpGlobalShortcut">Taste anklicken, dann gewünschte Tasten und Maustasten gemeinsam halten. Mit einfachem Linksklick bestätigen oder abbrechen. Mouse 4/5, Strg, Umschalt, Alt und Win werden unterstützt. Linksklick allein ist ausgeschlossen, Strg + Linksklick erlaubt. Standard: Win + &lt;.</s>
   <s name="HelpSpeechPronunciation">Wählt die Aufbereitung englischer Texte für das Sprachmodell. Standard ist Misaki mit neuronalem Modell, alternativ FYLs-G2P. Ein Wechsel erzeugt die Aufnahme neu.</s>
   <s name="MisakiNeuralName">Misaki + neuronal</s>
+  <s name="ShortcutAccept">Bestätigen</s>
+  <s name="ShortcutCancel">Abbrechen</s>
+  <s name="ShortcutFailed">Die Kombination konnte nicht angewendet werden. Bitte eine andere versuchen.</s>
+  <s name="ShortcutHold">Gewünschte Kombination gedrückt halten…</s>
   <s name="SpeechPronunciationLabel">Englische Aussprache</s>
 </strings>

@@ -26,6 +26,8 @@ public static class Preferences
         .Where(item => item.Editor is not null)
         .Select(item => new PreferenceEntry((ISetting)item.Field.GetValue(null)!, item.Editor!)).ToArray();
     public static event Action? Changed;
+    public static string ShortcutConfiguration=>Settings.GlobalShortcut.Value;
+    public static Task<bool> SaveShortcutAsync(Input.ShortcutChord chord)=>SetAsync(Settings.GlobalShortcut,chord.Serialize());
     internal static void NotifyChanged()=>Changed?.Invoke();
     public static Func<CancellationToken,Task<string[]>>? LoadFonts;
     public static double InputShare => Settings.InputShare.Value;
@@ -148,6 +150,7 @@ public static class Preferences
     /// <returns>Whether the parsed value satisfies its setting-specific semantic bounds.</returns>
     static bool IsValid(ISetting setting, PreferenceAttribute metadata)
     {
+        if(setting==Settings.GlobalShortcut){if(string.IsNullOrEmpty(Settings.GlobalShortcut.Value))return true;try{_=Input.ShortcutChord.Parse(Settings.GlobalShortcut.Value);return true;}catch(FormatException){return false;}catch(System.Text.Json.JsonException){return false;}}
         if(setting==Settings.SpeechPronunciation)return Enum.IsDefined(Settings.SpeechPronunciation.Value);
         if (setting.Value is double or int)
         {

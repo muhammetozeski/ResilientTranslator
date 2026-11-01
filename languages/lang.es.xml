@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <strings>
   <LanguageName>Español</LanguageName>
   <s name="SwapLanguages">Intercambiar idiomas</s>
@@ -226,7 +226,13 @@
   <s name="SpeechPreparing">Preparando la voz. Pulsa de nuevo para cancelar.</s>
   <s name="SpeechStop">Detener la lectura.</s>
   <s name="SpeechFailed">No se pudo generar la voz. Pulsa para reintentar.</s>
+  <s name="GlobalShortcutLabel">Atajo para mostrar/ocultar</s>
+  <s name="HelpGlobalShortcut">Pulsa y mantén juntas las teclas y botones deseados. Confirma o cancela con un clic izquierdo simple. Admite Mouse 4/5, Ctrl, Mayús, Alt y Win. El clic izquierdo solo no se asigna; Ctrl + clic izquierdo sí. Predeterminado: Win + &lt;.</s>
   <s name="HelpSpeechPronunciation">Selecciona la preparación del texto inglés para el modelo de voz. Misaki neuronal es el predeterminado; FYLs-G2P es la alternativa. Al cambiarlo se regenera la grabación.</s>
   <s name="MisakiNeuralName">Misaki + neuronal</s>
+  <s name="ShortcutAccept">Confirmar</s>
+  <s name="ShortcutCancel">Cancelar</s>
+  <s name="ShortcutFailed">No se pudo aplicar el atajo. Prueba otra combinación.</s>
+  <s name="ShortcutHold">Mantén la combinación deseada…</s>
   <s name="SpeechPronunciationLabel">Motor de pronunciación inglesa</s>
 </strings>

@@ -82,8 +82,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
             window.AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(-30000, -30000, Preferences.WindowWidth, Preferences.WindowHeight));
             Preferences.LoadFonts = FontCatalog.LoadAsync;
             CreateHandle(new Forms.CreateParams { Caption = "ResilientTranslator.Hotkey" });
-            if (!PInvoke.RegisterHotKey(new HWND(Handle), HotkeyId, HOT_KEY_MODIFIERS.MOD_WIN | HOT_KEY_MODIFIERS.MOD_NOREPEAT, (uint)VIRTUAL_KEY.VK_OEM_102))
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+            GlobalShortcut.Instance.Attach(new HWND(Handle),()=>Dispatch(Toggle,DesktopAction.Hotkey));
             Tray = new Forms.NotifyIcon
             {
                 Icon = System.Drawing.Icon.ExtractAssociatedIcon(Environment.ProcessPath!) ?? System.Drawing.SystemIcons.Application,
@@ -107,7 +106,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
             TranslationWorkspace.RequestSuperseded += CancelCapture;
             TranslationWorkspace.HideWindow = () => Dispatch(Hide, DesktopAction.HideButton);
             TranslationWorkspace.ViewReady = () => Dispatch(OnReady, DesktopAction.FirstRender);
-            Log("Desktop initialized; shortcut=Win+OEM102; trayLeft=toggle; trayMiddle=exit", Run: IsLogEnabled);
+            Log($"Desktop initialized; shortcut={GlobalShortcut.Instance.Display(GlobalShortcut.Instance.Current)}; trayLeft=toggle; trayMiddle=exit", Run: IsLogEnabled);
         }
         catch (Exception initializationError)
         {
@@ -403,8 +402,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
     /// <param name = "message">The complete diagnostic text or native Windows message identifier.</param>
     protected override void WndProc(ref Forms.Message message)
     {
-        if (message.Msg == PInvoke.WM_HOTKEY && message.WParam == HotkeyId)
-            Dispatch(Toggle, DesktopAction.Hotkey);
+        GlobalShortcut.Instance.HandleMessage((uint)message.Msg,(nuint)message.WParam);
         base.WndProc(ref message);
     }
 
@@ -684,7 +682,7 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         LocManager.LanguageChanged -= RefreshTrayLanguage;
         TranslationWorkspace.RequestSuperseded -= CancelCapture;
         CancelCapture();
-        PInvoke.UnregisterHotKey(new HWND(Handle), HotkeyId);
+        GlobalShortcut.Instance.Detach();
         Tray.Visible = false;
         Chrome?.Dispose();
         Tray?.Dispose();
@@ -692,3 +690,5 @@ internal sealed class DesktopHost : Forms.NativeWindow, IDisposable
         Log("Desktop disposed", Run: IsLogEnabled);
     }
 }
+
+
