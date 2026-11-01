@@ -26,7 +26,8 @@ namespace ResilientTranslator
                 });
 
             builder.Services.AddMauiBlazorWebView();
-            builder.Services.AddSingleton<MainProject.Infrastructure.Speech.IEnglishPhonemizer, EnglishPhonemizer>();
+            builder.Services.AddScoped<MainProject.Infrastructure.Speech.EnglishPronunciation>();
+            builder.Services.AddScoped<MainProject.Infrastructure.Speech.IEnglishPhonemizer>(services=>services.GetRequiredService<MainProject.Infrastructure.Speech.EnglishPronunciation>());
             builder.Services.AddScoped<MainProject.Infrastructure.Speech.SpeechPlayback>();
             builder.ConfigureLifecycleEvents(events => events.AddWindows(windows => windows.OnWindowCreated(DesktopHost.Attach)));
 
@@ -35,6 +36,9 @@ namespace ResilientTranslator
         }
     }
 }
+
+
+
 
 
 

@@ -84,7 +84,9 @@
     <Content Include="..\languages\lang.*.xml" Link="languages\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
-<PropertyGroup><Version>1.2.0</Version><AssemblyVersion>1.2.0.0</AssemblyVersion><FileVersion>1.2.0.0</FileVersion><ApplicationIcon>Resources\AppIcon\appicon.ico</ApplicationIcon><AllowUnsafeBlocks>true</AllowUnsafeBlocks><WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained></PropertyGroup><ItemGroup><FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms"/><FrameworkReference Include="Microsoft.WindowsDesktop.App.WPF"/><PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.363" PrivateAssets="all"/><Using Remove="System.Windows.Forms"/><Using Remove="System.Drawing"/></ItemGroup><ItemGroup><Content Include="SpeechAssets\**\*" Link="Speech\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup></Project>
+<PropertyGroup><Version>1.2.0</Version><AssemblyVersion>1.2.0.0</AssemblyVersion><FileVersion>1.2.0.0</FileVersion><ApplicationIcon>Resources\AppIcon\appicon.ico</ApplicationIcon><AllowUnsafeBlocks>true</AllowUnsafeBlocks><WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained></PropertyGroup><ItemGroup><FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms"/><FrameworkReference Include="Microsoft.WindowsDesktop.App.WPF"/><PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.363" PrivateAssets="all"/><Using Remove="System.Windows.Forms"/><Using Remove="System.Drawing"/></ItemGroup></Project>
+
+
 
 
 

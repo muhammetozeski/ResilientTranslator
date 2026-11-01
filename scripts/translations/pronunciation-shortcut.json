@@ -1,0 +1,29 @@
+{
+  "SpeechPronunciationLabel": {
+    "tr": "İngilizce telaffuz motoru",
+    "en": "English pronunciation engine",
+    "de": "Englische Aussprache",
+    "fr": "Moteur de prononciation anglaise",
+    "es": "Motor de pronunciación inglesa",
+    "it": "Motore di pronuncia inglese",
+    "ru": "Движок английского произношения"
+  },
+  "HelpSpeechPronunciation": {
+    "tr": "Metni ses modeline hazırlayan telaffuz yöntemini seçer. Misaki + sinir ağı varsayılandır; FYLs-G2P alternatifidir. Seçim değişince aynı metnin sesi yeniden hazırlanır.",
+    "en": "Selects how English text is prepared for the speech model. Misaki + neural is the default; FYLs-G2P is the alternative. Changing it rebuilds the recording for the same text.",
+    "de": "Wählt die Aufbereitung englischer Texte für das Sprachmodell. Standard ist Misaki mit neuronalem Modell, alternativ FYLs-G2P. Ein Wechsel erzeugt die Aufnahme neu.",
+    "fr": "Choisit la préparation du texte anglais pour le modèle vocal. Misaki neuronal est utilisé par défaut, FYLs-G2P est l’alternative. Un changement recrée l’enregistrement.",
+    "es": "Selecciona la preparación del texto inglés para el modelo de voz. Misaki neuronal es el predeterminado; FYLs-G2P es la alternativa. Al cambiarlo se regenera la grabación.",
+    "it": "Seleziona la preparazione del testo inglese per il modello vocale. Misaki neurale è predefinito; FYLs-G2P è l’alternativa. Cambiando si rigenera la registrazione.",
+    "ru": "Выбирает подготовку английского текста для речевой модели. По умолчанию Misaki с нейросетью, альтернатива — FYLs-G2P. При смене запись создаётся заново."
+  },
+  "MisakiNeuralName": {
+    "tr": "Misaki + sinir ağı",
+    "en": "Misaki + neural",
+    "de": "Misaki + neuronal",
+    "fr": "Misaki + neuronal",
+    "es": "Misaki + neuronal",
+    "it": "Misaki + neurale",
+    "ru": "Misaki + нейросеть"
+  }
+}

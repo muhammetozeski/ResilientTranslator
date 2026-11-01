@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <strings>
   <LanguageName>Italiano</LanguageName>
   <s name="SwapLanguages">Scambia lingue</s>
@@ -226,4 +226,7 @@
   <s name="SpeechPreparing">Preparazione della voce. Premi di nuovo per annullare.</s>
   <s name="SpeechStop">Interrompi la lettura.</s>
   <s name="SpeechFailed">Impossibile generare la voce. Premi per riprovare.</s>
+  <s name="HelpSpeechPronunciation">Seleziona la preparazione del testo inglese per il modello vocale. Misaki neurale è predefinito; FYLs-G2P è l’alternativa. Cambiando si rigenera la registrazione.</s>
+  <s name="MisakiNeuralName">Misaki + neurale</s>
+  <s name="SpeechPronunciationLabel">Motore di pronuncia inglese</s>
 </strings>

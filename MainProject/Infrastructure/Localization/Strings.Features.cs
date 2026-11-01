@@ -95,6 +95,7 @@ public static partial class Strings
     public static string HelpSequentialBudget = "Sıralı servis denemeleri ve beklemeleri için toplam saniye sınırı.";
     public static string HelpSequentialRetries = "Paralel aşama başarısız olduktan sonra, servisleri sırayla deneyen aşamanın ek tekrarları.";
     public static string HelpSequentialRetryDelay = "Aynı aşamadaki tekrarlar arasındaki başlangıç beklemesi, milisaniye. Sonraki beklemeler artabilir.";
+    public static string HelpSpeechPronunciation = "Metni ses modeline hazırlayan telaffuz yöntemini seçer. Misaki + sinir ağı varsayılandır; FYLs-G2P alternatifidir. Seçim değişince aynı metnin sesi yeniden hazırlanır.";
     public static string HelpStartupLanguage = "Uygulama açılınca bu kutunun dilini seçer. — son kullanılanı korur.";
     public static string HelpStatusPreview = "Durum yazısı hızının gerçek önizlemesidir; ana çubuğun aynı bileşenini kullanır.";
     public static string HelpStatusSpeed = "Sığmayan durum yazısının saniyede kaç piksel kayacağını belirler; durum ışığı sabit kalır.";
@@ -118,6 +119,7 @@ public static partial class Strings
     public static string LocalRetries = "Yerel çeviri ek deneme sayısı";
     public static string LocalRetryDelay = "Yerel ek denemeler arası bekleme (ms)";
     public static string LocalTranslationTimeout = "Yerel çeviri süre sınırı (ms)";
+    public static string MisakiNeuralName = "Misaki + sinir ağı";
     public static string ModelLoadTimeout = "Model yükleme süre sınırı (ms)";
     public static string MoveDown = "Daha sonra kontrol etmek için aşağı taşı";
     public static string MoveUp = "Önce kontrol etmek için yukarı taşı";
@@ -154,6 +156,7 @@ public static partial class Strings
     public static string SpeechFailed = "Ses üretilemedi. Yeniden denemek için bas.";
     public static string SpeechListen = "Seslendir. Aynı metin ikinci dinleyişte biraz daha yavaş çalar.";
     public static string SpeechPreparing = "Ses hazırlanıyor. İptal etmek için tekrar bas.";
+    public static string SpeechPronunciationLabel = "İngilizce telaffuz motoru";
     public static string SpeechStop = "Seslendirmeyi durdur.";
     public static string SplitterTooltip = "Metin kutularının genişlik oranını değiştirmek için sürükle. Pencerenin boyutu değişince oran korunur; ayarlardan yüzde 50’ye dönebilirsin.";
     public static string TargetTooltip = "Sağ metin kutusunun dili. Bu kutudaki metni düzenlemek ters yönde çeviri başlatır. İki yönlü otomatik seçim açıksa iki kutu da Otomatik olabilir.";

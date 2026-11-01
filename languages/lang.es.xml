@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <strings>
   <LanguageName>Español</LanguageName>
   <s name="SwapLanguages">Intercambiar idiomas</s>
@@ -226,4 +226,7 @@
   <s name="SpeechPreparing">Preparando la voz. Pulsa de nuevo para cancelar.</s>
   <s name="SpeechStop">Detener la lectura.</s>
   <s name="SpeechFailed">No se pudo generar la voz. Pulsa para reintentar.</s>
+  <s name="HelpSpeechPronunciation">Selecciona la preparación del texto inglés para el modelo de voz. Misaki neuronal es el predeterminado; FYLs-G2P es la alternativa. Al cambiarlo se regenera la grabación.</s>
+  <s name="MisakiNeuralName">Misaki + neuronal</s>
+  <s name="SpeechPronunciationLabel">Motor de pronunciación inglesa</s>
 </strings>

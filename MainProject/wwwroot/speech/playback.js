@@ -1,6 +1,6 @@
 // Owns one cached recording and one player. Inference reuses the existing ONNX runtime.
 export function create() {
-    let worker, pending, player, url, cachedText, finish;
+    let worker, pending, player, url, cachedText, cachedEngine, finish;
     function stop() {
         if (pending) {
             pending.reject(new Error('Speech generation canceled'));
@@ -25,10 +25,10 @@ export function create() {
         return new Blob([data], { type: 'audio/wav' });
     }
     return {
-        has: text => text === cachedText && !!url,
+        has: (text,engine) => text === cachedText && engine===cachedEngine && !!url,
         stop,
-        async prepare(text, sentences) {
-            if (text === cachedText && url) return;
+        async prepare(text, sentences,engine) {
+            if (text === cachedText && engine===cachedEngine && url) return;
             stop();
             if (!worker) {
                 const spawned = new Worker(new URL('worker.js', import.meta.url));
@@ -47,10 +47,12 @@ export function create() {
                 };
             }
             const samples = await new Promise((resolve, reject) => { pending = { resolve, reject }; worker.postMessage({ sentences }); });
+            if(text===null)return;
             discard();
-            url = URL.createObjectURL(wav(samples)); cachedText = text;
+            url = URL.createObjectURL(wav(samples)); cachedText = text;cachedEngine=engine;
             player = new Audio(url); player.preservesPitch = true;
         },
+        async warm() { if(!worker)await this.prepare(null,['həlˈO.'],null); },
         play(rate) {
             if (!player) throw new Error('Speech is not prepared');
             player.currentTime = 0; player.playbackRate = rate;
@@ -65,3 +67,4 @@ export function create() {
         dispose() { stop(); discard(); worker?.terminate(); worker = undefined; }
     };
 }
+

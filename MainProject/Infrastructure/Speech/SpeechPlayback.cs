@@ -5,9 +5,18 @@ namespace ResilientTranslator.MainProject.Infrastructure.Speech;
 public enum SpeechState { Idle, Preparing, Playing }
 
 /// <summary>Owns the latest speech request and a bounded browser recording cache.</summary>
-public sealed class SpeechPlayback(IJSRuntime javascript, IEnglishPhonemizer phonemizer) : IAsyncDisposable
+public sealed class SpeechPlayback : IAsyncDisposable
 {
     const bool IsLogEnabled = true;
+    readonly IJSRuntime javascript;
+    readonly IEnglishPhonemizer phonemizer;
+    PronunciationEngine Selected;
+
+    public SpeechPlayback(IJSRuntime javascript,IEnglishPhonemizer phonemizer)
+    {
+        this.javascript=javascript;this.phonemizer=phonemizer;Selected=phonemizer.Engine;
+        Preferences.Changed+=OnPreferencesChanged;
+    }
     readonly SemaphoreSlim Initialization = new(1, 1);
     IJSObjectReference? Controller, Module;
     CancellationTokenSource? Current;
@@ -23,6 +32,8 @@ public sealed class SpeechPlayback(IJSRuntime javascript, IEnglishPhonemizer pho
     {
         if (Owner == owner && State != SpeechState.Idle) { await StopAsync(); return; }
         if (string.IsNullOrWhiteSpace(text)) return;
+        
+        var engine=phonemizer.Engine;
         var request = new CancellationTokenSource();
         var previous = Current; Current = request; previous?.Cancel();
         Owner = owner; FailedOwner = null; State = SpeechState.Preparing; Changed?.Invoke();
@@ -32,14 +43,14 @@ public sealed class SpeechPlayback(IJSRuntime javascript, IEnglishPhonemizer pho
             var controller = Controller ?? throw new InvalidOperationException("Speech controller is unavailable.");
             token.ThrowIfCancellationRequested();
             await controller.InvokeVoidAsync("stop", token);
-            bool cached = await controller.InvokeAsync<bool>("has", token, text);
+            bool cached = await controller.InvokeAsync<bool>("has", token, text,engine.ToString());
             Log($"Speech requested; cached={cached}; text={text}", Run: IsLogEnabled);
             if (!cached)
             {
                 string[] sentences = await phonemizer.ConvertAsync(text, token);
                 await Resilience.ExecuteResilientlyAsync(async ct =>
                 {
-                    try { await controller.InvokeVoidAsync("prepare", ct, text, sentences); return true; }
+                    try { await controller.InvokeVoidAsync("prepare", ct, text, sentences,engine.ToString()); return true; }
                     catch (JSException) when (!ct.IsCancellationRequested)
                     {
                         await controller.InvokeVoidAsync("reset", ct);
@@ -77,6 +88,13 @@ public sealed class SpeechPlayback(IJSRuntime javascript, IEnglishPhonemizer pho
         finally { Initialization.Release(); }
     }
 
+    void OnPreferencesChanged()
+    {
+        if(Selected==phonemizer.Engine)return;
+        Selected=phonemizer.Engine;LastText=null;ListenCount=0;
+        _=ExceptionBoundary.RunSafelyAsync(async _=>await StopAsync(),operationName:"ChangeSpeechPronunciation");
+    }
+
     /// <summary>Cancels generation at its worker and stops playback without clearing the last recording.</summary>
     public async Task StopAsync()
     {
@@ -88,6 +106,7 @@ public sealed class SpeechPlayback(IJSRuntime javascript, IEnglishPhonemizer pho
 
     public async ValueTask DisposeAsync()
     {
+        Preferences.Changed-=OnPreferencesChanged;
         await StopAsync();
         if (Controller is not null) { await Controller.InvokeVoidAsync("dispose"); await Controller.DisposeAsync(); }
         if (Module is not null) await Module.DisposeAsync();

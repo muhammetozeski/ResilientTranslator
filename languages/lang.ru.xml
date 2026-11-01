@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <strings>
   <LanguageName>Русский</LanguageName>
   <s name="SwapLanguages">Поменять языки</s>
@@ -226,4 +226,7 @@
   <s name="SpeechPreparing">Подготовка речи. Нажмите ещё раз для отмены.</s>
   <s name="SpeechStop">Остановить чтение.</s>
   <s name="SpeechFailed">Не удалось создать речь. Нажмите, чтобы повторить.</s>
+  <s name="HelpSpeechPronunciation">Выбирает подготовку английского текста для речевой модели. По умолчанию Misaki с нейросетью, альтернатива — FYLs-G2P. При смене запись создаётся заново.</s>
+  <s name="MisakiNeuralName">Misaki + нейросеть</s>
+  <s name="SpeechPronunciationLabel">Движок английского произношения</s>
 </strings>

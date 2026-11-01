@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <CompressionExcludePatterns>$(CompressionExcludePatterns);**/speech/*.onnx</CompressionExcludePatterns>
+    <CompressionExcludePatterns>$(CompressionExcludePatterns);**/speech/*.onnx;**/speech/**/*.onnx;**/speech/phonemizers/**/*.json</CompressionExcludePatterns>
     <RootNamespace>ResilientTranslator.MainProject</RootNamespace>
     <RuntimeIdentifiers>win-x64;win-x86;win-arm64;android-arm64;android-x64</RuntimeIdentifiers>
     <!-- MAUI consumer projects propagate legacy RIDs (win10-x64, android-arm, etc.).
@@ -21,6 +21,7 @@
     <SupportedPlatform Include="android" />
     <SupportedPlatform Include="windows" />
   </ItemGroup>
+  <ItemGroup><ProjectReference Include="..\ThirdParty\MisakiSharp\MisakiSharp.csproj" /></ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0" />
@@ -32,5 +33,6 @@
 						  ReferenceOutputAssembly="false" />
 	</ItemGroup>
 <ItemGroup><ProjectReference Include="..\TranslationEngine\TranslationEngine.csproj" Aliases="TranslationEngine" /></ItemGroup><Import Project="Infrastructure\Localization.resources.props" /><PropertyGroup><RestoreAdditionalProjectSources>$(RestoreAdditionalProjectSources);$(MSBuildThisFileDirectory)packages</RestoreAdditionalProjectSources></PropertyGroup><ItemGroup><PackageReference Include="ResilientTranslator.Lingua.SevenLanguages" Version="2.0.0" /></ItemGroup></Project>
+
 
 

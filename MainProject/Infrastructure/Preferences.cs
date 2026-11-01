@@ -148,6 +148,7 @@ public static class Preferences
     /// <returns>Whether the parsed value satisfies its setting-specific semantic bounds.</returns>
     static bool IsValid(ISetting setting, PreferenceAttribute metadata)
     {
+        if(setting==Settings.SpeechPronunciation)return Enum.IsDefined(Settings.SpeechPronunciation.Value);
         if (setting.Value is double or int)
         {
             double number = Convert.ToDouble(setting.Value, CultureInfo.InvariantCulture);

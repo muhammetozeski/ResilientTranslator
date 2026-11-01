@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <strings>
   <LanguageName>Türkçe</LanguageName>
   <s name="SwapLanguages">Dillerin yerini değiştir</s>
@@ -226,4 +226,7 @@
   <s name="SpeechPreparing">Ses hazırlanıyor. İptal etmek için tekrar bas.</s>
   <s name="SpeechStop">Seslendirmeyi durdur.</s>
   <s name="SpeechFailed">Ses üretilemedi. Yeniden denemek için bas.</s>
+  <s name="HelpSpeechPronunciation">Metni ses modeline hazırlayan telaffuz yöntemini seçer. Misaki + sinir ağı varsayılandır; FYLs-G2P alternatifidir. Seçim değişince aynı metnin sesi yeniden hazırlanır.</s>
+  <s name="MisakiNeuralName">Misaki + sinir ağı</s>
+  <s name="SpeechPronunciationLabel">İngilizce telaffuz motoru</s>
 </strings>

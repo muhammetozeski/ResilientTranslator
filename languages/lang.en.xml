@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <strings>
   <LanguageName>English</LanguageName>
   <s name="SwapLanguages">Swap languages</s>
@@ -226,4 +226,7 @@
   <s name="SpeechPreparing">Preparing speech. Press again to cancel.</s>
   <s name="SpeechStop">Stop reading aloud.</s>
   <s name="SpeechFailed">Speech could not be generated. Press to retry.</s>
+  <s name="HelpSpeechPronunciation">Selects how English text is prepared for the speech model. Misaki + neural is the default; FYLs-G2P is the alternative. Changing it rebuilds the recording for the same text.</s>
+  <s name="MisakiNeuralName">Misaki + neural</s>
+  <s name="SpeechPronunciationLabel">English pronunciation engine</s>
 </strings>
