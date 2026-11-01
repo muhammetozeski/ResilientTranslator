@@ -2,17 +2,7 @@ const allowed = ['en', 'tr', 'de', 'fr', 'es', 'it', 'ru'];
 const iso = { eng: 'en', tur: 'tr', deu: 'de', fra: 'fr', spa: 'es', ita: 'it', rus: 'ru', und: 'und' };
 let detect;
 async function initialize(kind) {
-    if (kind === 'MediaPipe') {
-        const { LanguageDetector } = await import('./vendor/mediapipe.js');
-        const detector = await LanguageDetector.createFromOptions({
-            wasmLoaderPath: new URL('./vendor/text_wasm_internal.js', import.meta.url).href,
-            wasmBinaryPath: new URL('./vendor/text_wasm_internal.wasm', import.meta.url).href
-        }, {
-            baseOptions: { modelAssetBuffer: new Uint8Array(await checkedFetch('./models/language_detector.tflite')) },
-            maxResults: 1, scoreThreshold: 0, categoryAllowlist: allowed
-        });
-        detect = text => detector.detect(text).languages[0]?.languageCode ?? null;
-    } else if (kind === 'FastText') {
+    if (kind === 'FastText') {
         const { default: createRuntime } = await import('./vendor/fasttext.js');
         const runtime = await createRuntime({ wasmBinary: new Uint8Array(await checkedFetch('./vendor/fasttext_wasm.wasm')) });
         runtime.FS.writeFile('/language-model.ftz', new Uint8Array(await checkedFetch('./models/lid.176.ftz')));
@@ -60,3 +50,4 @@ self.onmessage = async ({ data }) => {
         self.postMessage({ type: 'error', error: error?.stack ?? String(error) });
     }
 };
+

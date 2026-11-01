@@ -6990,6 +6990,3 @@ if (typeof exports === 'object' && typeof module === 'object') {
 } else if (typeof define === 'function' && define['amd'])
   define([], () => ModuleFactory);
 
-
-// Expose the UMD factory when MediaPipe imports this loader from an ES module worker.
-globalThis.ModuleFactory = ModuleFactory;

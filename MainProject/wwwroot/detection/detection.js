@@ -3,8 +3,8 @@ const operations = new Map();
 let options = { loadTimeoutMs: 15000, detectTimeoutMs: 3000 };
 export function configure(value) { options = { ...options, ...value }; }
 function create(kind) {
-    const classic = kind === 'Cld2';
-    const worker = new Worker(new URL(classic ? './vendor/cld-worker.js' : './detector.worker.js', import.meta.url), classic ? {} : { type: 'module' });
+    const classic = kind === 'Cld2' || kind === 'MediaPipe';
+    const worker = new Worker(new URL(kind === 'Cld2' ? './vendor/cld-worker.js' : kind === 'MediaPipe' ? './mediapipe.worker.js' : './detector.worker.js', import.meta.url), classic ? {} : { type: 'module' });
     const slot = { worker, active: null, ready: null };
     workers.set(kind, slot);
     slot.ready = new Promise((resolve, reject) => {
@@ -23,7 +23,7 @@ function create(kind) {
             const error = new Error(`${kind}: ${event.message}`);
             if (slot.active) slot.active.reject(error); else slot.failInitialization(error);
         };
-        if (!classic) worker.postMessage({ type: 'initialize', kind });
+        if (kind !== 'Cld2') worker.postMessage({ type: 'initialize', kind });
     });
     slot.ready.catch(() => { if (workers.get(kind) === slot) retire(kind, slot); });
     return slot;
@@ -80,3 +80,4 @@ export function dispose() {
     for (const id of operations.keys()) cancel(id);
     for (const [kind, slot] of workers) retire(kind, slot);
 }
+
