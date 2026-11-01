@@ -12,6 +12,7 @@ For a newly played text the playback count starts at one. Odd listens use rate 1
 
 ## Packaging and evidence
 
-Speech model compression is excluded in the static-assets pipeline so the 8,462,119-byte model is shipped once. All newly added payload files, including pronunciation data, module compression variants and license texts, total approximately 9.77 MB. The measured 1.2.0 payload delta against the installed 1.1.0 build was approximately 6.74 MB; other rebuilt files account for that difference.
+Speech model compression is excluded in the static-assets pipeline so the 8,462,119-byte model is shipped once. All newly added payload files, including pronunciation data, module compression variants and license texts, total approximately 9.77 MB. The measured 1.2.0 payload delta against the installed 1.1.0 build was approximately 6.74 MB; The older installation retained 4,085,641 bytes of obsolete .mjs variants, while common rebuilt files grew by 1,056,057 bytes. Comparing a dirty installed directory with a clean publish directory therefore understated the feature addition; use the added-file inventory when checking a feature size budget.
 
 The actual C# phonemizer and original ONNX model produced 79,800 audio samples for the demo sentence. Controlled tests using the actual C# playback coordinator verified cache reuse, the 1.0/0.9/1.0 sequence and command cancellation. Browser-controller tests verified WAV retention, pitch-preserving playback, stop, worker termination, stale-worker rejection and URL disposal. These checks are distinct from listening in the native application.
+
