@@ -1,16 +1,17 @@
 # Resilient Translator
 
-![Version](https://img.shields.io/badge/version-1.2.0-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
+![Version](https://img.shields.io/badge/version-1.3.0-74cf9c) ![Platform](https://img.shields.io/badge/platform-Windows_11-2468a0) ![Runtime](https://img.shields.io/badge/.NET-10-512bd4)
 
 A portable, borderless MAUI Blazor translator with a warm hidden window and two editable text panes.
 
-- **Win + <** shows or hides the window. Opening requests Ctrl+C and translates the current clipboard text, including text copied earlier when Ctrl+C makes no change.
+- **Win + <** shows or hides the window by default; advanced settings can record keyboard and mouse chords, including Mouse 4/5. Opening requests Ctrl+C and translates the current clipboard text, including text copied earlier when Ctrl+C makes no change.
 - Typing in either pane translates toward the other pane after one second without edits.
 - Failed service passes retry through fresh sessions and then a sequential alternative. Large input is split without losing Unicode text or separators. Only confirmed successful output is reused from memory.
 - A new command cancels the previous request; only the current request object may publish its result.
 - Bergamot, applicable Töz translation chains and online services start immediately. The first result appears immediately; higher-priority results replace it and cancel lower-priority computation. Online recovery continues until success or cancellation.
 - Click the status light for gray mode: local translation only, without online requests. The package includes models for all seven supported languages, using English as a bridge where necessary.
-- English editors offer local read-aloud with a cancelable preparation indicator. The last recording stays in RAM; successive listens alternate normal and slightly slower playback.
+- English editors offer local read-aloud with selectable Misaki + neural (default) or FYLs-G2P pronunciation and a cancelable preparation indicator. The last recording stays in RAM; successive listens alternate normal and slightly slower playback.
+- Retained local translation, pronunciation, speech and detection engines are prepared centrally in the background. Silent speech warmup does not replace the user's cached recording; new user commands cancel warming.
 - Single left click on the tray icon toggles the window. Middle click exits.
 - A compact toolbar swaps languages or texts; its arrow starts a fresh translation immediately.
 - Click the icon or title for persistent appearance, startup-language and technical settings. The application UI supports Turkish, English, German, French, Spanish, Italian and Russian.
@@ -46,6 +47,7 @@ With two-way automatic selection disabled, an Automatic output destination becom
 
 
 Developer knowledge: [documentation index](Docs/İçindekiler.md).
+
 
 
 

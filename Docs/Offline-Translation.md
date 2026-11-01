@@ -26,4 +26,6 @@ A failed or inconclusive selected detector falls back to Lingua. If neither iden
 
 ## Evidence
 
+MediaPipe's supplied UMD loader must execute in a classic worker. Importing it as an ES module first hid ModuleFactory from the SDK, then exposed a strict-mode block-function error in custom_dbg when the factory was manually exported. Production uses a dedicated classic MediaPipe worker with the original loader unchanged; the API module is dynamically imported from that worker. Native startup warming then succeeded. A Node compatibility harness that evaluates imports as classic scripts can mask this browser difference.
+
 The original production worker code translated all twelve Bergamot directions, an English-pivot pair and both Töz pivot directions in isolated browser-worker-compatible consumers. Real worker cancellation terminated old computation and allowed a newer request to finish. All seven browser detector implementations matched their original 150 reference predictions. Controlled consumers using the actual coordinator and resilience code verified progressive publication, lower-priority cancellation, gray-mode isolation and online retry cancellation. These checks do not replace a native WebView interaction trial.

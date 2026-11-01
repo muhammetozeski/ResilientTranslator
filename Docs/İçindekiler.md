@@ -5,6 +5,7 @@ Read the relevant verified project knowledge before changing recovery behavior.
 - [Documentation guide](Documentation-Guide.md): how to add evidence-backed project knowledge without duplicating source or activity logs.
 - [Future work](todos.md): requested model catalog and one-click installation.
 - [English speech](English-Speech.md): existing-language notifications, shared inference runtime, bounded recording cache and alternating playback speed.
+- [Shortcuts and warmup](Shortcuts-and-Warmup.md): physical chord recording, Mouse 4/5, native registration and cancellable silent startup preparation.
 - [Why this knowledge is retained](Documentation-Purpose.md): the project-specific mistakes these documents prevent.
 - [Translation recovery](Translation-Recovery.md): service retries, attempt isolation, cancellation, confirmed-result reuse and failure surfacing.
 - [Offline translation](Offline-Translation.md): shipped Bergamot and Töz workers, progressive results, cancellation, model packaging and online recovery.
