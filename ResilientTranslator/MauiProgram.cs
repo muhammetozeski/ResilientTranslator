@@ -30,6 +30,7 @@ namespace ResilientTranslator
             builder.Services.AddScoped<MainProject.Infrastructure.Speech.EnglishPronunciation>();
             builder.Services.AddScoped<MainProject.Infrastructure.Speech.IEnglishPhonemizer>(services=>services.GetRequiredService<MainProject.Infrastructure.Speech.EnglishPronunciation>());
             builder.Services.AddScoped<MainProject.Infrastructure.Speech.SpeechPlayback>();
+            builder.Services.AddScoped<MainProject.Infrastructure.StartupWarmup>();
             builder.ConfigureLifecycleEvents(events => events.AddWindows(windows => windows.OnWindowCreated(DesktopHost.Attach)));
 
 

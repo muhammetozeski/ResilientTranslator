@@ -11,7 +11,7 @@ public sealed class SpeechPlayback : IAsyncDisposable
     readonly IJSRuntime javascript;
     readonly IEnglishPhonemizer phonemizer;
     PronunciationEngine Selected;
-
+    CancellationTokenSource? Warming;
     public SpeechPlayback(IJSRuntime javascript,IEnglishPhonemizer phonemizer)
     {
         this.javascript=javascript;this.phonemizer=phonemizer;Selected=phonemizer.Engine;
@@ -32,7 +32,7 @@ public sealed class SpeechPlayback : IAsyncDisposable
     {
         if (Owner == owner && State != SpeechState.Idle) { await StopAsync(); return; }
         if (string.IsNullOrWhiteSpace(text)) return;
-        
+        Warming?.Cancel();
         var engine=phonemizer.Engine;
         var request = new CancellationTokenSource();
         var previous = Current; Current = request; previous?.Cancel();
@@ -95,6 +95,20 @@ public sealed class SpeechPlayback : IAsyncDisposable
         _=ExceptionBoundary.RunSafelyAsync(async _=>await StopAsync(),operationName:"ChangeSpeechPronunciation");
     }
 
+    /// <summary>Runs a disposable silent sample; the first user command cancels it immediately.</summary>
+    public async Task WarmAsync(CancellationToken token)
+    {
+        if(Current is not null)return;
+        using var warm=CancellationTokenSource.CreateLinkedTokenSource(token);Warming=warm;
+        try
+        {
+            await InitializeAsync(warm.Token);
+            using var registration=warm.Token.Register(()=>_=ExceptionBoundary.RunSafelyAsync(async _=>await Controller!.InvokeVoidAsync("stop"),operationName:"CancelSpeechWarmup"));
+            await Controller!.InvokeVoidAsync("warm",warm.Token);
+        }
+        finally {if(Warming==warm)Warming=null;}
+    }
+
     /// <summary>Cancels generation at its worker and stops playback without clearing the last recording.</summary>
     public async Task StopAsync()
     {
@@ -106,7 +120,7 @@ public sealed class SpeechPlayback : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        Preferences.Changed-=OnPreferencesChanged;
+        Preferences.Changed-=OnPreferencesChanged;Warming?.Cancel();
         await StopAsync();
         if (Controller is not null) { await Controller.InvokeVoidAsync("dispose"); await Controller.DisposeAsync(); }
         if (Module is not null) await Module.DisposeAsync();

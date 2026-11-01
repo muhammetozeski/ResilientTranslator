@@ -8,6 +8,7 @@
 <PageTitle>@AppConstants.AppNameHumanReadable</PageTitle>
 <HomeCss />
 @inject Microsoft.JSInterop.IJSRuntime JavaScript
+@inject StartupWarmup StartupEngines
 <StatusTickerCss />
 <section class="translator" data-window-background>
     <header class="toolbar" data-window-background inert="@(SettingsOpen ? string.Empty : null)">
@@ -61,15 +62,12 @@
     });
     /// <summary>Signals native readiness only after the first complete Blazor render.</summary>
     /// <param name="firstRender">Whether this is the first completed render of this component instance.</param>
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if(!firstRender)return;
+        if(!firstRender)return Task.CompletedTask;
         TranslationWorkspace.ViewReady?.Invoke();
-        await ExceptionBoundary.RunSafelyAsync(async token=>
-        {
-            await TranslationRuntime.InitializeAsync(JavaScript);
-            _=ExceptionBoundary.RunSafelyAsync(ct=>TranslationRuntime.WarmAsync(ct),Warmup.Token,operationName:"WarmLocalEngines");
-        },operationName:"InitializeLocalEngines");
+        _=ExceptionBoundary.RunSafelyAsync(ct=>StartupEngines.RunAsync(ct),Warmup.Token,operationName:"WarmRetainedEngines");
+        return Task.CompletedTask;
     }
     /// <summary>Renders shared-state notifications on the owning dispatcher.</summary>
     void ApplyTooltipSettings()=>PopupContext?.ConfigureTooltips(Settings.EnableTooltips.Value,(int)Math.Round(Settings.TooltipDelay.Value*1000),(int)Math.Round(Settings.TooltipFade.Value*1000));
@@ -116,3 +114,5 @@
         base.Dispose();
     }
 }
+
+
